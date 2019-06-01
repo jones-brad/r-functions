@@ -21,4 +21,4 @@ partycolors <- c(
 	ind = "#A4A4A4")
   
 ###Stacked bar
-source("r-functions/plot_functions/stackedBar.R")
+source("stackedBar.R")
