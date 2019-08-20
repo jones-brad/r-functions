@@ -662,7 +662,7 @@ find.vars <- function(str, data) {
 	return(names(data)[inds])
 }
 
-source("S:/Common/Brad/plot_functions.R")
+
 
 
 ###############Pew methods functions
@@ -731,7 +731,17 @@ wxtab2 <- function(x, y, w, round = FALSE) {
 	
 }
 
+###Github
+readGit <- function(path) {
+	tmp <- tempfile(fileext = ".R")
+	text <- readLines(path)
+	writeLines(text, tmp)
+	source(tmp)
+}
+
 
 ################Significance testing
-source("S:/Common/Brad/error_calc_functions.R")
+#source("S:/Common/Brad/error_calc_functions.R")
+
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plot_functions")
 
