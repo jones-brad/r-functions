@@ -1,0 +1,737 @@
+library(foreign)
+
+con <- read.csv("S:/Common/Brad/state concordance.csv",
+	as.is = TRUE)
+
+recode <- function(var, vals) {
+	if (class(var) == "factor") lev <- levels(var)
+	if (class(var) != "factor") lev <- levels(factor(var))
+	names(vals) <- lev
+	new <- vals[as.character(var)]
+	return(new)
+}
+
+##############locate a dataset in the Pew Projects directory
+find.data <- function(path = NULL) {
+	files <- list.files(path,
+		pattern = "*.sav", full.names = TRUE)
+	return(files)		
+}
+
+open.que <- function(path) {
+	slash <- gregexpr("/", path)
+	trim <- substr(path, 1, tail(slash[[1]],1))
+	writeClipboard(trim)
+	flush.console()
+	hits <- list.files(trim, pattern = "que.*docx$")
+	if (length(hits)>1) {
+		h <- list.files(trim, pattern = "que\\.docx")
+		inval <- grep("~", h)
+		if (length(inval)>0) h <- h[-inval]
+		if (length(hits) > length(h)) hits <- h
+	}
+	old.dir <- getwd()
+	setwd(trim)
+	if (length(hits) != 1) shell.exec(file.choose(trim))
+	if (length(hits) == 1) shell.exec(hits)
+}
+
+create.party <- function(dat, party = "party",
+	partyln = "partyln", overwrite = FALSE, showCheck = TRUE) {
+	if (overwrite) {
+		w <- which(names(dat) == "party5")
+		cat("A variable called 'party5' already exists", "\n")
+		if (length(w) == 1) return(dat)
+	}
+
+if (class(dat[[party]])=="factor"|class(dat[[party]])=="character") {
+	dat$party5 <- "3. Ind/Other"
+	w <- grep("republic", dat[[party]], ignore.case=TRUE)
+	dat$party5[w] <- "5. Republican"
+	w <- grep("democrat", dat[[party]], ignore.case=TRUE)
+	dat$party5[w] <- "1. Democrat"
+	w <- grep("republic", dat[[partyln]], ignore.case=TRUE)
+	dat$party5[w] <- "4. Lean Rep"
+	w <- grep("democrat", dat[[partyln]], ignore.case=TRUE)
+	dat$party5[w] <- "2. Lean Dem"
+	tab1 <- table(dat$party5, dat[[party]], useNA = 'ifany')
+	tab2 <- table(dat$party5, dat[[partyln]], useNA = 'ifany')
+}
+if (class(dat[[party]])=="numeric"|class(dat[[party]])=="labelled") {
+	dat$party5 <- "3. Ind/Other"
+	w <- which(dat[[party]]==1)
+	dat$party5[w] <- "5. Republican"
+	w <- which(dat[[party]]==2)
+	dat$party5[w] <- "1. Democrat"
+	w <- which(dat[[partyln]]==1)
+	dat$party5[w] <- "4. Lean Rep"
+	w <- which(dat[[partyln]]==2)
+	dat$party5[w] <- "2. Lean Dem"
+	tab1 <- table(dat$party5, dat[[party]], useNA = 'ifany')
+	tab2 <- table(dat$party5, dat[[partyln]], useNA = 'ifany')
+}
+
+if (showCheck) {
+	cat("tabulation of party5 and party\n", "\n")
+	print(tab1)
+	cat("\n tabulation of party5 and partyln\n")
+	print(tab2)
+}
+
+	if (length(intersect(names(dat), "partysum"))==0) {
+		dat$partysum <- recode(dat$party5, c("Dem/lean Dem",
+			"Dem/lean Dem", "DK/Ref-no lean",
+			"Rep/lean Rep", "Rep/lean Rep"))	
+	}
+
+	return(dat)
+}
+
+#############Weighted tabulations
+wtab <- function(y, i = NULL, round = TRUE, weight = NULL,
+	ssize.thresh = 100) {
+	if (is.null(weight)) data$W <- data$weight
+	if (!is.null(weight)) data$W <- data[[weight]]
+
+	if (is.null(i)) i <- 1:length(y)
+	i <- intersect(which(!is.na(y)*data$W), i)
+
+	if (length(i) < ssize.thresh) print(paste("n is equal to", length(i),
+		"for this group"))
+
+	data$Y <- y
+
+	ag <- aggregate(W ~ Y, data = data[i,],
+			FUN = sum)
+	if (round) {
+		ag[,2] <- round(ag[,2]*100/sum(data$W[i],
+			na.rm=TRUE))
+		return(ag)
+	}
+	if (!round) {
+		ag[,2] <- ag[,2]*100/sum(data$W[i],
+			na.rm=TRUE)
+		return(ag)
+	}
+}
+
+
+#############Weighted average
+wmean <- function(y, x = NULL, i = NULL, round = TRUE) {
+	if (length(i) < 100) print(paste("n is equal to", length(i),
+		"for this group"))
+	if (is.null(i)) i <- 1:length(y)
+	data$Y <- y
+	data$X <- x
+	if (is.null(x)) {
+		w <- which(!is.na(data$Y))
+		w <- intersect(w, i)
+		mu <- sum(data$Y[w]*data$weight[w])/sum(data$weight[w])
+		if (round) {
+			return(round(mu))
+		}
+		if (!round) {
+			return(mu)
+		}
+	}
+}
+
+wtest <- function(nm, g1, g2) {
+	res <- array(NA, c(1000,2))
+	for (j in 1:1000) {
+		s1 <- sample(g1, p = data$weight[g1], replace=TRUE)
+		s2 <- sample(g2, p = data$weight[g2], replace=TRUE)
+		res[j,1] <- mean(data[[nm]][s1], na.rm=TRUE)
+		res[j,2] <- mean(data[[nm]][s2], na.rm=TRUE)
+	}
+	cat(mean(res[,1] > res[,2]), "\n")
+	plot(density(res[,1]), xlim = range(res))
+	lines(density(res[,2]), lty=2)
+}
+
+wxtab <- function(x, y, w, row = TRUE, cell = FALSE,
+	col = FALSE) {
+
+	wh <- which(!is.na(x)&!is.na(y)&!is.na(w))
+	x <- x[wh]
+	y <- y[wh]
+	w <- w[wh]
+	tab1 <- table(x)
+	tab2 <- table(y)
+
+	res <- array(NA, c(length(tab1), length(tab2)))
+	dimnames(res) <- list(names(tab1), names(tab2))
+
+	for (j in 1:length(tab1)) {
+		wh <- which(x == names(tab1)[j])
+		if (length(wh)==0) { 
+			res[j,] <- 0
+			next
+		}
+		ag <- aggregate(w[wh] ~ y[wh], FUN = sum)
+		res[j,as.character(ag[,1])] <- ag[,2]
+	}
+
+	if (!row & !col & !cell) return(res)
+	if (row) {
+		res <- res/rowSums(res, na.rm=TRUE)
+		return(res)
+	}
+	if (col) {
+		s <- colSums(res)
+		for (j in 1:ncol(res)) res[,k] <- res[,k]/s[k]
+		return(res)
+	}
+	if (cell) {
+		res <- res/sum(res)
+		return(res)
+	}
+}
+
+find.attr <- function(attr, query) {
+	res <- NULL
+	for (j in 1:length(attr)) {
+		hits <- grep(query, tolower(names(attr[[j]])))	
+		if (length(hits)>0) res <- c(res, names(attr)[j])
+	}
+	return(res)
+}
+
+#con <- read.csv("state concordance.csv", as.is=TRUE)
+
+#####################get latest panel wave
+get.panel <- function(str) {
+
+	waves <- list.files("S:/Methodology/Panel/Panel Waves", 
+		pattern = str, full.names = TRUE)
+	dir <- paste(waves, "Data and Analysis", sep="/")
+
+	regex <- paste(str, ".*?\\.sav$", sep = "")
+	files <- list.files(dir, pattern = regex,
+		full.names = TRUE)
+
+	
+
+	if (length(files)==0) {
+		files <- list.files(dir, pattern = "\\.sav$",
+			full.names = TRUE, recursive = TRUE)
+	}
+
+	if (length(files) > 1) {
+		info <- file.info(files)
+		ind <- which.max(info$mtime)
+		return(rownames(info)[ind])
+	}
+
+
+
+	return(files)
+}
+
+#########################get 5 point thermometer rating
+code.therm <- function(t) {
+	t5 <- rep(NA, length(t))
+	wh <- which(!is.na(t))
+	t5[wh] <- 6
+	wh <- which(t <= 100)
+	t5[wh] <- 5
+	wh <- which(t < 76)
+	t5[wh] <- 4
+	wh <- which(t < 51)
+	t5[wh] <- 3
+	wh <- which(t < 50)
+	t5[wh] <- 2
+	wh <- which(t < 25)
+	t5[wh] <- 1
+	t5 <- factor(t5, labels = c("Very cold", "Cold", "Neutral",
+		"Warm", "Very warm", "DK/Ref"), levels = 1:6)
+	return(t5)
+}
+
+delta.therm <- function(t1, t2) {
+	delta <- rep(NA, length(t1)) 
+
+	wh <- which(t1 == 999)
+	t1[wh] <- NA
+	wh <- which(t2 == 999)
+	t2[wh] <- NA
+
+	wh <- which(t1 < 50 & t2 < 50)
+	delta[wh] <- 1
+	wh <- which(t1 > 49 & t2 < 50)
+	delta[wh] <- 2
+	wh <- which(t1 == 50 & t2 == 50)
+	delta[wh] <- 3
+	wh <- which(t1 < 51 & t2 > 50)
+	delta[wh] <- 4
+	wh <- which(t1 > 50 & t2 > 50)
+	delta[wh] <- 5
+
+	delta <- factor(delta, labels = c("Cold", "Colder", "Neutral",
+		"Warmer", "Warm"))
+	return(delta)
+}
+
+
+delta.therm2 <- function(t1, t2, cuts = c(25,5,-5,-25)) {
+	delta <- rep(NA, length(t1)) 
+
+	wh <- which(t1 == 999)
+	t1[wh] <- NA
+	wh <- which(t2 == 999)
+	t2[wh] <- NA
+
+	diff <- t2 - t1
+
+	wh <- which(!is.na(diff))
+	delta[wh] <- 5
+	wh <- which(diff < cuts[1])
+	delta[wh] <- 4
+	wh <- which(diff < cuts[2])
+	delta[wh] <- 3
+	wh <- which(diff < cuts[3])
+	delta[wh] <- 2
+	wh <- which(diff < cuts[4])
+	delta[wh] <- 1
+
+
+	delta <- factor(delta, labels = c("Much colder", "Colder",
+		"About the same", "Warmer", "Much warmer"))
+	return(delta)
+}
+
+
+test.diff <- function(x1, w1, x2, w2) {
+	wh <- which(!is.na(w1))
+	x1 <- x1[wh]
+	w1 <- w1[wh]
+
+	wh <- which(!is.na(w2))
+	x2 <- x2[wh]
+	w2 <- w2[wh]
+
+	res <- array(NA, c(1000, 2))
+	for (j in 1:1000) {
+		s1 <- sample(x1, p = w1, size = length(x1),
+			replace = TRUE)
+		s2 <- sample(x2, p = w2, size = length(x2),
+			replace = TRUE)
+		res[j,1] <- mean(s1, na.rm=TRUE)
+		res[j,2] <- mean(s2, na.rm=TRUE)
+	}
+	return( mean(res[,1] < res[,2] ) )
+}
+
+
+create.party2 <- function(party, partyln) {
+
+	wh <- which(is.na(party)&is.na(partyln))
+	party5 <- rep("3. Ind/Other", length(party))
+	party5[wh] <- NA
+
+	w <- grep("republic", party, ignore.case=TRUE)
+	party5[w] <- "5. Republican"
+	w <- grep("democrat", party, ignore.case=TRUE)
+	party5[w] <- "1. Democrat"
+	w <- grep("republic", partyln, ignore.case=TRUE)
+	party5[w] <- "4. Lean Rep"
+	w <- grep("democrat", partyln, ignore.case=TRUE)
+	party5[w] <- "2. Lean Dem"
+
+	party5 <- factor(party5)
+
+	return(party5)
+}
+
+
+#############Weighted average
+wmean <- function(y, i = NULL, round = TRUE, weight) {
+	if (length(i) < 100) print(paste("n is equal to", length(i),
+		"for this group"))
+	if (is.null(i)) i <- 1:length(y)
+
+		w <- which(!is.na(y))
+		w <- intersect(w, i)
+		mu <- sum(y[w]*weight[w])/sum(weight[w])
+		if (round) {
+			return(round(mu))
+		}
+		if (!round) {
+			return(mu)
+		}
+}
+
+
+
+##########################Chunker
+chunk <- function(vlist, data) {
+	dat <- data
+	lev <- list()
+	for (j in vlist) {
+		if (is.factor(data[[j]])) lv <- levels(data[[j]])
+		if (!is.factor(data[[j]])) lv <- levels(factor(data[[j]]))
+		lev[[j]] <- lv
+	}
+
+	grp <- rep(0, nrow(dat))
+	grps <- 1
+	dat$grp.name <- ""
+	for (j in vlist) {
+		tab <- table(dat$grp.name, dat[[j]])
+		inds <- which(tab > 100, arr.ind = TRUE)
+		for (k in which(tab > 100)) {
+			wh <- which(dat[[j]] == colnames(tab)[k],
+				arr.ind = TRUE)
+			dat$grp.name[wh] <- paste(dat$grp.name[wh], 
+				colnames(tab)[k])
+		}
+	}
+}
+
+#######################create age4 from raw age
+
+create.age4 <- function(age, age.breaks = c(65, 50, 30)) {
+	age4 <- rep(9, length(age))
+	wh <- which(age < 99)
+	age4[wh] <- 4
+	wh <- which(age < age.breaks[1])
+	age4[wh] <- 3
+	wh <- which(age < age.breaks[2])
+	age4[wh] <- 2
+	wh <- which(age < age.breaks[3])
+	age4[wh] <- 1
+
+	lab <- c( paste0( "18-", age.breaks[3]-1),
+		paste(age.breaks[3], age.breaks[2]-1, sep="-"),
+		paste(age.breaks[2], age.breaks[1]-1, sep="-"),
+		paste0(age.breaks[1], "+"), "DK/ref")
+
+	age4 <- factor(age4, labels = lab)
+
+	return(age4)
+}
+
+create.partylnideo <- function(party, ideo) {
+	out <- rep(9, length(party))
+
+	party <- as.numeric(party)
+	ideo <- as.numeric(ideo)
+	wh <- which( party == 1 & ideo < 3)
+	out[wh] <- 1
+	wh <- which( party == 1 & ideo > 2 & ideo < 6 )
+	out[wh] <- 2
+	wh <- which( party == 2 & ideo < 4 )
+	out[wh] <- 3
+	wh <- which( party == 2 & ideo > 3 & ideo < 6 )
+	out[wh] <- 4
+
+	out <- factor(out, labels = c("Cons R/R lean", "Mod/Lib R",
+		"Mod/Cons D", "Lib D/D lean", "DK/ref"))
+	return(out)
+}
+
+
+recode2 <- function(var) {
+      if (class(var) == "factor") lev <- levels(var)
+      if (class(var) != "factor") lev <- levels(factor(var))
+	vals <- rep(NA, length(lev))
+	for (j in 1:length(lev)) {
+		vals[j] <- readline(prompt = paste(lev[j], ":", sep=""))
+	}
+	names(vals) <- lev
+	new <- as.numeric(vals[as.character(var)])
+	return(new)
+}
+
+
+create.educ3 <- function(educ) {
+	ed3 <- rep(NA, length(educ))
+	wh <- which(!is.na(educ))
+	ed3[wh] <- 9
+
+	hs <- grep("(high school|hs)", educ, ignore.case=TRUE)
+	ed3[hs] <- 3
+	
+	some <- grep("(some college|associate)", educ, ignore.case=TRUE)
+	ed3[some] <- 2
+	
+	coll <- grep("(four year|postgrad)", educ, ignore.case=TRUE)
+	ed3[coll] <- 1
+
+	return(ed3)
+}
+
+get.merge <- function() {
+	files <- list.files("P:/Pew Projects/Merge File",
+		pattern = "*.sav", full.names = TRUE)
+	return(files)
+}
+
+
+####Functions for calculating great circle distances in miles
+####convert degrees to radians for distance calculation
+deg2rad <- function(deg) return(deg*pi/180)
+# Calculates the geodesic distance between two points specified by radian latitude/longitude using the
+# Spherical Law of Cosines (slc)
+gcd.slc <- function(long1, lat1, long2, lat2) {
+	##convert coordinates to radians
+	lat1 <- deg2rad(lat1)
+	long1 <- deg2rad(long1)
+	lat2 <- deg2rad(lat2)
+	long2 <- deg2rad(long2)
+	R <- 3959 # Earth mean radius [miles]
+
+	##container for distances
+	d_vec <- rep(NA, length(long2))
+	for (i in 1:length(long2)) {
+	##find distances from each point
+	  d_vec[i] <- acos(sin(lat1)*sin(lat2[i]) + 
+		cos(lat1)*cos(lat2[i]) * cos(abs(long2[i]-long1))) * R
+	}
+	
+	return(d_vec)
+}
+
+
+
+windowsFonts(fgb = windowsFont("Franklin Gothic Book"))
+windowsFonts(demi = windowsFont("Franklin Gothic Demi"))
+#########Function for plotting trends for PID report
+plot.trend <- function(tab,
+	axis.control = NULL, col = rdi, ord = NULL) { ##supply axis options
+
+	if (is.null(ord)) ord <- 1:ncol(tab)	
+
+	par(mar = c(2,.1,.1,.1))
+	x <- as.numeric(rownames(tab))
+	if (is.null(axis.control$xlim)) xlim <- range(x)
+	if (!is.null(axis.control$xlim)) xlim <- axis.control$xlim
+	if (is.null(axis.control$ylim)) ylim <- c(0, max(tab, na.rm=TRUE))
+	if (!is.null(axis.control$ylim)) ylim <- axis.control$ylim
+	plot(0,0, pch = '', xlim = xlim, ylim = ylim,
+		axes = FALSE, xlab = '', ylab = '',
+		family = 'fgb')
+	if (is.null(axis.control)) axis(1, family = 'fgb') 
+	if (!is.null(axis.control)) {
+		axis(1, at = axis.control[['at']],
+			labels = axis.control[['labels']],
+				family = 'fgb', col = grey(.4))			
+	}
+
+	x <- as.numeric(rownames(tab))
+	for (j in ord) {
+		lines(x, tab[,j], col = col[j], lwd = 2.5)
+		text(x[1], tab[1,j], round(tab[1,j]), family = 'demi',
+			col = col[j], pos = 2)
+		text(x[nrow(tab)], tab[nrow(tab),j], 
+			round(tab[nrow(tab),j]),
+			family = 'demi',
+			col = col[j], pos = 4)
+	}
+}
+
+create.gen <- function(age, svy.yr) {
+	byear <- svy.yr - age
+	gen <- rep(NA, length(age))
+	w <- which(byear < svy.yr)
+	gen[w] <- 7
+	w <- which(byear < 1997)
+	gen[w] <- 6
+	w <- which(byear < 1981)
+	gen[w] <- 5
+	w <- which(byear < 1965)
+	gen[w] <- 4
+	w <- which(byear < 1946)
+	gen[w] <- 3
+	w <- which(byear < 1928)
+	gen[w] <- 2
+	w <- which(byear < 1901)
+	gen[w] <- 1
+	tab <- table(gen)
+	lab <- c("Dead", "Greatest", "Silent", "Boomer", "Xer", 
+		"Millennial", "Post-Mill")
+	int <- intersect(names(tab), names(lab))
+	gen <- factor(gen, 
+		levels = as.character(1:7))
+	levels(gen) <- lab
+	return(gen)
+}
+
+##############Load SPSS
+
+load_spss <- function(nm = NULL, path = NULL) {
+	dat <- read.spss(find.data(nm, path = path),
+		to.data.frame = TRUE, use.value.labels = FALSE)
+	dat$cons <- 1
+	return(dat)
+}
+
+
+test_sig <- function(deff, p1, n1, p2, n2) {
+
+	thresh <- sqrt(deff)*1.96*(sqrt((((p1)*(1-(p1)))/n1)+(((p2)*(1-(p2)))/n2)))
+	return(thresh)
+
+}
+
+####convert degrees to radians for distance calculation
+deg2rad <- function(deg) return(deg*pi/180)
+# Calculates the geodesic distance between two points specified by radian latitude/longitude using the
+# Spherical Law of Cosines (slc)
+gcd.slc <- function(long1, lat1, long2, lat2) {
+	lat1 <- deg2rad(lat1)
+	long1 <- deg2rad(long1)
+	lat2 <- deg2rad(lat2)
+	long2 <- deg2rad(long2)
+	R <- 3959 # Earth mean radius [miles]
+#  d <- acos(sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2) * cos(abs(long2-long1))) * R
+	d_vec <- rep(NA, length(long2))
+	for (i in 1:length(long2)) {
+	  d_vec[i] <- acos(sin(lat1)*sin(lat2[i]) + cos(lat1)*cos(lat2[i]) * cos(abs(long2[i]-long1))) * R
+	}
+	#wh <- which.min(d_vec)
+  return(d_vec)
+#  return(min(d)) # Distance in miles
+}
+
+
+##############loess plot
+lo.plot <- function(dv, iv, new.plot = TRUE, 
+	ylim = c(0,1), xlim = NULL, col = "black",
+	main = "", xlab = "", ylab = "", xtransform = NULL, 
+	weight = NULL, lwd = 1) {
+
+	
+	lo <- loess(dv ~ iv, weight = weight)
+	ord <- order(lo$x)
+	if (is.null(xlim)) xlim = range(lo$x)
+	if (new.plot) {
+		if (!is.null(xtransform)) iv <- xtransform(iv)
+		plot(lo$x[ord], lo$fitted[ord],
+			type = 'l', ylim = ylim, xlim = xlim,
+			col = col, main = main, xlab = xlab,
+			ylab = ylab, lwd = lwd)
+	}
+	if (!new.plot) {
+		lines(lo$x[ord], lo$fitted[ord], col = col,
+			lwd = lwd)
+	}
+}
+
+
+######################generations from age and year
+
+create.gen <- function(age, year) {
+	if (class(age)=="factor") {
+		age <- gsub("97[^0-9]", 97, age)
+		age <- as.numeric( as.character(age) )
+	}
+
+	gen <- rep(7, length(age))
+	byear <- year - age
+	w <- which(byear > 1800)
+	gen[w] <- 6
+	w <- which(byear > 1927)
+	gen[w] <- 5
+	w <- which(byear > 1945)
+	gen[w] <- 4
+	w <- which(byear > 1964)
+	gen[w] <- 3
+	w <- which(byear > 1980)
+	gen[w] <- 2
+	w <- which(byear > 1996)
+	gen[w] <- 1
+	
+	lab <- c("Gen Z",
+		"Mill", "Gen X", "Boomer", "Silent",
+		"Greatest+", "DK/Ref")
+
+	tab <- table(gen)
+
+	mis <- setdiff(1:7, names(tab))
+
+	gen <- factor(gen, labels = lab,
+		levels = 1:7, exclude = lab[mis] )
+	return(gen)
+	
+}
+
+#################Find vars in a dataframe
+find.vars <- function(str, data) {
+	inds <- grep(str, names(data), ignore.case = TRUE)
+	return(names(data)[inds])
+}
+
+source("S:/Common/Brad/plot_functions.R")
+
+
+###############Pew methods functions
+
+calculate_deff <- function (weight, include_zeroes = FALSE, at = .5) 
+{
+    weight <- as.numeric(weight)
+    if (!include_zeroes) 
+        weight <- ifelse(weight == 0, NA_real_, weight)
+    n = length(na.omit(weight))
+    mean_wt = mean(weight, na.rm = T)
+    sd_wt = sd(weight, na.rm = T)
+    deff = 1 + (sd_wt/mean_wt)^2
+    ess = n/deff
+    variance = ((at*(1-at))/n) * deff
+    std_err = sqrt(variance)
+    moe = 1.96 * std_err * 100
+    return(list(n = n, sd_wt = sd_wt, deff = deff, ess = ess, 
+        moe = moe))
+}
+
+
+
+
+####Weighted cross tab with ss and ess
+wxtab2 <- function(x, y, w, round = FALSE) {
+
+	wh <- which(!is.na(x)&!is.na(y)&!is.na(w))
+	x <- x[wh]
+	y <- y[wh]
+	w <- w[wh]
+	tab1 <- table(x)
+	tab2 <- table(y)
+
+	res <- array(NA, c(length(tab1), length(tab2)))
+	dimnames(res) <- list(names(tab1), names(tab2))
+
+	for (j in 1:length(tab1)) {
+		wh <- which(x == names(tab1)[j])
+		if (length(wh)==0) { 
+			res[j,] <- 0
+			next
+		}
+		ag <- aggregate(w[wh] ~ y[wh], FUN = sum)
+		res[j,as.character(ag[,1])] <- ag[,2]
+	}
+
+
+	res <- res/rowSums(res, na.rm=TRUE)
+	if (round) res = round(res*100)
+
+	ssize <- array(NA, c(length(tab1), 2))
+	colnames(ssize) <- c("n", "ess")
+
+	###get ss
+	for (j in 1:length(tab1)) {
+		wh <- which(x == names(tab1)[j])
+		ss <- calculate_deff(w[wh])
+		ssize[j,'n'] <- ss$n
+		ssize[j,'ess'] <- ss$ess
+	}
+
+	res <- cbind(res, ssize)
+
+	return(res)
+	
+}
+
+
+################Significance testing
+source("S:/Common/Brad/error_calc_functions.R")
+
