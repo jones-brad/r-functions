@@ -26,19 +26,19 @@ greys <- c(dark = rgb(128/255, 128/255, 128/255))
 
 
 ############################Stacked bar
-source("S:/Common/Brad/plot_functions/stackedBar.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/stackedBar.R")
 
 ############################Dot plot
-source("S:/Common/Brad/plot_functions/dotPlot.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/dotPlot.R")
 
 ############################Spaced bar
-source("S:/Common/Brad/plot_functions/spacedBar.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/spacedBar.R")
 
 ############################Opposing bar
-source("S:/Common/Brad/plot_functions/opposingBar.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/opposingBar.R")
 
 ############################Line trend
-source("S:/Common/Brad/plot_functions/plotTrend.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/plotTrend.R")
 
 ####write pdf to a file and save a note
 ##output_pdf(tempfile, "/Figure 1", "Change the color of bars")
