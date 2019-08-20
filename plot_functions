@@ -1,4 +1,4 @@
-##Set up color palettes
+#######################Stacked bar
 ppcolors <- c( 
 	darkgold = "#9E7F2D",
 	gold = "#D1A730",
@@ -15,10 +15,106 @@ ppcolors2 <- c(
 	darkest = "#1D1B12",
 	lightest = "#EEECE4" )
 
-partycolors <- c(
-	rep = "#BF3B27",
-	dem = "#456A83", 
-	ind = "#A4A4A4")
-  
-###Stacked bar
-source("stackedBar.R")
+partycolors <- c(rep = "#BF3B27",
+	dem = "#456A83", ind = "#A4A4A4",
+	lnrep = "#E37F73",
+	lndem = "#82A6BF",
+	consrep = rgb(143/255, 44/255, 29/255),
+	libdem = rgb(50/255, 78/255, 97/255))
+
+greys <- c(dark = rgb(128/255, 128/255, 128/255))
+
+
+############################Stacked bar
+source("S:/Common/Brad/plot_functions/stackedBar.R")
+
+############################Dot plot
+source("S:/Common/Brad/plot_functions/dotPlot.R")
+
+############################Spaced bar
+source("S:/Common/Brad/plot_functions/spacedBar.R")
+
+############################Opposing bar
+source("S:/Common/Brad/plot_functions/opposingBar.R")
+
+############################Line trend
+source("S:/Common/Brad/plot_functions/plotTrend.R")
+
+####write pdf to a file and save a note
+##output_pdf(tempfile, "/Figure 1", "Change the color of bars")
+output_pdf <- function(file, path, note = NULL, plotting_data) {
+	dir <- paste( getwd(), path, sep = "")
+
+	if (dir.exists(dir)) {
+		files <- list.files(dir, full.names = TRUE)
+		for (j in files) {
+			file.remove(j)
+		}
+	}
+
+	dir.create(dir)
+	file.copy(from = file, to = dir)
+	
+	if (!is.null(note)) writeLines(note, 
+		paste(dir, "notes.txt", sep = "/"))
+
+	write.data(plotting_data, dir = dir)
+}
+
+
+output_file <- function(file, path, note = NULL, plotting_data) {
+	dir <- paste( getwd(), path, sep = "")
+
+	if (dir.exists(dir)) {
+		files <- list.files(dir, full.names = TRUE)
+		for (j in files) {
+			file.remove(j)
+		}
+	}
+
+	dir.create(dir)
+	file.copy(from = file, to = dir)
+	
+	if (!is.null(note)) writeLines(note, 
+		paste(dir, "notes.txt", sep = "/"))
+
+	write.data(plotting_data, dir = dir)
+}
+
+write.data <- function(plotting_data, dir) {
+	if (class(plotting_data) != "list") write.csv(plotting_data*100, 
+		paste(dir, "plot_data.csv", sep = "/"))
+	if (class(plotting_data) == "list") {
+
+		ncols <- 0
+		for (j in 1:length(plotting_data)) {
+			ncols <- max(ncols, length(plotting_data[[j]]))
+		}
+
+		array <- array(NA, c(length(plotting_data), 
+			ncols))
+
+		for (j in 1:length(plotting_data)) {
+			if (length(plotting_data[[j]]) == 0) next
+			array[j,] <- as.numeric(plotting_data[[j]])
+		}
+		rownames(array) <- names(plotting_data)
+		dn <- dimnames(plotting_data[[1]])
+		if (length(dn[[2]]) == ncol(array)) colnames(array) <- dn[[2]]
+
+		write.csv(array, 
+			paste(dir, "plot_data.csv", sep = "/"))
+	}
+}
+
+###function to format dates from excel to plot in R
+format.date <- function(dates) {
+	years = as.numeric(format(as.Date(dates), "%Y"))
+	month = as.numeric(format(as.Date(dates), "%m"))
+	day =   as.numeric(format(as.Date(dates), "%d"))
+
+	odate <- years + (month-1)/12 + (day - 1)/310
+	return(odate)
+}
+
+
