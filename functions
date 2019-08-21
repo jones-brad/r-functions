@@ -10,7 +10,7 @@ recode <- function(var, vals, labels = NULL) {
 	new <- vals[as.character(var)]
 	
 	if (!is.null(labels)) {
-		new <- factor(new, levels = vals,
+		new <- factor(new, levels = unique(vals),
 			labels = labels)
 	}
 	return(new)
