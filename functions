@@ -497,44 +497,6 @@ gcd.slc <- function(long1, lat1, long2, lat2) {
 	return(d_vec)
 }
 
-
-
-windowsFonts(fgb = windowsFont("Franklin Gothic Book"))
-windowsFonts(demi = windowsFont("Franklin Gothic Demi"))
-#########Function for plotting trends for PID report
-plot.trend <- function(tab,
-	axis.control = NULL, col = rdi, ord = NULL) { ##supply axis options
-
-	if (is.null(ord)) ord <- 1:ncol(tab)	
-
-	par(mar = c(2,.1,.1,.1))
-	x <- as.numeric(rownames(tab))
-	if (is.null(axis.control$xlim)) xlim <- range(x)
-	if (!is.null(axis.control$xlim)) xlim <- axis.control$xlim
-	if (is.null(axis.control$ylim)) ylim <- c(0, max(tab, na.rm=TRUE))
-	if (!is.null(axis.control$ylim)) ylim <- axis.control$ylim
-	plot(0,0, pch = '', xlim = xlim, ylim = ylim,
-		axes = FALSE, xlab = '', ylab = '',
-		family = 'fgb')
-	if (is.null(axis.control)) axis(1, family = 'fgb') 
-	if (!is.null(axis.control)) {
-		axis(1, at = axis.control[['at']],
-			labels = axis.control[['labels']],
-				family = 'fgb', col = grey(.4))			
-	}
-
-	x <- as.numeric(rownames(tab))
-	for (j in ord) {
-		lines(x, tab[,j], col = col[j], lwd = 2.5)
-		text(x[1], tab[1,j], round(tab[1,j]), family = 'demi',
-			col = col[j], pos = 2)
-		text(x[nrow(tab)], tab[nrow(tab),j], 
-			round(tab[nrow(tab),j]),
-			family = 'demi',
-			col = col[j], pos = 4)
-	}
-}
-
 create.gen <- function(age, svy.yr) {
 	byear <- svy.yr - age
 	gen <- rep(NA, length(age))
