@@ -1,7 +1,7 @@
 library(foreign)
 
-con <- read.csv("S:/Common/Brad/state concordance.csv",
-	as.is = TRUE)
+#con <- read.csv("S:/Common/Brad/state concordance.csv",
+#	as.is = TRUE)
 
 recode <- function(var, vals, labels = NULL) {
 	if (class(var) == "factor") lev <- levels(var)
