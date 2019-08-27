@@ -24,6 +24,12 @@ partycolors <- c(rep = "#BF3B27",
 
 greys <- c(dark = rgb(128/255, 128/255, 128/255))
 
+thermcolors <- c("Very cold" = "#82A6BF",
+	"Somewhat cold" = "#D5E1E9",
+	"Neutral" = "#D7D7D7",
+	"Somewhat warm" = "#F5D6A9",
+	"Very warm" = "#EA9E2C")
+
 
 ############################Stacked bar
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/stackedBar.R")
