@@ -80,7 +80,7 @@ getLabelPosition <- function(vec) {
 stackedBar <- function(list, 	##data to plot
 	xlim = c(-.18, 1),	##xlim for plot
 	col.vec, 			##colors
-	val.lab, 			##value labels
+	val.lab = TRUE, 		##value labels
 	res = 1, 			##resolution
 	plot.width = 3.2,		##width of plot window
 	write.file = "no", 	##write out a file
