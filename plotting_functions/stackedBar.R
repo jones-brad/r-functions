@@ -1,7 +1,7 @@
 ##############adding bars to the plot
 addBar <- function(vec, col.vec, val.lab = TRUE,
 	pos = 1, label = "Total", res, write.file,
-	addNet = FALSE, netAdj = .05) {
+	addNet = FALSE, netAdj = .05, digits = 0) {
 	
 	x.pos <- 0
 	fam <- ifelse( write.file == "pdf", "", "fgb")
@@ -12,9 +12,11 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 			y = c(pos -.4, pos-.4, pos+.4, pos+.4),
 			border = NA, col = col.vec[j])
 		## write value labels
-		if (val.lab) { 
+		if (val.lab) {
+			if (digits == 0) mult = 100
+			if (digits > 0) mult = 1
 			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
-				pos, round(vec[j]*100),
+				pos, round(sum(vec)*mult, digits),
 				family = fam,
 				cex = .75)
 			
@@ -24,7 +26,9 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 
 		if (j == length(vec) & addNet) {
 			fam = ifelse(write.file == "pdf", "", "demi")
-			text( x.pos + netAdj, pos, round(sum(vec)*100),
+			if (digits == 0) mult = 100
+			if (digits > 0) mult = 1
+			text( x.pos + netAdj, pos, round(sum(vec)*mult, digits),
 				family = fam, cex = .75)
 		}
 	}
@@ -85,6 +89,7 @@ stackedBar <- function(list, 	##data to plot
 	col.pos = NULL, 		##position of labels
 	n.cats = NULL,		##number of categories to plot
 	addNet = FALSE,
+	digits = 0,
 	netAdj = .05) {		##add a NET to the bars?
 
 	##set up the height of the box based on the number of elements
@@ -149,7 +154,7 @@ if (write.file == "pdf") {
 			val.lab = (list[[j]][1:N] > 0),
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
-			addNet = addNet, netAdj = netAdj)
+			addNet = addNet, netAdj = netAdj, digits = digits)
 	}
 
 if (write.file!="no") {
