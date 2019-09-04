@@ -19,11 +19,10 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 				pos, round(sum(vec)*mult, digits),
 				family = fam,
 				cex = .75)
-			
-			## increment the x position
-			x.pos <- x.pos+vec[j]
 		}
-
+		## increment the x position
+		x.pos <- x.pos+vec[j]
+		
 		if (j == length(vec) & addNet) {
 			fam = ifelse(write.file == "pdf", "", "demi")
 			if (digits == 0) mult = 100
