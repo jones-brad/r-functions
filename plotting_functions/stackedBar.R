@@ -151,7 +151,7 @@ if (write.file == "pdf") {
 		if (is.null(n.cats)) N <- length(list[[j]])
 		if (!is.null(n.cats)) N <- n.cats
 		addBar(vec = list[[j]][1:N], col.vec = col.vec, 
-			val.lab = (list[[j]][1:N] > 0),
+			val.lab = val.lab,
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
 			addNet = addNet, netAdj = netAdj, digits = digits)
