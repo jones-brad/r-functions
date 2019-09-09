@@ -16,7 +16,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 			if (digits == 0) mult = 100
 			if (digits > 0) mult = 1
 			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
-				pos, round((vec)*mult, digits),
+				pos, round(vec[j]*mult, digits),
 				family = fam,
 				cex = .75)
 		}
