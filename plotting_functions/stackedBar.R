@@ -136,7 +136,7 @@ if (write.file == "pdf") {
 		col.pos[1] <- vec[1]/2
 		for (j in 2:n.cats) {
 			inds <- j:n.cats
-			col.pos[j] <- col.pos[j]/2 + sum(col.pos[-inds])
+			col.pos[j] <- vec[j]/2 + sum(vec[-inds])
 		}
 	}
 
