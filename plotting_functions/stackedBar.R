@@ -123,6 +123,22 @@ if (write.file == "pdf") {
 	plot(0,0, pch = '', xlim = xlim,
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
+	
+	if ( is.null(col.pos) ) {
+		col.pos <- rep(NA, n.cats)
+		vec = list[[1]]
+		p = 1
+		while (length(vec)==0) {
+			p = p + 1
+			vec = vec[[p+1]]
+		}
+		
+		col.pos[1] <- vec[1]/2
+		for (j in 2:n.cats) {
+			inds <- j:n.cats
+			col.pos[j] <- col.pos[j]/2 + sum(col.pos[-inds])
+		}
+	}
 
 	if (!is.null(col.lab)) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
