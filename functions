@@ -744,6 +744,7 @@ runModeRegressions <- function(controls, pdat, wdat) {
 
 ###Function to show the overall mode difference and the 
 ###sample composition adjustment
+###Single punch
 
 testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 
@@ -797,6 +798,85 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 	abline(h = 0)
 
 }
+
+
+###Function to show the overall mode difference and the 
+###sample composition adjustment
+###Full distribution
+
+testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
+	pname, wname) {
+
+	ptab <- table(pdat[[pname]])
+	wtab <- table(wdat[[wname]])
+	
+	if (length(ptab) != length(wtab)) {
+		vol <- grep("vol", names(ptab))
+		pdat$y[vol] <- 99
+		ptab <- table(pdat$y)
+		if (length(ptab) != length(wtab)) return("Error")
+	}
+	
+	lev <- names(wtab)
+	
+	##containers to hold the results
+	mode <- reg <- adj <- array(NA, c(N.rep, length(lev)))
+	colnames(mode) <- colnames(adj) <- lev
+	
+	for (L in 1:length(lev)) {
+
+		pdat$y <- pdat[[pname]] == levels(pdat[[pname]])[L]
+		wdat$y <- wdat[[wname]] == levels(wdat[[wname]])[L]
+
+		regRes <- runModeRegressions(controls, pdat, wdat)
+		pdat = regRes[[1]]
+		wdat = regRes[[2]]
+	
+	
+
+		winds <- which(!is.na(wdat$y))
+		pinds <- which(!is.na(pdat$y))
+		for (k in 1:N.rep) {
+			##Draw new samples from the phone and web data
+			s1 <- sample(winds, p = wdat$weight[winds],
+				size = length(winds), replace = TRUE)
+
+			s2 <- sample(pinds, p = pdat$weight[pinds],
+				size = length(pinds), replace = TRUE)
+	
+			##Run out the means with the resampled data
+			wt <- mean(wdat$y[s1])
+			pt <- mean(pdat$y[s2])
+	
+			##get the web - phone difference
+			mode[k,L] <- wt - pt
+
+			##Run out the means of the adjusted resampled data
+			ag1 <- mean(wdat$phonepred[s1])
+			ag2 <- mean(wdat$webpred[s1])
+
+			##store the results
+			reg[k,L] <- ag2 - ag1
+
+		}
+	}
+
+	##Open a new graphics window
+	dev.new()
+	par(mfrow = c(1,2))
+	ylim = range( c(mode, mode - reg) )
+
+	##plot the variance of the mode difference
+	boxplot(mode, ylim = ylim,
+		main = "Web - Phone diff")
+	abline(h = 0)
+	##plot the regression adjusted difference
+	boxplot(mode - reg, ylim = ylim,
+		main = "Sample composition\nadjustment")
+	abline(h = 0)
+
+}
+
 
 ###test for mode effects among subgroups
 testModeSubgroups <- function(controls, pdat, wdat, N.rep = 200,
