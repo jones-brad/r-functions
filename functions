@@ -815,7 +815,7 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 		vals <- 1:length(tab)
 		vals[vol] <- 99
 		pdat[[pname]] <- recode(pdat[[pname]], vals)
-		ptab <- table(pdat$y)
+		ptab <- table(pdat[[pname]])
 		if (length(ptab) != length(wtab)) return("Error")
 	}
 	
