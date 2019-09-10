@@ -805,7 +805,7 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 ###Full distribution
 
 testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
-	pname, wname) {
+	pname, wname, descrip = NULL) {
 
 	ptab <- table(pdat[[pname]])
 	wtab <- table(wdat[[wname]])
@@ -874,6 +874,8 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 	boxplot(mode - reg, ylim = ylim,
 		main = "Sample composition\nadjustment")
 	abline(h = 0)
+	
+	if (!is.null(descrip)) text( length(lev)/2, ylim[2], descrip )
 
 }
 
