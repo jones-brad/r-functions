@@ -712,3 +712,90 @@ readGit <- function(path) {
 
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plot_functions")
 
+
+###############################Mode effect functions
+###Runs regressions to control for sample composition between modes
+###Appends predicted values from regressions to phone and web datasets
+runModeRegressions <- function(controls, pdat, wdat) {
+	##Set up the equation
+	eqn <- paste("y ~", paste(controls, collapse = "+"))
+
+	##run the phone model
+	pmod <- glm(eqn, data = pdat, family = binomial)
+
+	##run the web model
+	wmod <- glm(eqn, data = wdat, family = binomial)
+
+	##append predictions to phone dataset
+	pdat$phonepred <- predict(pmod, newdata = pdat,
+		type = 'response')
+	pdat$webpred <- predict(wmod, newdata = pdat,
+		type = 'response')
+
+	##append predictions to web dataset
+	wdat$phonepred <- predict(pmod, newdata = wdat,
+		type = 'response')
+	wdat$webpred <- predict(wmod, newdata = wdat,
+		type = 'response')
+
+	return(list(pdat, wdat))
+
+}
+
+###Function to show the overall mode difference and the 
+###sample composition adjustment
+
+testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
+
+	regRes <- runModeRegressions(controls, pdat, wdat)
+	pdat = regRes[[1]]
+	wdat = regRes[[2]]
+
+
+	##############Show the mode effect on total
+	##containers to hold the results
+	mode <- reg <- adj <- rep(NA, N.rep)
+
+	winds <- which(!is.na(wdat$y))
+	pinds <- which(!is.na(pdat$y))
+	for (k in 1:N.rep) {
+		##Draw new samples from the phone and web data
+		s1 <- sample(winds, p = wdat$weight[winds],
+			size = length(winds), replace = TRUE)
+
+		s2 <- sample(pinds, p = pdat$weight[pinds],
+			size = length(pinds), replace = TRUE)
+
+		##Run out the means with the resampled data
+		wt <- mean(wdat$y[s1])
+		pt <- mean(pdat$y[s2])
+
+		##get the web - phone difference
+		mode[k] <- wt[1,2] - pt[1,2]
+
+		##Run out the means of the adjusted resampled data
+		ag1 <- mean(wdat$phonepred[s1])
+		ag2 <- mean(wdat$webpred[s1])
+
+		##store the results
+		reg[k] <- ag2 - ag1
+
+	}
+
+	##Open a new graphics window
+	dev.new()
+	par(mfrow = c(1,2))
+	ylim = range( c(mode, mode - reg) )
+
+	##plot the variance of the mode difference
+	boxplot(mode, ylim = ylim,
+		main = "Web - Phone diff")
+	abline(h = 0)
+	##plot the regression adjusted difference
+	boxplot(mode - reg, ylim = ylim,
+		main = "Sample composition\nadjustment")
+	abline(h = 0)
+
+}
+
+
