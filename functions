@@ -798,4 +798,62 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 
 }
 
+###test for mode effects among subgroups
+testModeSubgroups <- function(controls, pdat, wdat, N.rep = 200,
+	x.cats = NULL) {
+
+	regRes <- runModeRegressions(controls, pdat, wdat)
+	pdat = regRes[[1]]
+	wdat = regRes[[2]]
+
+
+	##############Show the mode effect on total
+	##containers to hold the results
+	if (is.null(x.cats)) x.cats <- length(table(wdat$x))
+	mode <- reg <- adj <- array(NA, c(N.rep, x.cats))
+
+	winds <- which(!is.na(wdat$y))
+	pinds <- which(!is.na(pdat$y))
+
+	colnames(mode) <- colnames(adj) <- names(table(wdat$x))[1:x.cats]
+	for (k in 1:N.rep) {
+		##Draw new samples from the phone and web data
+		s1 <- sample(winds, p = wdat$weight[winds],
+			size = length(winds), replace = TRUE)
+
+		s2 <- sample(pinds, p = pdat$weight[pinds],
+			size = length(pinds), replace = TRUE)
+
+		##Run out the means with the resampled data
+		wt <- aggregate(y ~ x, data = wdat[s1,], FUN = mean)
+		pt <- aggregate(y ~ x, data = pdat[s2,], FUN = mean)
+
+		##get the web - phone difference
+		mode[k,] <- wt[1:x.cats,2] - pt[1:x.cats,2]
+
+		##Run out the means of the adjusted resampled data
+		ag1 <- aggregate(phonepred ~ x, data = wdat[s1,], FUN = mean)
+		ag2 <- aggregate(webpred ~ x, data = wdat[s1,], FUN = mean)
+
+
+		##store the results
+		reg[k,] <- ag2[1:x.cats,2] - ag1[1:x.cats,2]
+
+	}
+
+	##Open a new graphics window
+	dev.new()
+	par(mfrow = c(1,2))
+	ylim = range( c(mode, mode - reg) )
+
+	##plot the variance of the mode difference
+	boxplot(mode, ylim = ylim,
+		main = "Web - Phone diff")
+	abline(h = 0)
+	##plot the regression adjusted difference
+	boxplot(mode - reg, ylim = ylim,
+		main = "Sample composition\nadjustment")
+	abline(h = 0)
+
+}
 
