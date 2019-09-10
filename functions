@@ -771,7 +771,7 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 		pt <- mean(pdat$y[s2])
 
 		##get the web - phone difference
-		mode[k] <- wt[1,2] - pt[1,2]
+		mode[k] <- wt - pt
 
 		##Run out the means of the adjusted resampled data
 		ag1 <- mean(wdat$phonepred[s1])
