@@ -76,20 +76,20 @@ getLabelPosition <- function(vec) {
 	return(pos)
 }
 
-stackedBar <- function(list, 	##data to plot
-	xlim = c(-.18, 1),	##xlim for plot
+stackedBar <- function(list, 		##data to plot
+	xlim = c(-.18, 1),		##xlim for plot
 	col.vec, 			##colors
 	val.lab = TRUE, 		##value labels
 	res = 1, 			##resolution
 	plot.width = 3.2,		##width of plot window
-	write.file = "no", 	##write out a file
-	bar.width = .5,		##width of bars
+	write.file = "no", 		##write out a file
+	bar.width = .5,			##width of bars
 	col.lab = NULL, 		##column labels
 	col.pos = NULL, 		##position of labels
-	n.cats = NULL,		##number of categories to plot
-	addNet = FALSE,
-	digits = 0,
-	netAdj = .05) {		##add a NET to the bars?
+	n.cats = NULL,			##number of categories to plot
+	addNet = FALSE,			##Add NET to bars (only helpful for subsetting)
+	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
+	netAdj = .05) {			##horizontal adjustment to bars
 
 	##set up the height of the box based on the number of elements
 	##(in reverse order; list should be ordered with total first, etc)
@@ -119,11 +119,13 @@ if (write.file == "pdf") {
 }
 
 }
+	##Open plot window
 	par(mar = rep(.1, 4))
 	plot(0,0, pch = '', xlim = xlim,
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
-	
+
+	##default positions labels above first row of data (NOT WORKING)
 	if ( is.null(col.pos) ) {
 		col.pos <- rep(NA, n.cats)
 		vec = list[[1]]
@@ -140,8 +142,11 @@ if (write.file == "pdf") {
 		}
 	}
 
+	##Add data to the plot window
 	if (!is.null(col.lab)) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
+		
+	##Add the column labels
 	for (j in 1:length(col.lab)) {
 		if (ymin == 0) y = 0
 		if (ymin != 0) y = ymin/2
@@ -152,7 +157,7 @@ if (write.file == "pdf") {
 
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
-		##skip NULL entries
+		##skip NULL entries; add italicized subheading if applicable
 		fam <- ifelse(write.file == "pdf", "", "fgb")
 		if (length(list[[j]]) == 0) {
 			text(xlim[1], j, 
@@ -172,6 +177,7 @@ if (write.file == "pdf") {
 			addNet = addNet, netAdj = netAdj, digits = digits)
 	}
 
+##Close the plot window
 if (write.file!="no") {
 	dev.off()
 	dev.off()
