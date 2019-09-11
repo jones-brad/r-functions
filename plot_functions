@@ -29,6 +29,12 @@ thermcolors <- c("Very cold" = "#82A6BF",
 	"Neutral" = "#D7D7D7",
 	"Somewhat warm" = "#F5D6A9",
 	"Very warm" = "#EA9E2C")
+	
+############################Windows fonts
+if(.Platform$OS.type == "windows") {
+	windowsFonts(fgb = windowsFont("Franklin Gothic Book"))
+	windowsFonts(demi = windowsFont("Franklin Gothic Demi"))
+}
 
 
 ############################Stacked bar
