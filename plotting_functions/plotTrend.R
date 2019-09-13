@@ -19,7 +19,7 @@ plotTrend <- function(to.plot,
 	val.lab.adj = NULL,
 	point.size = 1.2,
 	lab.points = NULL,
-	lab.points.pos = NULL
+	lab.points.pos = NULL,
 	add.value.labels = TRUE) {
 
 	##open the plot window (multiplied by the resolution factor)
