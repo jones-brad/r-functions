@@ -19,7 +19,8 @@ plotTrend <- function(to.plot,
 	val.lab.adj = NULL,
 	point.size = 1.2,
 	lab.points = NULL,
-	lab.points.pos = NULL) {
+	lab.points.pos = NULL
+	add.value.labels = TRUE) {
 
 	##open the plot window (multiplied by the resolution factor)
 	dev.new(width=plot.width*res, height=plot.height*res)
@@ -41,12 +42,14 @@ if (write.file == "pdf") {
 
 	if (is.null(ord)) ord <- 1:ncol(to.plot)	
 
+	##Open plot window
 	par(mar = c(1.7,.1,.1,.1))
 	fam <- ifelse(write.file == "pdf", "", "fgb")
 
 	plot(0,0, pch = '', xlim = xlim+xadj, ylim = ylim,
 		axes = FALSE, xlab = '', ylab = '',
 		family = fam)
+	##print axis
 	if (is.null(axis.control)) axis(1, family = fam) 
 	if (!is.null(axis.control)) {
 
@@ -78,6 +81,7 @@ if (write.file == "pdf") {
 	for (j in ord) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
 
+		##Add trend lines
 		for (k in 2:length(to.plot[,j])) {
 			segments(y0 = to.plot[k,j],
 				y1 = to.plot[k-1,j],
@@ -88,11 +92,14 @@ if (write.file == "pdf") {
 		}
 
 
+	##Add value labels
+	if (add.value.labels) {
 	for (k in 1:length(lab.points)) {
 		lp <- lab.points[k]
 		text(x[lp], to.plot[lp,j]+val.lab.adj[j,k], 
 			round(to.plot[lp,j]), family = fam,
 			col = col.vec[j], pos = lab.points.pos[k], cex = .75)
+	}
 	}
 
 		if (addPoints) {
