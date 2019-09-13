@@ -840,25 +840,24 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 		pinds <- which(!is.na(pdat$y))
 		for (k in 1:N.rep) {
 			##Draw new samples from the phone and web data
-			s1 <- sample(winds, p = wdat$weight[winds],
+			s1 <- sample(winds, #p = wdat$weight[winds],
 				size = length(winds), replace = TRUE)
 
 			s2 <- sample(pinds, p = pdat$weight[pinds],
 				size = length(pinds), replace = TRUE)
 	
-			##Run out the means with the resampled data
-			wt <- mean(wdat$y[s1])
-			pt <- mean(pdat$y[s2])
+			##Run out the means with the resampled data ###ADD WEIGHTED MEANS
+			wt <- wmean(wdat$webpred[s1], wdat$weight[s1])
+			pt <- wmean(pdat$phonepred[s2], wdat$weight[s1])
 	
 			##get the web - phone difference
 			mode[k,L] <- wt - pt
 
 			##Run out the means of the adjusted resampled data
-			ag1 <- mean(wdat$phonepred[s1])
-			ag2 <- mean(wdat$webpred[s1])
+			delta <- wdat$phonepred[s1] - wdat$webpred[s1]
 
 			##store the results
-			reg[k,L] <- ag2 - ag1
+			reg[k,L] <- wmean(delta, wdat$weight[s1])
 
 		}
 	}
