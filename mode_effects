@@ -41,61 +41,18 @@ rep_weights <- function(wgt, n.rep = 200) {
 	return(rweights)
 }
 
-###Function to show the overall mode difference and the 
-###sample composition adjustment
-###Single punch
-
-testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
-
-	regRes <- runModeRegressions(controls, pdat, wdat)
-	pdat = regRes[[1]]
-	wdat = regRes[[2]]
-
-
-	##############Show the mode effect on total
-	##containers to hold the results
-	mode <- reg <- adj <- rep(NA, N.rep)
-
-	winds <- which(!is.na(wdat$y))
-	pinds <- which(!is.na(pdat$y))
-	for (k in 1:N.rep) {
-		##Draw new samples from the phone and web data
-		s1 <- sample(winds, p = wdat$weight[winds],
-			size = length(winds), replace = TRUE)
-
-		s2 <- sample(pinds, p = pdat$weight[pinds],
-			size = length(pinds), replace = TRUE)
-
-		##Run out the means with the resampled data
-		wt <- mean(wdat$y[s1])
-		pt <- mean(pdat$y[s2])
-
-		##get the web - phone difference
-		mode[k] <- wt - pt
-
-		##Run out the means of the adjusted resampled data
-		ag1 <- mean(wdat$phonepred[s1])
-		ag2 <- mean(wdat$webpred[s1])
-
-		##store the results
-		reg[k] <- ag2 - ag1
-
+###add replicate weights - alternate
+rep_weights2 <- function(wgt, n.rep = 200) {
+	rweights <- array(0, c(length(wgt), n.rep))
+	
+	for (j in 1:n.rep) {
+		s <- sample(1:length(wgt), size = length(wgt),
+			replace = TRUE, p = wgt)
+		tab <- table(s)
+		rweights[as.numeric(names(tab)),j] <- tab
+		rweights[,j] <- rweights[,j]*wgt
 	}
-
-	##Open a new graphics window
-	dev.new()
-	par(mfrow = c(1,2))
-	ylim = range( c(mode, mode - reg) )
-
-	##plot the variance of the mode difference
-	boxplot(mode, ylim = ylim,
-		main = "Web - Phone diff")
-	abline(h = 0)
-	##plot the regression adjusted difference
-	boxplot(mode - reg, ylim = ylim,
-		main = "Sample composition\nadjustment")
-	abline(h = 0)
-
+	return(rweights)
 }
 
 
@@ -104,25 +61,42 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200) {
 ###Full distribution
 
 testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
-	pname, wname, descrip = NULL) {
+	pname, wname, descrip = NULL, rep_weight_stem = NULL) {
 
-	ptab <- table(pdat[[pname]])
-	wtab <- table(wdat[[wname]])
+	pdat$cons <- wdat$cons <- 1
+
+	ptab <- wxtab(pdat$cons, pdat[[pname]], pdat$weight)
+	wtab <- wxtab(wdat$cons, wdat[[wname]], wdat$weight)
 	
 	if (length(ptab) != length(wtab)) {
 		vol <- grep("vol", names(ptab), ignore.case = TRUE)
 		vals <- 1:length(ptab)
 		vals[vol] <- 99
 		pdat[[pname]] <- factor(recode(pdat[[pname]], vals))
-		ptab <- table(pdat[[pname]])
+		ptab <- wxtab(pdat$cons, pdat[[pname]], pdat$weight)
 		if (length(ptab) != length(wtab)) return("Error")
 	}
 	
-	lev <- names(wtab)
+	lev <- colnames(wtab)
 	
 	##containers to hold the results
 	mode <- reg <- adj <- array(NA, c(N.rep, length(lev)))
-	colnames(mode) <- colnames(adj) <- lev
+	colnames(mode) <- colnames(adj) <- colnames(reg) <- lev
+	
+	##Get replicate weights
+	if (is.null(rep_weight_stem)) {
+		rep_phone <- rep_weights(pdat$weight, N.rep)
+		rep_web <- rep_weights(wdat$weight, N.rep)
+	
+
+		##attach replicate weights
+		for (j in 1:N.rep) {
+			nm <- paste("wgt", j, sep = "")
+			pdat[[nm]] <- rep_phone[,j]
+			wdat[[nm]] <- rep_web[,j]
+		}
+		rep_weight_stem = "wgt"
+	}
 	
 	for (L in 1:length(lev)) {
 
@@ -133,46 +107,43 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 		pdat = regRes[[1]]
 		wdat = regRes[[2]]
 	
-	
-
-		winds <- which(!is.na(wdat$y))
-		pinds <- which(!is.na(pdat$y))
 		for (k in 1:N.rep) {
-			##Draw new samples from the phone and web data
-			s1 <- sample(winds, #p = wdat$weight[winds],
-				size = length(winds), replace = TRUE)
+			nm <- paste(rep_weight_stem, k, sep = "")
 
-			s2 <- sample(pinds, p = pdat$weight[pinds],
-				size = length(pinds), replace = TRUE)
-	
 			##Run out the means with the resampled data ###ADD WEIGHTED MEANS
-			wt <- wmean(wdat$webpred[s1], wdat$weight[s1])
-			pt <- wmean(pdat$phonepred[s2], wdat$weight[s1])
+			wt <- sum(wdat$y*wdat[[nm]])/sum(wdat[[nm]])
+			pt <- sum(pdat$y*pdat[[nm]])/sum(pdat[[nm]])
 	
 			##get the web - phone difference
 			mode[k,L] <- wt - pt
 
 			##Run out the means of the adjusted resampled data
-			delta <- wdat$phonepred[s1] - wdat$webpred[s1]
+			delta <- wdat$y - wdat$phonepred
 
 			##store the results
-			reg[k,L] <- wmean(delta, wdat$weight[s1])
+			reg[k,L] <- sum(delta*wdat[[nm]])/sum(wdat[[nm]])
 
 		}
 	}
 
 	##Open a new graphics window
-	dev.new()
-	par(mfrow = c(1,2))
+	dev.new(width = 7.5)
+	par(mfrow = c(1,3))
 	ylim = range( c(mode, mode - reg) )
 
 	##plot the variance of the mode difference
 	boxplot(mode, ylim = ylim,
-		main = "Web - Phone diff")
+		main = "Observed\nWeb - Phone diff")
+	points(1:length(lev), wtab - ptab, pch = 20, col = 'red',
+		cex = 3)
 	abline(h = 0)
 	##plot the regression adjusted difference
+	boxplot(reg, ylim = ylim,
+		main = "Expected mode effect")
+	abline(h = 0)
+	##Differencing out the mode effect
 	boxplot(mode - reg, ylim = ylim,
-		main = "Sample composition\nadjustment")
+		main = "Predicted compositional\ndifference")
 	abline(h = 0)
 	
 	if (!is.null(descrip)) text( length(lev)/2, ylim[2], descrip )
@@ -181,60 +152,70 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 
 
 ###test for mode effects among subgroups
-testModeSubgroups <- function(controls, pdat, wdat, N.rep = 200,
-	x.cats = NULL) {
+testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
+	pname, wname, descrip = NULL, rep_weight_stem = NULL,
+	px, wx, x.cats = NULL, xcol = NULL) {
 
-	regRes <- runModeRegressions(controls, pdat, wdat)
-	pdat = regRes[[1]]
-	wdat = regRes[[2]]
-
-
-	##############Show the mode effect on total
+	ptab <- wxtab(pdat[[px]], pdat[[pname]], pdat$weight)
+	wtab <- wxtab(wdat[[wx]], wdat[[wname]], wdat$weight)
+	
+	if (length(ptab) != length(wtab)) {
+		vol <- grep("vol", names(ptab), ignore.case = TRUE)
+		vals <- 1:length(ptab)
+		vals[vol] <- 99
+		pdat[[pname]] <- factor(recode(pdat[[pname]], vals))
+		ptab <- wxtab(pdat$cons, pdat[[pname]], pdat$weight)
+		if (length(ptab) != length(wtab)) return("Error")
+	}
+	
+	lev <- colnames(wtab)
+	
 	##containers to hold the results
-	if (is.null(x.cats)) x.cats <- length(table(wdat$x))
-	mode <- reg <- adj <- array(NA, c(N.rep, x.cats))
+	if (is.null(x.cats)) x.cats <- nrow(wtab)
+	mode <- array(NA, c(N.rep, length(lev), x.cats))
+	
+	##Get replicate weights
+	if (is.null(rep_weight_stem)) {
+		rep_phone <- rep_weights(pdat$weight, N.rep)
+		rep_web <- rep_weights(wdat$weight, N.rep)
+	
 
-	winds <- which(!is.na(wdat$y))
-	pinds <- which(!is.na(pdat$y))
+		##attach replicate weights
+		for (j in 1:N.rep) {
+			nm <- paste("wgt", j, sep = "")
+			pdat[[nm]] <- rep_phone[,j]
+			wdat[[nm]] <- rep_web[,j]
+		}
+		rep_weight_stem = "wgt"
+	}
+	
 
-	colnames(mode) <- colnames(adj) <- names(table(wdat$x))[1:x.cats]
-	for (k in 1:N.rep) {
-		##Draw new samples from the phone and web data
-		s1 <- sample(winds, p = wdat$weight[winds],
-			size = length(winds), replace = TRUE)
+	for (k in 1:N.rep) { ##Loop number of replications
+		nm <- paste(rep_weight_stem, k, sep = "")
+		wtabr <- wxtab(wdat[[px]], wdat[[pname]], wdat[[nm]])
+		ptabr <- wxtab(pdat[[px]], pdat[[pname]], pdat[[nm]])
 
-		s2 <- sample(pinds, p = pdat$weight[pinds],
-			size = length(pinds), replace = TRUE)
-
-		##Run out the means with the resampled data
-		wt <- aggregate(y ~ x, data = wdat[s1,], FUN = mean)
-		pt <- aggregate(y ~ x, data = pdat[s2,], FUN = mean)
-
-		##get the web - phone difference
-		mode[k,] <- wt[1:x.cats,2] - pt[1:x.cats,2]
-
-		##Run out the means of the adjusted resampled data
-		ag1 <- aggregate(phonepred ~ x, data = wdat[s1,], FUN = mean)
-		ag2 <- aggregate(webpred ~ x, data = wdat[s1,], FUN = mean)
-
-
-		##store the results
-		reg[k,] <- ag2[1:x.cats,2] - ag1[1:x.cats,2]
-
+		mode[k,,] <- wtabr - ptabr	
 	}
 
-	##Open a new graphics window
 	dev.new()
-	par(mfrow = c(1,2))
-	ylim = range( c(mode, mode - reg) )
+	plot(0, 0, xlim = c(0, dim(mode)[2]+1),
+		ylim = range(mode, na.rm = TRUE),
+		xlab = '', ylab = '', axes = FALSE, pch = '')
+	axis(1, at = 1:dim(mode)[2], labels = lev)
+	axis(2)
+	abline(h =0)
 
-	##plot the variance of the mode difference
-	boxplot(mode, ylim = ylim,
-		main = "Web - Phone diff")
-	abline(h = 0)
-	##plot the regression adjusted difference
-	boxplot(mode - reg, ylim = ylim,
-		main = "Sample composition\nadjustment")
-	abline(h = 0)
+	##Plot distributions of mode differences
+	if (is.null(xcol)) xcol = 1:x.cats
+	xpos <- seq(from = -.35, to = .35, length = x.cats)
+	for (j in 1:x.cats) {
+	for (k in 1:length(lev)) {
+		boxplot(mode[,k,j], add = TRUE,
+			at = xpos[j]+k, boxwex = 1/x.cats,
+			col = xcol[j], axes = FALSE)
+	}
+	}
+	abline(v = 1:(length(lev)-1) + .5, col = 'grey')
 
 }
