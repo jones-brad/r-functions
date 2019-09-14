@@ -153,7 +153,7 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 
 ###test for mode effects among subgroups
 testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
-	pname, wname, descrip = NULL, rep_weight_stem = NULL,
+	pname, wname, ylim = NULL, descrip = NULL, rep_weight_stem = NULL,
 	px, wx, x.cats = NULL, xcol = NULL) {
 
 	ptab <- wxtab(pdat[[px]], pdat[[pname]], pdat$weight)
@@ -199,8 +199,9 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	}
 
 	dev.new()
+	if (is.null(ylim)) ylim = range(mode, na.rm = TRUE)
 	plot(0, 0, xlim = c(0, dim(mode)[2]+1),
-		ylim = range(mode, na.rm = TRUE),
+		ylim = ylim,
 		xlab = '', ylab = '', axes = FALSE, pch = '')
 	axis(1, at = 1:dim(mode)[2], labels = lev)
 	axis(2)
