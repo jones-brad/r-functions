@@ -711,6 +711,7 @@ readGit <- function(path) {
 #source("S:/Common/Brad/error_calc_functions.R")
 
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plot_functions")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/mode_effects")
 
 
 
