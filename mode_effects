@@ -27,6 +27,20 @@ runModeRegressions <- function(controls, pdat, wdat) {
 
 }
 
+###add replicate weights
+rep_weights <- function(wgt, n.rep = 200) {
+	rweights <- array(0, c(length(wgt), n.rep))
+	
+	for (j in 1:n.rep) {
+		s <- sample(1:length(wgt), size = length(wgt),
+			replace = TRUE)
+		tab <- table(s)
+		rweights[as.numeric(names(tab)),j] <- tab
+		rweights[,j] <- rweights[,j]*wgt
+	}
+	return(rweights)
+}
+
 ###Function to show the overall mode difference and the 
 ###sample composition adjustment
 ###Single punch
