@@ -195,7 +195,7 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 		wtabr <- wxtab(wdat[[px]], wdat[[pname]], wdat[[nm]])
 		ptabr <- wxtab(pdat[[px]], pdat[[pname]], pdat[[nm]])
 
-		mode[k,,] <- wtabr - ptabr	
+		mode[k,,] <- wtabr[1:x.cats,] - ptabr[1:x.cats,]	
 	}
 
 	dev.new()
