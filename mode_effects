@@ -148,8 +148,8 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 	##plot the variance of the mode difference
 	boxplot(mode, ylim = ylim,
 		main = "Observed\nWeb - Phone diff")
-	points(1:length(lev), wtab - ptab, pch = 20, col = 'red',
-		cex = 3)
+#	points(1:length(lev), wtab - ptab, pch = 20, col = 'red',
+#		cex = 3)
 	abline(h = 0)
 	
 	##plot the regression adjusted difference
