@@ -69,7 +69,7 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 	wtab <- wxtab(wdat$cons, wdat[[wname]], wdat$weight)
 	
 	if (length(ptab) != length(wtab)) {
-		vol <- grep("vol", names(ptab), ignore.case = TRUE)
+		vol <- grep("vol", colnames(ptab), ignore.case = TRUE)
 		vals <- 1:length(ptab)
 		vals[vol] <- 99
 		pdat[[pname]] <- factor(recode(pdat[[pname]], vals))
