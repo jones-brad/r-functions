@@ -144,7 +144,7 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 	
 	ylim = range( c(mode, mode - reg) )
 
-	par(mar = c(2, 1, 1, 1))
+	par(mar = c(2, 2, 2, .1))
 	##plot the variance of the mode difference
 	boxplot(mode, ylim = ylim,
 		main = "Observed\nWeb - Phone diff")
