@@ -180,7 +180,7 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	wtab <- wxtab(wdat[[wx]], wdat[[wname]], wdat$weight)
 	
 	if (length(ptab) != length(wtab)) {
-		vol <- grep("vol", names(ptab), ignore.case = TRUE)
+		vol <- grep("vol", colnames(ptab), ignore.case = TRUE)
 		vals <- 1:length(ptab)
 		vals[vol] <- 99
 		pdat[[pname]] <- factor(recode(pdat[[pname]], vals))
@@ -217,6 +217,11 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 
 		mode[k,,] <- wtabr[1:x.cats,] - ptabr[1:x.cats,]	
 	}
+	
+	##Open a new graphics window
+	dev.new(width = 7.5)
+	layout(matrix(c(1,1,2,2), 2, 2, byrow = TRUE),
+		heights = c(.2, .2, 3, 3))
 
 	dev.new()
 	if (is.null(ylim)) ylim = range(mode, na.rm = TRUE)
