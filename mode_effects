@@ -123,9 +123,10 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 
 			##Run out the means of the adjusted resampled data
 			delta <- wdat$y - wdat$phonepred
-
+			wdat$delta <- delta
+			
 			##store the results
-			reg[k,L] <- sum(delta*wdat[[nm]])/sum(wdat[[nm]])
+			reg[k,L] <- with(wdat[w.inds,], sum(delta*wt)/sum(wt))
 
 		}
 	}
