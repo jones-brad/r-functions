@@ -107,12 +107,16 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 		pdat = regRes[[1]]
 		wdat = regRes[[2]]
 	
+		p.inds <- which(!is.na(pdat$y))
+		w.inds <- which(!is.na(wdat$y))
 		for (k in 1:N.rep) {
 			nm <- paste(rep_weight_stem, k, sep = "")
-
+			wdat$wt <- wdat[[nm]]
+			pdat$wt <- pdat[[nm]]
+			
 			##Run out the means with the resampled data ###ADD WEIGHTED MEANS
-			wt <- sum(wdat$y*wdat[[nm]])/sum(wdat[[nm]])
-			pt <- sum(pdat$y*pdat[[nm]])/sum(pdat[[nm]])
+			wt <- with(wdat[w.inds,], sum(y*wt)/sum(wt))
+			pt <- with(pdat[p.inds,], sum(y*wt)/sum(wt))
 	
 			##get the web - phone difference
 			mode[k,L] <- wt - pt
