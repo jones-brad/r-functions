@@ -166,7 +166,7 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 	axis(1)
 	abline(h = 0)
 	
-	if (!is.null(descrip)) text( length(lev)/2, ylim[2], descrip )
+
 
 }
 
