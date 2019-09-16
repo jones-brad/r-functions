@@ -146,20 +146,24 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 
 	par(mar = c(2, 2, 2, .1))
 	##plot the variance of the mode difference
-	boxplot(mode, ylim = ylim,
+	boxplot(mode, ylim = ylim, axes = FALSE,
 		main = "Observed\nWeb - Phone diff")
+	axis(1)
+	axis(2)
 #	points(1:length(lev), wtab - ptab, pch = 20, col = 'red',
 #		cex = 3)
 	abline(h = 0)
 	
 	##plot the regression adjusted difference
-	boxplot(reg, ylim = ylim,
+	boxplot(reg, ylim = ylim, axes = FALSE,
 		main = "Expected mode effect")
+	axis(1)
 	abline(h = 0)
 	
 	##Differencing out the mode effect
-	boxplot(mode - reg, ylim = ylim,
+	boxplot(mode - reg, ylim = ylim, axes = FALSE,
 		main = "Predicted compositional\ndifference")
+	axis(1)
 	abline(h = 0)
 	
 	if (!is.null(descrip)) text( length(lev)/2, ylim[2], descrip )
