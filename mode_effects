@@ -60,7 +60,7 @@ rep_weights2 <- function(wgt, n.rep = 200) {
 ###sample composition adjustment
 ###Full distribution
 
-testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
+testModeOverall <- function(controls, pdat, wdat, N.rep = 200,
 	pname, wname, descrip = NULL, rep_weight_stem = NULL) {
 
 	pdat$cons <- wdat$cons <- 1
@@ -172,19 +172,20 @@ testModeOverallFull <- function(controls, pdat, wdat, N.rep = 200,
 
 
 ###test for mode effects among subgroups
-testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
+testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	pname, wname, ylim = NULL, descrip = NULL, rep_weight_stem = NULL,
 	px, wx, x.cats = NULL, xcol = NULL) {
 
 	ptab <- wxtab(pdat[[px]], pdat[[pname]], pdat$weight)
 	wtab <- wxtab(wdat[[wx]], wdat[[wname]], wdat$weight)
 	
-	if (length(ptab) != length(wtab)) {
+	if (length(levels(pdat[[pname]])) != 
+		length(levels(wdat[[wname]]))) {
 		vol <- grep("vol", colnames(ptab), ignore.case = TRUE)
 		vals <- 1:length(ptab)
 		vals[vol] <- 99
 		pdat[[pname]] <- factor(recode(pdat[[pname]], vals))
-		ptab <- wxtab(pdat$cons, pdat[[pname]], pdat$weight)
+		ptab <- wxtab(pdat[[px]], pdat[[pname]], pdat$weight)
 		if (length(ptab) != length(wtab)) return("Error")
 	}
 	
@@ -212,7 +213,7 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 
 	for (k in 1:N.rep) { ##Loop number of replications
 		nm <- paste(rep_weight_stem, k, sep = "")
-		wtabr <- wxtab(wdat[[px]], wdat[[pname]], wdat[[nm]])
+		wtabr <- wxtab(wdat[[wx]], wdat[[wname]], wdat[[nm]])
 		ptabr <- wxtab(pdat[[px]], pdat[[pname]], pdat[[nm]])
 
 		mode[k,,] <- wtabr[1:x.cats,] - ptabr[1:x.cats,]	
@@ -220,14 +221,13 @@ testModeOverallSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	
 	##Open a new graphics window
 	dev.new(width = 7.5)
-	layout(matrix(c(1,1,2,2), 2, 2, byrow = TRUE),
-		heights = c(.2, .2, 3, 3))
 
-	dev.new()
 	if (is.null(ylim)) ylim = range(mode, na.rm = TRUE)
+
 	plot(0, 0, xlim = c(0, dim(mode)[2]+1),
 		ylim = ylim,
-		xlab = '', ylab = '', axes = FALSE, pch = '')
+		xlab = '', ylab = '', axes = FALSE, pch = '',
+		main = descrip)
 	axis(1, at = 1:dim(mode)[2], labels = lev)
 	axis(2)
 	abline(h =0)
