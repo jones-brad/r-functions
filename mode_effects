@@ -246,6 +246,6 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	abline(v = 1:(length(lev)-1) + .5, col = 'grey')
 	
 	legend('topleft', rownames(wtab)[1:x.cats], col = xcol,
-		pch = 15)
+		pch = 15, cex = .67)
 
 }
