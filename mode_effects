@@ -227,7 +227,7 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 
 	if (is.null(ylim)) ylim = range(mode, na.rm = TRUE)
 
-	plot(0, 0, xlim = c(0, dim(mode)[2]+1),
+	plot(0, 0, xlim = c(0, length(lev)+1),
 		ylim = ylim,
 		xlab = '', ylab = '', axes = FALSE, pch = '',
 		main = descrip)
