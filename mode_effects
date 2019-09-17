@@ -220,7 +220,8 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	}
 	
 	##Open a new graphics window
-	dev.new(width = 7.5)
+	dev.new()	
+	if (descrip == "") par(mar = c(2,1,.1,.1))
 
 	if (is.null(ylim)) ylim = range(mode, na.rm = TRUE)
 
