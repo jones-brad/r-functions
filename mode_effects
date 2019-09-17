@@ -194,7 +194,7 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	##containers to hold the results
 	if (is.null(x.cats)) x.cats <- nrow(wtab)
 	mode <- array(NA, c(N.rep, x.cats, length(lev)))
-	dimnames(mode)[2] <- rownames(wdat)[1:x.cats]
+	dimnames(mode)[2] <- rownames(wtab)[1:x.cats]
 	dimnames(mode)[3] <- lev
 	
 	##Get replicate weights
@@ -218,7 +218,7 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 		wtabr <- wxtab(wdat[[wx]], wdat[[wname]], wdat[[nm]])
 		ptabr <- wxtab(pdat[[px]], pdat[[pname]], pdat[[nm]])
 
-		mode[k,,] <- wtabr[1:x.cats,] - ptabr[1:x.cats,]	
+		mode[k,,] <- wtabr[1:x.cats,lev] - ptabr[1:x.cats,lev]	
 	}
 	
 	##Open a new graphics window
