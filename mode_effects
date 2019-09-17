@@ -231,7 +231,7 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 		ylim = ylim,
 		xlab = '', ylab = '', axes = FALSE, pch = '',
 		main = descrip)
-	axis(1, at = 1:dim(mode)[2], labels = lev)
+	axis(1, at = 1:length(lev), labels = lev)
 	axis(2)
 	abline(h =0)
 
