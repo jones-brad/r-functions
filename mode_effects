@@ -193,7 +193,9 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	
 	##containers to hold the results
 	if (is.null(x.cats)) x.cats <- nrow(wtab)
-	mode <- array(NA, c(N.rep, length(lev), x.cats))
+	mode <- array(NA, c(N.rep, x.cats, length(lev)))
+	dimnames(mode)[2] <- rownames(wdat)[1:x.cats]
+	dimnames(mode)[3] <- lev
 	
 	##Get replicate weights
 	if (is.null(rep_weight_stem)) {
@@ -238,7 +240,7 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	xpos <- seq(from = -.35, to = .35, length = x.cats)
 	for (j in 1:x.cats) {
 	for (k in 1:length(lev)) {
-		boxplot(mode[,k,j], add = TRUE,
+		boxplot(mode[,j,k], add = TRUE,
 			at = xpos[j]+k, boxwex = 1/x.cats,
 			col = xcol[j], axes = FALSE)
 	}
