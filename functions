@@ -235,11 +235,11 @@ get.panel <- function(str) {
 
 #########################get 5 point thermometer rating
 code.therm <- function(t) {
+	inds <- which(!is.na(t))
 	if (class(t) == "factor") t <- as.numeric(as.character(t))
 	
 	t5 <- rep(NA, length(t))
-	wh <- which(!is.na(t))
-	t5[wh] <- 6
+	t5[inds] <- 6
 	wh <- which(t <= 100)
 	t5[wh] <- 5
 	wh <- which(t < 76)
