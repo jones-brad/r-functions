@@ -126,7 +126,8 @@ testModeOverall <- function(controls, pdat, wdat, N.rep = 200,
 			wdat$delta <- delta
 			
 			##store the results
-			reg[k,L] <- with(wdat[w.inds,], sum(delta*wt)/sum(wt))
+			reg[k,L] <- with(wdat[w.inds,], 
+				sum(delta*wt, na.rm =TRUE)/sum(wt, na.rm =TRUE))
 
 		}
 	}
