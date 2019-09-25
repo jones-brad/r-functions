@@ -61,7 +61,7 @@ rep_weights2 <- function(wgt, n.rep = 200) {
 ###Full distribution
 
 testModeOverall <- function(controls, pdat, wdat, N.rep = 200,
-	pname, wname, descrip = NULL, rep_weight_stem = NULL) {
+	pname, wname, descrip = NULL, rep_weight_stem = NULL, write.file = "no") {
 
 	pdat$cons <- wdat$cons <- 1
 
