@@ -138,12 +138,12 @@ if (write.file != "no") {
 
 if (write.file == "jpg") {
 	src <- tempfile(fileext = ".jpg")
-	jpeg(src, width = plot.width, height = plot.height,
-		units = 'in', res = 1000)
+	jpeg(src, width = 6, height = 4,
+		units = 'in', res = 200)
 }
 if (write.file == "pdf") {
 	src <- tempfile(fileext = ".pdf")
-	pdf(src, width = plot.width, height = plot.height)	
+	pdf(src, width = 6, height = 4)	
 }
 
 }
