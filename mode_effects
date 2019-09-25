@@ -195,7 +195,7 @@ if (write.file != "no") {
 ###test for mode effects among subgroups
 testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	pname, wname, ylim = NULL, descrip = NULL, rep_weight_stem = NULL,
-	px, wx, x.cats = NULL, xcol = NULL) {
+	px, wx, x.cats = NULL, xcol = NULL, write.file = "no") {
 
 	ptab <- wxtab(pdat[[px]], pdat[[pname]], pdat$weight)
 	wtab <- wxtab(wdat[[wx]], wdat[[wname]], wdat$weight)
