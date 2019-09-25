@@ -242,6 +242,21 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 		mode[k,,] <- wtabr[1:x.cats,lev] - ptabr[1:x.cats,1:length(lev)]	
 	}
 	
+##save to file
+if (write.file != "no") {
+
+if (write.file == "jpg") {
+	src <- tempfile(fileext = ".jpg")
+	jpeg(src, width = 6, height = 4,
+		units = 'in', res = 200)
+}
+if (write.file == "pdf") {
+	src <- tempfile(fileext = ".pdf")
+	pdf(src, width = 6, height = 4)	
+}
+
+}
+	
 	##Open a new graphics window
 	dev.new()	
 	if (descrip == "") par(mar = c(2,2,.1,.1))
@@ -270,5 +285,11 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	
 	legend('topleft', rownames(wtab)[1:x.cats], col = xcol,
 		pch = 15, cex = .67)
+		
+if (write.file != "no") {
+	dev.off()
+	dev.off()
+	return(src)
+}
 
 }
