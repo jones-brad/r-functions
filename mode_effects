@@ -181,7 +181,12 @@ if (write.file == "pdf") {
 		main = "Predicted compositional\ndifference")
 	axis(1, at = 1:length(lev), lab = lev)
 	abline(h = 0)
-	
+
+if (write.file != "no") {
+	dev.off()
+	dev.off()
+	return(src)
+}
 
 
 }
@@ -265,11 +270,5 @@ testModeSubgroup <- function(controls, pdat, wdat, N.rep = 200,
 	
 	legend('topleft', rownames(wtab)[1:x.cats], col = xcol,
 		pch = 15, cex = .67)
-		
-if (write.file != "no") {
-	dev.off()
-	dev.off()
-	return(src)
-}
 
 }
