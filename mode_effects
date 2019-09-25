@@ -184,7 +184,6 @@ if (write.file == "no") dev.new(width = 7.5)
 
 if (write.file != "no") {
 	dev.off()
-	dev.off()
 	return(src)
 }
 
@@ -287,7 +286,6 @@ if (write.file == "no") dev.new()
 		pch = 15, cex = .67)
 		
 if (write.file != "no") {
-	dev.off()
 	dev.off()
 	return(src)
 }
