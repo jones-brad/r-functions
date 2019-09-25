@@ -182,7 +182,7 @@ if (write.file == "no") dev.new(width = 7.5)
 	axis(1, at = 1:length(lev), lab = lev)
 	abline(h = 0)
 
-if (write.file != "no") {
+if (write.file !=  "no") {
 	dev.off()
 	return(src)
 }
