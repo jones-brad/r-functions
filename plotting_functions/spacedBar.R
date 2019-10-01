@@ -163,6 +163,7 @@ spacedBar2 <- function(list,  ###input list to plot
         bar.width = .5,         ###width of bars (determines the height of the plot)
         n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
         col.lab = NULL,                 ###column labels
+	lab.pos = NULL,
         spaces = NULL,
 	groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
 
@@ -244,7 +245,7 @@ xlim <- c(xmin, xmax)
         x.pos <- 0
         pos <- rep(NA, 3)
         ##Add column labels
-        if (length(col.lab)>0) {
+        if (length(col.lab)>0 & is.null(lab.pos)) {
                 for (j in 1:length(col.lab)) {
                         pos[j] <- x.pos
                         fam = ifelse(write.file == "pdf", "", "demi")
@@ -257,6 +258,15 @@ xlim <- c(xmin, xmax)
                                 x.pos + max(mat[,j], na.rm = TRUE) + spaces[j]
                 }
         }
+	
+	if (!is.null(lab.pos)) {
+		for (j in 1:length(col.lab)) {
+			fam = ifelse(write.file == "pdf", "", "demi")
+                        text(lab.pos[j], -.25,
+                                col.lab[j], family = fam, col = col.vec[j],
+                                cex = .75)
+		}
+	}
 
         ##run through the list to add the bars
         for (j in 1:length(list)) {
