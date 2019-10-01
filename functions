@@ -275,7 +275,7 @@ inout.therm <- function(dtherm, rtherm, party) {
 	outtherm[reps] <- dtherm[reps]
 	outtherm[dems] <- rtherm[dems]
 	
-	return(list(in = intherm, out = outtherm))
+	return(list("in" = intherm, "out" = outtherm))
 }
 
 delta.therm <- function(t1, t2) {
