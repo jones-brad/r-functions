@@ -255,6 +255,29 @@ code.therm <- function(t) {
 	return(t5)
 }
 
+inout.therm <- function(dtherm, rtherm, party) {
+	intherm <- rep(NA, length(dtherm))
+	outtherm <- rep(NA, length(dtherm))
+	
+	if (class(party)=="factor") {
+		reps <- grep("Rep", party)
+		dems <- grep("Dem", party)
+	}
+	
+	if (class(party)=="numeric") {
+		reps <- which(party == 1)
+		dems <- which(party == 2)
+	}
+	
+	intherm[reps] <- rtherm[reps]
+	intherm[dems] <- dtherm[dems]
+	
+	outtherm[reps] <- dtherm[reps]
+	outtherm[dems] <- rtherm[dems]
+	
+	return(list(in = intherm, out = outtherm))
+}
+
 delta.therm <- function(t1, t2) {
 	delta <- rep(NA, length(t1)) 
 
