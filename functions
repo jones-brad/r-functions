@@ -255,7 +255,7 @@ code.therm <- function(t) {
 	return(t5)
 }
 
-inout.therm <- function(dtherm, rtherm, party) {
+inout.therm <- function(rtherm, dtherm, party) {
 	intherm <- rep(NA, length(dtherm))
 	outtherm <- rep(NA, length(dtherm))
 	
