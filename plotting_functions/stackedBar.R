@@ -125,23 +125,6 @@ if (write.file == "pdf") {
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
 
-	##default positions labels above first row of data (NOT WORKING)
-	if ( is.null(col.pos) ) {
-		col.pos <- rep(NA, n.cats)
-		vec = list[[1]]
-		p = 1
-		while (length(vec)==0) {
-			p = p + 1
-			vec = vec[[p+1]]
-		}
-		
-		col.pos[1] <- vec[1]/2
-		for (j in 2:n.cats) {
-			inds <- j:n.cats
-			col.pos[j] <- vec[j]/2 + sum(vec[-inds])
-		}
-	}
-
 	##Add data to the plot window
 	if (!is.null(col.lab)) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
