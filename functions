@@ -742,7 +742,7 @@ readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/mode_eff
 
 ###########Get party indices
 partyinds <- function(dat, partynm) {
-	if ( class(dat[[partynm]] == "factor" |
+	if ( class(dat[[partynm]]) == "factor" |
 		class(dat[[partynm]]) == "string") {
 		dems <- grep("dem", dat[[partynm]], ignore.case = TRUE)
 		reps <- grep("rep", dat[[partynm]], ignore.case = TRUE)
