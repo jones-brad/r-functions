@@ -748,7 +748,7 @@ partyinds <- function(dat, partynm) {
 		reps <- grep("rep", dat[[partynm]], ignore.case = TRUE)
 	}
 	
-	if ( class(dat[[partynm]] == "numeric") {
+	if ( class(dat[[partynm]]) == "numeric") {
 		dems <- which(dat[[partynm]] == 2)
 		reps <- which(dat[[partynm]] == 1)
 	}
