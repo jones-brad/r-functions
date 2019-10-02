@@ -740,6 +740,20 @@ readGit <- function(path) {
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plot_functions")
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/mode_effects")
 
-
+###########Get party indices
+partyinds <- function(dat, partynm) {
+	if ( class(dat[[partynm]] == "factor" |
+		class(dat[[partynm]]) == "string") {
+		dems <- grep("dem", dat[[partynm]], ignore.case = TRUE)
+		reps <- grep("rep", dat[[partynm]], ignore.case = TRUE)
+	}
+	
+	if ( class(dat[[partynm]] == "numeric") {
+		dems <- which(dat[[partynm]] == 2)
+		reps <- which(dat[[partynm]] == 1)
+	}
+	
+	return(list(reps = reps, dems = dems))
+}
 
 
