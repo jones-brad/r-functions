@@ -224,7 +224,7 @@ for (j in 1:(length(groups) - 1)) {
 
 if (!is.null(spaces)) {
 for (j in 1:(length(groups) - 1)) {
-        space[,j] <- max(mat[,j], na.rm = TRUE) - mat[,j] + spaces[j]
+        space[,j] <- max(mat2[,j], na.rm = TRUE) - mat2[,j] + spaces[j]
 }
 }
 
