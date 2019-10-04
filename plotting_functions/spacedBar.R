@@ -223,7 +223,7 @@ for (j in 1:(length(groups) - 1)) {
 }
 
 if (!is.null(spaces)) {
-for (j in 1:(n.cats - 1)) {
+for (j in 1:(length(groups) - 1)) {
         space[,j] <- max(mat[,j], na.rm = TRUE) - mat[,j] + spaces[j]
 }
 }
