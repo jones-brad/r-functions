@@ -98,7 +98,7 @@ if (write.file == "pdf") {
 	for (k in 1:length(lab.points)) {
 		lp <- lab.points[k]
 		text(x[lp], to.plot[lp,j]+val.lab.adj[j,k], 
-			round(to.plot[lp,j]), family = fam,
+			round(abs(to.plot[lp,j])), family = fam,
 			col = col.vec[j], pos = lab.points.pos[k], cex = .75)
 	}
 	}
