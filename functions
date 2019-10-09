@@ -756,4 +756,26 @@ partyinds <- function(dat, partynm) {
 	return(list(reps = reps, dems = dems))
 }
 
+###Get the sample sizes for four-way form splits
+form_com <- function(form) {
+	tab <- table(form)
+	lev <- names(tab)
 
+	grid <- expand.grid(lev, lev)
+	w <- which(grid[,1] == grid[,2])
+	grid <- grid[-w,]
+
+	f12 <- tab[lev[1]] + tab[lev[2]]
+	f13 <- tab[lev[1]] + tab[lev[3]]
+	f14 <- tab[lev[1]] + tab[lev[4]]
+	f23 <- tab[lev[2]] + tab[lev[3]]
+	f24 <- tab[lev[2]] + tab[lev[4]]
+	f34 <- tab[lev[3]] + tab[lev[4]]
+
+ 
+
+	return(list(total = sum(tab),
+		minHalf = c(which.min(c(f12, f13, f14, f23, f24, f34)),
+			min(c(f12, f13, f14, f23, f24, f34))),
+		minQuarter = c(which.min(tab), min(tab))))
+}
