@@ -183,12 +183,12 @@ wxtab <- function(x, y, w, row = TRUE, cell = FALSE,
 		return(res)
 	}
 	if (col) {
-		s <- colSums(res)
+		s <- colSums(res, na.rm = TRUE)
 		for (j in 1:ncol(res)) res[,k] <- res[,k]/s[k]
 		return(res)
 	}
 	if (cell) {
-		res <- res/sum(res)
+		res <- res/sum(res, na.rm = TRUE)
 		return(res)
 	}
 }
