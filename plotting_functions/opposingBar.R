@@ -11,6 +11,7 @@ opposingBar <- function(list, 	##input to plot
 	lab.pos = NULL,
 	text.column = NULL,
 	addNets = FALSE,
+	val.lab = TRUE,		
 	addVertical = FALSE) {			##label positioning
 
 	##set up the height of the box based on the number of elements
@@ -54,12 +55,17 @@ for (j in 1:ncol(mat)) nmat[,j] <- as.numeric(mat[,j])
 nmat[,which.neg] <- nmat[,which.neg]*-1
 mat <- nmat
 
-if (addNets) {
+
+if (addNets & length(which.neg)>1 & ncol(nmat)-length(which.neg)>1) {
 	nets <- array(NA, c( nrow(mat), 2))
 	nets[,1] <- rowSums( mat[,which.neg] )
 	nets[,2] <- rowSums( mat[,-which.neg] )
 }
-
+if (addNets & n.cats == 2) {
+	nets <- array(NA, c( nrow(mat), 2))
+	nets[,1] <- mat[,which.neg]
+	nets[,2] <- mat[,-which.neg]
+}
 
 	par(mar = rep(.1, 4))
 	exp.x = c(0,0)
