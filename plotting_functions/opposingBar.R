@@ -116,6 +116,8 @@ if (addNets & n.cats == 2) {
 	cols <- 1:n.cats
 	neg <- cols[which.neg]
 	pos <- cols[-which.neg]
+		
+	if (length(val.lab)==1) val.lab <- rep(val.lab, n.cats)
 	
 	x.pos = 0
 	#if ( !is.element(1, neg) ) neg <- rev(neg)
@@ -123,7 +125,7 @@ if (addNets & n.cats == 2) {
 		 
 		addBar2(x = x.pos, val = mat[j,k], 
 			col = col.vec[k], 
-			val.lab = val.lab,
+			val.lab = val.lab[k],
 			pos = j, write.file = write.file)
 		x.pos = x.pos + mat[j,k]
 	}
@@ -134,7 +136,7 @@ if (addNets & n.cats == 2) {
 		 
 		addBar2(x = x.pos, val = mat[j,k], 
 			col = col.vec[k], 
-			val.lab = val.lab,
+			val.lab = val.lab[k],
 			pos = j, write.file = write.file)
 		x.pos = x.pos + mat[j,k]
 	}
