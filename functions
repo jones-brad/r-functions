@@ -779,3 +779,36 @@ form_com <- function(form) {
 			min(c(f12, f13, f14, f23, f24, f34))),
 		minQuarter = c(which.min(tab), min(tab))))
 }
+
+###########Error calculator function
+
+##########Difference in two proportions
+
+diff_prop <- function(var1, var2, wgt1, wgt2,
+	p1 = NULL, p2 = NULL, n1 = NULL, n2 = NULL, deff = NULL){
+
+	w1 <- which(!is.na(var1))
+	###first proportion
+	if (is.null(p1)) p1 = sum(var1[w1]*wgt1[w1])/sum(wgt1[w1])
+	if (!is.null(wgt1)) v1 = (calculate_deff(wgt1[w1], at = p1)$moe/196)^2
+	if (!is.null(p1) & !is.null(n1) & !is.null(deff)) {
+		v1 = ((p1*(1-p1))/n1) * deff
+		v1 = 196*sqrt(v1)
+	}
+
+	w2 <- which(!is.na(var2))
+	##second proportion
+	if (is.null(p2)) p2 = sum(var2[w2]*wgt2[w2])/sum(wgt2[w2])
+	if (!is.null(wgt2)) v2 = (calculate_deff(wgt2[w2], at = p2)$moe/196)^2
+	if (!is.null(p1) & !is.null(n1) & !is.null(deff)) {
+		v2 = ((p2*(1-p2))/n2) * deff
+		v2 = 196*sqrt(v2)
+	}
+
+	##calculation
+	num = (p1 - p2)
+	denom = sqrt( v1 + v2 )
+	z = num/denom
+
+	return(paste("p =", round(abs(dnorm(z)),3)) )
+}
