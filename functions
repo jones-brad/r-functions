@@ -787,7 +787,7 @@ form_com <- function(form) {
 diff_prop <- function(var1, var2, wgt1, wgt2,
 	p1 = NULL, p2 = NULL, n1 = NULL, n2 = NULL, deff = NULL){
 
-	w1 <- which(!is.na(var1))
+	w1 <- which(!is.na(var1) & !is.na(wgt1))
 	###first proportion
 	if (is.null(p1)) p1 = sum(var1[w1]*wgt1[w1])/sum(wgt1[w1])
 	if (!is.null(wgt1)) v1 = (calculate_deff(wgt1[w1], at = p1)$moe/196)^2
@@ -796,7 +796,7 @@ diff_prop <- function(var1, var2, wgt1, wgt2,
 		v1 = 196*sqrt(v1)
 	}
 
-	w2 <- which(!is.na(var2))
+	w2 <- which(!is.na(var2) & !is.na(wgt2))
 	##second proportion
 	if (is.null(p2)) p2 = sum(var2[w2]*wgt2[w2])/sum(wgt2[w2])
 	if (!is.null(wgt2)) v2 = (calculate_deff(wgt2[w2], at = p2)$moe/196)^2
