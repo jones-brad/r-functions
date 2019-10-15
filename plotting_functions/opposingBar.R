@@ -90,7 +90,7 @@ if (addNets & n.cats == 2) {
 	for (j in 1:length(list)) {
 		if (!is.null(text.column)) {
 			fam = ifelse(write.file == "pdf", "", "demi")
-			text(xlim[2]-.05, j, text.column[j], family = fam,
+			text(xlim[2]-.05+exp.x[1], j, text.column[j], family = fam,
 				cex = .75, col = tail(col.vec, 1))
 		}
 		##skip NULL entries
