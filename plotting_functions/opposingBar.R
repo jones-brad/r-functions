@@ -16,7 +16,10 @@ opposingBar <- function(list, 	##input to plot
 
 	##set up the height of the box based on the number of elements
 	##(in reverse order; list should be ordered with total first, etc)
-	ylim <- c(length(list)+.5, ifelse(length(col.lab)>0, -.5, .5))
+	lines <- grep("\\\n", col.lab)
+	ylim <- c(length(list)+.5, ifelse(length(col.lab)>0, -.5-.5*length(lines), .5))
+	
+	
 
 
 	##open the plot window (multiplied by the resolution factor)
