@@ -90,13 +90,13 @@ if (addNets & n.cats == 2) {
 	for (j in 1:length(list)) {
 		if (!is.null(text.column)) {
 			fam = ifelse(write.file == "pdf", "", "demi")
-			text(xlim[2]-.05+exp.x[1], j, text.column[j], family = fam,
+			text(xlim[2]-.05, j, text.column[j], family = fam,
 				cex = .75, col = tail(col.vec, 1))
 		}
 		##skip NULL entries
 		fam = ifelse(write.file == "pdf", "", "fgb")
 		if (length(list[[j]]) == 0) {
-			text(xlim[1], j, names(list)[[j]], pos = 4, 
+			text(xlim[1]+exp.x[1], j, names(list)[[j]], pos = 4, 
 				family = fam, offset = -.1,
 				font = 3,
 				cex = .75)
