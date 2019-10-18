@@ -12,7 +12,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 			y = c(pos -.4, pos-.4, pos+.4, pos+.4),
 			border = NA, col = col.vec[j])
 		## write value labels
-		if (val.lab) {
+		if (val.lab[j]) {
 			if (digits == 0) mult = 100
 			if (digits > 0) mult = 1
 			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
@@ -137,7 +137,8 @@ if (write.file == "pdf") {
 			col = col.vec[j], cex = .75)
 	}
 	}
-
+	
+	if (length(val.lab)<n.cats) val.lab = rep(val.lab, n.cats)
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
 		##skip NULL entries; add italicized subheading if applicable
