@@ -156,7 +156,7 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
 spacedBar2 <- function(list,  ###input list to plot
         xmin = -.18,            ###xmin for plot (xmax is determined from input)
         col.vec,                        ###colors to plot
-        val.lab,                        ###value labels
+        val.lab = TRUE,                        ###value labels
         res = 1,                        ###resolution for plot
         plot.width = 3.2,               ###width of plot window in inches
         write.file = "no",      ###write out a file? "pdf" or "jpg"
@@ -285,11 +285,12 @@ xlim <- c(xmin, xmax)
                 family = fam,
                 cex = .75)
         x = 0
+	if (length(val.lab)==1) val.lab <- rep(val.lab, n.cats)
         for (k in 1:n.cats) {
                  
                 addBar2(x = x, val = list[[j]][k], 
                         col = col.vec[k], 
-                        val.lab = list[[j]][k] > 0,
+                        val.lab = list[[j]][k] > 0 & val.lab[k],
                         pos = j, shiftSmall = TRUE, write.file = write.file)
                 x = x + mat[j,k]
                 if (k < n.cats) x = x + space2[j,k]
