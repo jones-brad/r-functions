@@ -275,7 +275,7 @@ xlim <- c(xmin, xmax)
                 if (length(list[[j]]) == 0) {
                         
                         text(xlim[1], j, names(list)[[j]], pos = 4, 
-                                family = fam, offset = -.75,
+                                family = fam, offset = -.3,
                                 font = 3,
                                 cex = .75)
                         next
