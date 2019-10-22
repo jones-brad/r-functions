@@ -233,6 +233,35 @@ get.panel <- function(str) {
 	return(files)
 }
 
+
+#####################get latest panel wave
+get.frame <- function(str) {
+
+	waves <- list.files("S:/Methodology/Panel/Panel Waves/Frame File", 
+		pattern = str, full.names = TRUE)
+
+	regex <- paste(str, ".*?\\.sav$", sep = "")
+	files <- list.files(waves, pattern = regex,
+		full.names = TRUE)
+
+	
+
+	if (length(files)==0) {
+		files <- list.files(dir, pattern = "\\.sav$",
+			full.names = TRUE, recursive = TRUE)
+	}
+
+	if (length(files) > 1) {
+		info <- file.info(files)
+		ind <- which.max(info$mtime)
+		return(rownames(info)[ind])
+	}
+
+
+
+	return(files)
+}
+
 #########################get 5 point thermometer rating
 code.therm <- function(t) {
 	inds <- which(!is.na(t))
