@@ -52,6 +52,9 @@ readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting
 ############################Line trend
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/plotTrend.R")
 
+############################Quadrant plot
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/quadPlot.R")
+
 ####write pdf to a file and save a note
 ##output_pdf(tempfile, "/Figure 1", "Change the color of bars")
 output_pdf <- function(file, path, note = NULL, plotting_data) {
