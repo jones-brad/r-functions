@@ -53,7 +53,7 @@ readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/plotTrend.R")
 
 ############################Quadrant plot
-readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/quadPlot.R")
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/plotQuad.R")
 
 ####write pdf to a file and save a note
 ##output_pdf(tempfile, "/Figure 1", "Change the color of bars")
