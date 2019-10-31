@@ -11,13 +11,14 @@ opposingBar <- function(list, 	##input to plot
 	lab.pos = NULL,
 	text.column = NULL,
 	addNets = FALSE,
-	val.lab = TRUE,		
+	val.lab = TRUE,	
+	vert.adj = 0,
 	addVertical = FALSE) {			##label positioning
 
 	##set up the height of the box based on the number of elements
 	##(in reverse order; list should be ordered with total first, etc)
 	lines <- grep("\\\n", col.lab)
-	ylim <- c(length(list)+.5, ifelse(length(col.lab)>0, -.5-.5*length(lines), .5))
+	ylim <- c(length(list)+.5, ifelse(length(col.lab)>0, -.5-.5*length(lines)+vert.adj, .5))
 	
 	
 
