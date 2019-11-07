@@ -720,7 +720,7 @@ wxtab2 <- function(x, y, w, round = FALSE) {
 	tab1 <- table(x)
 	tab2 <- table(y)
 
-	res <- array(NA, c(length(tab1), length(tab2)))
+	res <- array(0, c(length(tab1), length(tab2)))
 	dimnames(res) <- list(names(tab1), names(tab2))
 
 	for (j in 1:length(tab1)) {
