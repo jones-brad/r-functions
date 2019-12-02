@@ -841,3 +841,36 @@ diff_prop <- function(var1, var2, wgt1, wgt2,
 
 	return(paste("p =", round(abs(dnorm(z)),3)) )
 }
+
+#####################4-way approval
+create.approval4 <- function(appr, str) {
+	appr4 <- rep(NA, length(appr))
+	app <- grep("Approv", appr)
+	dis <- grep("Disapp", appr)
+	str <- grep("Very strong", strength)
+	not <- grep("Not so strong", strength)
+	
+	###mis
+	w <- which(!is.na(appr))
+	appr4[w] <- 9
+	
+	###strong approval
+	inds <- intersect(app, str)
+	appr4[inds] <- 1
+	
+	###Not strong approval
+	inds <- intersect(app, not)
+	appr4[inds] <- 2
+	
+	###Not strong disapproval
+	inds <- intersect(dis, not)
+	appr4[inds] <- 3
+	
+	###Strong disapproval
+	inds <- intersect(dis, str)
+	appr4[inds] <- 4
+	
+	appr4 <- recode(appr4, c(1:4,9),
+		c("Str app", "App", "Dis", "Str dis", "DK/Ref"))
+	return(appr4)
+}
