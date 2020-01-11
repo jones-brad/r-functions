@@ -877,7 +877,7 @@ create.approval4 <- function(appr, str) {
 
 
 ####Expects a codebook with variable definitions
-read_ascii <- (dir = getwd(),
+read_ascii <- function(dir = getwd(),
 	data = NULL, codebook = NULL,
 	out_name = NULL) {
 
