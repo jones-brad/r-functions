@@ -879,7 +879,7 @@ create.approval4 <- function(appr, str) {
 ####Expects a codebook with variable definitions
 read_ascii <- function(dir = getwd(),
 	data = NULL, codebook = NULL,
-	out_name = NULL) {
+	out_name = NULL, return = FALSE) {
 	
 	###Identify the data file
 	if (is.null(data)) data = list.files(dir, 
@@ -929,4 +929,6 @@ read_ascii <- function(dir = getwd(),
 	if (is.null(out_name)) out_name <- gsub("\\.dat$", "", data)
 	fnm <- paste(dir, "/", out_name, ".rdat", sep = "")
 	saveRDS(odat, fnm)
+	
+	if (return) return(odat)
 }
