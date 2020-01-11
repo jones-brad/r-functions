@@ -874,3 +874,59 @@ create.approval4 <- function(appr, str) {
 		c("Str app", "App", "Dis", "Str dis", "DK/Ref"))
 	return(appr4)
 }
+
+
+####Expects a codebook with variable definitions
+read_ascii <- (dir = getwd(),
+	data = NULL, codebook = NULL,
+	out_name = NULL) {
+
+	###Identify the data file
+	if (is.null(data)) data = list.files(dir, 
+		pattern = "\\.dat$")
+
+	###Find the codebook
+	if (is.null(codebook)) codebook = list.files(dir,
+		pattern = "\\.csv$")
+	cbk <- read.csv(codebook, as.is = TRUE)
+
+	##get meta data from the codebook file
+	w <- which(cbk$name == "META")
+	cards <- cbk$card[w]
+	cbk <- cbk[-w,]
+
+	##read raw data
+	raw <- readLines(data)
+
+	##separate out data on cards
+	craw <- list()
+	inds <- rep(1:cards, length(raw)/cards)
+	for (j in 1:cards) craw[[j]] <- raw[which(inds==j)]
+
+	odat <- data.frame(id = 1:length(craw[[1]]))
+
+	##add variables from codebook
+	for (j in 1:nrow(cbk)) {
+		var <- substr(craw[[cbk$card[j]]], cbk$pos[j],
+			cbk$pos[j]+cbk$len[j]-1)
+		if (cbk$vals[j]!="") {
+			v <- strsplit(cbk$vals[j], ", ")[[1]]
+			ext <- strsplit(v, " = ")
+			##get levels and labels from codebook vals
+			levels <- labels <- NULL
+			for (k in 1:length(ext)) {
+				levels <- c(levels, as.numeric(ext[[k]][1]))
+				labels <- c(labels, ext[[k]][2])
+			}
+			var <- factor(var, levels = levels,
+				labels = labels)
+			
+		}
+		
+		odat[[cbk$name[j]]] <- var
+	}
+	
+	if (is.null(out_name)) out_name <- gsub("\\.dat$", "", data)
+	fnm <- paste(dir, "/", out_name, ".rdat", sep = "")
+	saveRDS(odat, fnm)
+}
