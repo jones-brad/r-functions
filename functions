@@ -880,7 +880,7 @@ create.approval4 <- function(appr, str) {
 read_ascii <- function(dir = getwd(),
 	data = NULL, codebook = NULL,
 	out_name = NULL) {
-
+	
 	###Identify the data file
 	if (is.null(data)) data = list.files(dir, 
 		pattern = "\\.dat$")
@@ -918,7 +918,7 @@ read_ascii <- function(dir = getwd(),
 				levels <- c(levels, as.numeric(ext[[k]][1]))
 				labels <- c(labels, ext[[k]][2])
 			}
-			var <- factor(var, levels = levels,
+			var <- factor(as.numeric(var), levels = levels,
 				labels = labels)
 			
 		}
