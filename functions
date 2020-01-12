@@ -880,14 +880,19 @@ create.approval4 <- function(appr, str) {
 read_ascii <- function(dir = getwd(),
 	data = NULL, codebook = NULL,
 	out_name = NULL, return = FALSE) {
+
+	##get original working directory
+	odir <- getwd()
+	#change directory
+	setwd(dir)
 	
 	###Identify the data file
 	if (is.null(data)) data = list.files(dir, 
-		pattern = "\\.dat$", full.names = TRUE)
+		pattern = "\\.dat$")
 
 	###Find the codebook
 	if (is.null(codebook)) codebook = list.files(dir,
-		pattern = "\\.csv$", full.names = TRUE)
+		pattern = "\\.csv$")
 	cbk <- read.csv(codebook, as.is = TRUE)
 
 	##get meta data from the codebook file
@@ -929,6 +934,9 @@ read_ascii <- function(dir = getwd(),
 	if (is.null(out_name)) out_name <- gsub("\\.dat$", "", data)
 	fnm <- paste(dir, "/", out_name, ".rdat", sep = "")
 	saveRDS(odat, fnm)
+
+	##change working directory back to original
+	setwd(odir)
 	
 	if (return) return(odat)
 }
