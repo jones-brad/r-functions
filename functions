@@ -883,11 +883,11 @@ read_ascii <- function(dir = getwd(),
 	
 	###Identify the data file
 	if (is.null(data)) data = list.files(dir, 
-		pattern = "\\.dat$")
+		pattern = "\\.dat$", full.names = TRUE)
 
 	###Find the codebook
 	if (is.null(codebook)) codebook = list.files(dir,
-		pattern = "\\.csv$")
+		pattern = "\\.csv$", full.names = TRUE)
 	cbk <- read.csv(codebook, as.is = TRUE)
 
 	##get meta data from the codebook file
