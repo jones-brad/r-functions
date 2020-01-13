@@ -111,8 +111,16 @@ if (addNets & n.cats == 2) {
 			na.rm = TRUE), na.rm = TRUE)-.02
 		if (length(which.neg)==1) lpos <- min( mat[,which.neg],
 			na.rm = TRUE) - .02
-		text(lpos+exp.x[1], j, names(list)[[j]], pos = 2, 
-                family = fam,
+		rlab <- names(list)[[j]]
+		##flag for grey sublabels
+		flag <- substr(rlab, 1, 1)
+		rcol = "black"
+		if (flag == "*") {
+			rcol = greys['dark']
+			rlab <- substr(rlab, 2, 10000)
+		}
+		text(lpos+exp.x[1], j, rlab, pos = 2, 
+                family = fam, col = rcol,
                 cex = .75)
 	x = 0
 
@@ -169,4 +177,4 @@ if (write.file != "no") {
 	dev.off()
 	return(src)
 }
-}
+} 
