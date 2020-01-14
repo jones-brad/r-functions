@@ -843,7 +843,7 @@ diff_prop <- function(var1, var2, wgt1, wgt2,
 }
 
 #####################4-way approval
-create.approval4 <- function(appr, str) {
+create.approval4 <- function(appr, strength) {
 	appr4 <- rep(NA, length(appr))
 	app <- grep("Approv", appr)
 	dis <- grep("Disapp", appr)
@@ -873,6 +873,39 @@ create.approval4 <- function(appr, str) {
 	appr4 <- recode(appr4, c(1:4,9),
 		c("Str app", "App", "Dis", "Str dis", "DK/Ref"))
 	return(appr4)
+}
+
+
+
+combine_vars <- function(var1, var2) {
+	tab <- table(var1, var2)
+	
+	##get the levels of each variable
+	lev1 <- rownames(tab)
+	lev2 <- colnames(tab)
+
+	##combine the levels
+	grid <- expand.grid(lev1, lev2)
+	grid$name <- paste(grid[[1]], grid[[2]], sep = ", ")
+
+	##remove the DK/Ref
+	dk <- grep("(ref|DK|don\\'t know)", grid$name,
+		ignore.case = TRUE)
+	if (length(dk)> 0) grid <- grid[-dk,]
+
+	##set up new variable
+	new.var <- rep(99, length(var1))
+	for (j in 1:nrow(grid)) {
+		w <- which(var1 == grid[[1]][j] &
+			var2 == grid[[2]][j])
+		new.var[w] <- j
+	}
+
+	new.var <- factor(new.var, 
+		levels = c(1:nrow(grid), 99),
+		labels = c(grid$name, "Refused"))
+
+	return(new.var)
 }
 
 
