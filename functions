@@ -528,6 +528,32 @@ get.merge <- function() {
 	return(files)
 }
 
+###Create age category variable with arbitrary number of categories
+create.agecat <- function(age, age.breaks = c(65, 50, 30)) {
+        if (class(age) == "factor") age <- as.numeric(as.character(age))
+        
+        agecat <- rep(9, length(age))
+        wh <- which(age < 99)
+        agecat[wh] <- length(age.breaks)+1
+	
+	for (j in 1:length(age.breaks)) {
+        wh <- which(age < age.breaks[j])
+	  agecat[wh] <- length(age.breaks)-j+1
+	}
+
+	rbreaks <- rev(age.breaks)
+	lab <- paste0("18-", rbreaks[1]-1)
+	for (j in 2:(length(age.breaks))) {
+		lab <- c(lab, paste(rbreaks[j-1], 
+			rbreaks[j]-1, sep = "-"))
+	}
+	lab <- c(lab, paste0(rbreaks[j], "+"), "DK/Ref")
+
+        agecat <- factor(agecat, labels = lab)
+
+        return(agecat)
+}
+
 
 ####Functions for calculating great circle distances in miles
 ####convert degrees to radians for distance calculation
