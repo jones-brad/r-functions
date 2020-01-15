@@ -18,7 +18,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
 				pos, round(vec[j]*mult, digits),
 				family = fam,
-				cex = .75, col = vcol)
+				cex = .75, col = vcol[j])
 		}
 		## increment the x position
 		x.pos <- x.pos+vec[j]
@@ -148,7 +148,8 @@ if (write.file == "pdf") {
 	}
 	}
 	
-	if (length(vcol)<n.cats) vlabcolors <- rep(vcol, n.cats)	
+	if (length(vcol)<n.cats) vlabcolors <- rep(vcol, n.cats)
+	if (length(vcol)==n.cats) vlabcolors <- vcol	
 	if (length(val.lab)<n.cats) val.lab = rep(val.lab, n.cats)
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
@@ -171,7 +172,7 @@ if (write.file == "pdf") {
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
 			addNet = addNet, netAdj = netAdj, digits = digits,
-		      	vcol = vlabcolors[j])
+		      	vcol = vlabcolors)
 	}
 
 ##Close the plot window
