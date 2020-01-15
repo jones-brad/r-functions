@@ -34,9 +34,17 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 
 	## write the label
 	fam = ifelse(write.file == "pdf", "", "fgb")
+			
+	##flag for grey sublabels
+	flag <- substr(label, 1, 1)
+	rcol = "black"
+	if (flag == "*") {
+		rcol = greys['dark']
+		label <- substr(label, 2, 10000)
+	}
 	text(0, pos, label, pos = 2, 
 		family = fam,
-		cex = .75)
+		cex = .75, col = rcol)
 }
 
 #############Label formatting #############NOT WORKING...
