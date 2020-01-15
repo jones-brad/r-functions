@@ -1,7 +1,7 @@
 ##############adding bars to the plot
 addBar <- function(vec, col.vec, val.lab = TRUE,
 	pos = 1, label = "Total", res, write.file,
-	addNet = FALSE, netAdj = .05, digits = 0) {
+	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black") {
 	
 	x.pos <- 0
 	fam <- ifelse( write.file == "pdf", "", "fgb")
@@ -18,11 +18,12 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
 				pos, round(vec[j]*mult, digits),
 				family = fam,
-				cex = .75)
+				cex = .75, col = vcol)
 		}
 		## increment the x position
 		x.pos <- x.pos+vec[j]
 		
+		## add the NET
 		if (j == length(vec) & addNet) {
 			fam = ifelse(write.file == "pdf", "", "demi")
 			if (digits == 0) mult = 100
@@ -97,6 +98,7 @@ stackedBar <- function(list, 		##data to plot
 	n.cats = NULL,			##number of categories to plot
 	addNet = FALSE,			##Add NET to bars (only helpful for subsetting)
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
+	vcol = "black",			##Value label color
 	netAdj = .05) {			##horizontal adjustment to bars
 
 	##set up the height of the box based on the number of elements
@@ -146,6 +148,7 @@ if (write.file == "pdf") {
 	}
 	}
 	
+	if (length(vcol)<n.cats) vlabcolors <- rep(vcol, n.cats)	
 	if (length(val.lab)<n.cats) val.lab = rep(val.lab, n.cats)
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
@@ -162,11 +165,13 @@ if (write.file == "pdf") {
 		##add bars
 		if (is.null(n.cats)) N <- length(list[[j]])
 		if (!is.null(n.cats)) N <- n.cats
+
 		addBar(vec = list[[j]][1:N], col.vec = col.vec, 
 			val.lab = val.lab,
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
-			addNet = addNet, netAdj = netAdj, digits = digits)
+			addNet = addNet, netAdj = netAdj, digits = digits,
+		      	vcol = vlabcolors[j])
 	}
 
 ##Close the plot window
