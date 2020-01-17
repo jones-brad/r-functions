@@ -101,10 +101,20 @@ xlim <- c(xmin, xmax)
 				cex = .75)
 			next
 		}
-		##add label
-		text(0, j, names(list)[[j]], pos = 2, 
-                family = fam,
-                cex = .75)
+
+	##add label
+	##flag for grey sublabels
+	label <- names(list)[[j]]
+	flag <- substr(label, 1, 1)
+	rcol = "black"
+	if (flag == "*") {
+		rcol = greys['dark']
+		label <- substr(label, 2, 10000)
+	}
+	text(0, j, label, pos = 2, 
+		family = fam,
+		cex = .75, col = rcol)
+
 	x = 0
 	for (k in 1:n.cats) {
 		 
