@@ -62,13 +62,13 @@ if (write.file!="no") {
 if (write.file == "jpg") {
 	src <- tempfile(fileext = ".jpg")
 	jpeg(src, width = plot.width, 
-		height = bar.width*length(list),
+		height = plot.height,
 		units = 'in', res = 1000)
 }
 if (write.file == "pdf") {
 	src <- tempfile(fileext = ".pdf")
 	pdf(src, width = plot.width,
-		height = bar.width*length(list))
+		height = plot.height)
 }
 
 }
