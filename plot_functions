@@ -61,6 +61,9 @@ readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting
 ############################Quadrant plot
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/plotQuad.R")
 
+############################Vertical bar plot
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/plotting_functions/verticalBar.R")
+
 ####write pdf to a file and save a note
 ##output_pdf(tempfile, "/Figure 1", "Change the color of bars")
 output_pdf <- function(file, path, note = NULL, plotting_data) {
