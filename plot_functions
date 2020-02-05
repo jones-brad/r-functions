@@ -30,6 +30,12 @@ thermcolors <- c("Very cold" = "#82A6BF",
 	"Somewhat warm" = "#F5D6A9",
 	"Very warm" = "#EA9E2C")
 	
+gencolors <- c("Silent" = "#377668",
+	Boomer = "#64B6AA",
+	Xer = "#E4CB83",
+	Millennial = "#D1A730",
+	"Gen Z" = "#9E7F2D")
+	
 ############################Windows fonts
 if(.Platform$OS.type == "windows") {
 	windowsFonts(fgb = windowsFont("Franklin Gothic Book"))
