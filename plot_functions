@@ -106,7 +106,7 @@ output_file <- function(file, path, note = NULL, plotting_data) {
 }
 
 write.data <- function(plotting_data, dir) {
-	if (class(plotting_data) != "list") write.csv(plotting_data*100, 
+	if (class(plotting_data) != "list") write.csv(plotting_data, 
 		paste(dir, "plot_data.csv", sep = "/"))
 	if (class(plotting_data) == "list") {
 
