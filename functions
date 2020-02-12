@@ -549,7 +549,8 @@ create.agecat <- function(age, age.breaks = c(65, 50, 30)) {
         }
         lab <- c(lab, paste0(rbreaks[j], "+"), "DK/Ref")
 
-        agecat <- factor(agecat, labels = lab)
+        agecat <- factor(agecat, levels = c(1:(length(age.breaks)+1), 99),
+		labels = lab)
 
         return(agecat)
 }
