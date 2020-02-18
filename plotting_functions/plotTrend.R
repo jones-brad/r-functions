@@ -20,7 +20,7 @@ plotTrend <- function(to.plot,
 	point.size = 1.2,
 	lab.points = NULL,
 	lab.points.pos = NULL,
-		      
+	add.lines = NULL,	      
 	add.value.labels = TRUE) {
 
 	##open the plot window (multiplied by the resolution factor)
@@ -114,7 +114,9 @@ if (write.file == "pdf") {
 		}
 	}
 
-
+	if (!is.null(add.lines)) {
+		abline(v = add.lines, col = 'grey'
+	}
 
 	if (length(lab.pos)>0) {
 		for (j in 1:length(lab.pos)) {
