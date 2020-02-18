@@ -115,7 +115,7 @@ if (write.file == "pdf") {
 	}
 
 	if (!is.null(add.lines)) {
-		abline(v = add.lines, col = 'grey'
+		abline(v = add.lines, col = 'grey')
 	}
 
 	if (length(lab.pos)>0) {
