@@ -42,7 +42,12 @@ if (write.file == "pdf") {
 
 }
 
-	if (is.null(ord)) ord <- 1:ncol(to.plot)	
+	if (is.null(ord)) ord <- 1:ncol(to.plot)
+	
+	##Reorder the data if it is in the wrong order
+	sort <- order(x, decreasing = TRUE)
+	x <- x[sort]
+	to.plot <- to.plot[sort,]
 
 	##Open plot window
 	par(mar = c(1.7,.1,.1,.1))
@@ -87,10 +92,12 @@ if (write.file == "pdf") {
 	if (!is.null(add.scatter)) {
 		scatter_col <- ifelse(is.null(add.scatter$col), "grey", add.scatter$col)
 		scatter_cex <- ifelse(is.null(add.scatter$cex), 1, add.scatter$cex)
+		scatter_pch <- ifelse(is.null(add.scatter$pch), 20, add.scatter$pch)
 		
 		points(add.scatter$coords[,1],
 		       add.scatter$coords[,2],
-		       col = scatter_col, scatter_cex = cex)
+		       col = scatter_col, scatter_cex = cex,
+		       pch = scatter_pch)
 	}
 	
 	for (j in ord) {
