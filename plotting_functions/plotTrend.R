@@ -96,7 +96,7 @@ if (write.file == "pdf") {
 		
 		points(add.scatter$coords[,1],
 		       add.scatter$coords[,2],
-		       col = scatter_col, scatter_cex = cex,
+		       col = scatter_col, cex = scatter_cex,
 		       pch = scatter_pch)
 	}
 	
