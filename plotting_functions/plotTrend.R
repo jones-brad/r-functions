@@ -20,7 +20,8 @@ plotTrend <- function(to.plot,
 	point.size = 1.2,
 	lab.points = NULL,
 	lab.points.pos = NULL,
-	add.lines = NULL,	      
+	add.lines = NULL,
+	add.scatter = NULL,
 	add.value.labels = TRUE) {
 
 	##open the plot window (multiplied by the resolution factor)
@@ -78,7 +79,20 @@ if (write.file == "pdf") {
 		lab.points = c(1, nrow(to.plot))
 		lab.points.pos = c(4, 2)
 	}
-
+	
+	##Add background elements
+	if (!is.null(add.lines)) {
+		abline(v = add.lines, col = 'grey')
+	}
+	if (!is.null(add.scatter)) {
+		scatter_col <- ifelse(is.null(add.scatter$col), "grey", add.scatter$col)
+		scatter_cex <- ifelse(is.null(add.scatter$cex), 1, add.scatter$cex)
+		
+		points(add.scatter$coords[,1],
+		       add.scatter$coords[,2],
+		       col = scatter_col, scatter_cex = cex)
+	}
+	
 	for (j in ord) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
 
@@ -112,10 +126,6 @@ if (write.file == "pdf") {
 				hollow = hollow[k], cex = ptsz)
 		}
 		}
-	}
-
-	if (!is.null(add.lines)) {
-		abline(v = add.lines, col = 'grey')
 	}
 
 	if (length(lab.pos)>0) {
