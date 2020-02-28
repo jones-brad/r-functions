@@ -359,6 +359,37 @@ delta.therm2 <- function(t1, t2, cuts = c(25,5,-5,-25)) {
 	return(delta)
 }
 
+####Rolling average function
+roll_avg <- function(x, y, window = 5) {
+	start <- 1
+	end <- window
+	res <- NULL
+	while (end <= length(x)) {
+		inds <- start:end
+		res <- rbind(res, 
+			c(mean(x[inds]), mean(y[inds])))
+		start <- start+1
+		end <- end+1
+	}
+	return(res)
+}
+
+####Rolling median function
+roll_med <- function(x, y, window = 5) {
+	start <- 1
+	end <- window
+	res <- NULL
+	while (end <= length(x)) {
+		inds <- start:end
+		res <- rbind(res, 
+			c(mean(x[inds]), median(y[inds])))
+		start <- start+1
+		end <- end+1
+	}
+	return(res)
+}
+
+
 
 test.diff <- function(x1, w1, x2, w2) {
 	wh <- which(!is.na(w1))
