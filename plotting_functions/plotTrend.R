@@ -116,8 +116,6 @@ if (write.file == "pdf") {
 
 
         ##Add value labels
-	#swap columns
-	val.lab.adj <- val.lab.adj[,2:1]
         if (add.value.labels) {
         for (k in 1:length(lab.points)) {
                 lp <- lab.points[k]
