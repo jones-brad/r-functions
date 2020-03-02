@@ -27,6 +27,10 @@ plotTrend <- function(to.plot,
 
         ##open the plot window (multiplied by the resolution factor)
         dev.new(width=plot.width*res, height=plot.height*res)
+	
+	##Re order value label adjustment columns
+	if (!is.null(val.lab.adj)) val.lab.adj <- 
+		val.lab.adj[,ncol(val.lab.adj):1]
 
 ##save to file
 if (write.file != "no") {
