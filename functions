@@ -1031,3 +1031,12 @@ read_ascii <- function(dir = getwd(),
 	
 	if (return) return(odat)
 }
+
+
+#############Format a haven read spss variable to a standard factor
+to_factor <- function(var) {
+	lev <- attr(var, 'labels')
+	fac <- factor(var, levels = lev,
+		labels = names(lev))
+	return(fac)
+}
