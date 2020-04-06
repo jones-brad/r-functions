@@ -561,8 +561,12 @@ get.merge <- function() {
 
 ###Create age category variable with arbitrary number of categories
 create.agecat <- function(age, age.breaks = c(65, 50, 30)) {
-        if (class(age) == "factor") age <- as.numeric(as.character(age))
-        
+        if (class(age) == "factor") {
+		age <- as.character(age)
+		age <- gsub("[^0-9]", "", age)
+		age <- as.numeric(age)
+        }
+	
         agecat <- rep(99, length(age))
         wh <- which(age < 99)
         agecat[wh] <- length(age.breaks)+1
