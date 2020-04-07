@@ -62,17 +62,18 @@ if (autoAxis) {
 }
 
 
+	##run through the list to add the dots
+	if (length(hollow)==1) hollow <- rep(hollow, ncol(array))
+
 	if (!is.null(legend)) {
 	for (j in 1:length(legend)) {
 		fam <- ifelse(write.file == "pdf", "", "demi")
-		addDot(leg.pos[j], 0, col = col.vec[j], hollow = hollow)
+		addDot(leg.pos[j], 0, col = col.vec[j], hollow = hollow[j])
 		text(leg.pos[j], 0, legend[j], col = col.vec[j],
 			family = fam, cex = .75, pos = 4)
 	}
 	}
 
-	##run through the list to add the dots
-	if (length(hollow)==1) hollow <- rep(hollow, ncol(array))
 	for (j in 1:nrow(array)) {
 		fam = ifelse(write.file == "pdf", "", "fgb")
 		if (sum(is.na(array[j,]))==ncol(array)) {
