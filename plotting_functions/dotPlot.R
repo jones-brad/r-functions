@@ -71,7 +71,8 @@ if (autoAxis) {
 	}
 	}
 
-	##run through the list to add the bars
+	##run through the list to add the dots
+	if (length(hollow)==1) hollow <- rep(hollow, ncol(array))
 	for (j in 1:nrow(array)) {
 		fam = ifelse(write.file == "pdf", "", "fgb")
 		if (sum(is.na(array[j,]))==ncol(array)) {
@@ -87,7 +88,7 @@ if (autoAxis) {
 	for (k in 1:ncol(array)) {
 		##add dots
 		addDot(array[j,k]*100, j, col = col.vec[k],
-			hollow = hollow)
+			hollow = hollow[k])
 	}
 	}
 
