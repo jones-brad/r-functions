@@ -8,6 +8,7 @@ spacedBar <- function(list,	###input list to plot
 	bar.width = .5,		###width of bars (determines the height of the plot)
 	n.cats = 4, 		###number of categories to plot (to exclude DK/Refused mostly)
 	col.lab = NULL, 		###column labels
+	center.on.which.row = NULL,
 	spaces = NULL) {		###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
 
 	##set up the height of the box based on the number of elements
@@ -78,14 +79,29 @@ xlim <- c(xmin, xmax)
 	if (length(col.lab)>0) {
 		for (j in 1:length(col.lab)) {
 			pos[j] <- x.pos
+			sp = 0
 			fam = ifelse(write.file == "pdf", "", "demi")
-			text(x.pos + (max(mat[,j], na.rm = TRUE)/2), -.25,
+			if (is.null(center.on.which.row)) { 
+				text(x.pos + (max(mat[,j], na.rm = TRUE)/2), -.25,
 				col.lab[j], family = fam, col = col.vec[j],
 				cex = .75)
+				x.plus <- (max(mat[,j], na.rm = TRUE))
+			}
+			if (!is.null(center.on.which.row)) {
+				 text(x.pos + 
+				mat[center.on.which.row,j]/2, -.25,
+				col.lab[j], family = fam, col = col.vec[j],
+				cex = .75)
+				x.plus <- mat[center.on.which.row,j]
+				if (j < length(col.lab)) sp <- space[center.on.which.row,j]
+			}
+			
+			
+
 			if (is.null(spaces)) x.pos <- 
-				x.pos + max(mat[,j], na.rm = TRUE) +.05
+				x.pos + x.plus + sp
 			if (!is.null(spaces)) x.pos <- 
-				x.pos + max(mat[,j], na.rm = TRUE) + spaces[j]
+				x.pos + x.plus + spaces[j]
 		}
 	}
 
