@@ -96,7 +96,7 @@ output_file <- function(file, path, note = NULL, plotting_data) {
 		}
 	}
 
-	dir.create(dir)
+	dir.create(dir, recursive = TRUE)
 	file.copy(from = file, to = dir)
 	
 	if (!is.null(note)) writeLines(note, 
