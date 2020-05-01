@@ -1055,3 +1055,63 @@ to_factor <- function(var) {
 		labels = names(lev))
 	return(fac)
 }
+
+
+###################Write excel docs from pew_methods
+df_list_to_xlsx = function (df_list, sheet_name, outfile, overwrite = TRUE, label_list = NULL, 
+    title = NULL, borders = "surrounding") 
+{
+	require("openxlsx")
+    wb <- createWorkbook()
+    if (any(str_detect(sheet_name, "\\/|\\\\|\\?|:|\\*|\\[|\\]"))) {
+        warning("Excel sheet names cannot contain the characters :, /, \\, ?, *, [ or ]. These characters will automatically be removed from sheet names.")
+        sheet_name <- str_replace_all(sheet_name, "\\/|\\\\|\\?|:|\\*|\\[|\\]", 
+            " ")
+    }
+    if (any(nchar(sheet_name) > 31)) {
+        warning("Excel sheet names cannot contain more than 31 characters. These names will automatically be cut down to 31 characters.")
+        sheet_name <- str_sub(sheet_name, start = 1, end = 31)
+    }
+    if (length(sheet_name) == 1) {
+        df_list <- list(df_list)
+        if (!is.null(label_list)) {
+            label_list <- list(label_list)
+        }
+    }
+    if (!is.null(title)) {
+        if (length(title) != length(df_list)) 
+            stop("df_list and title should both be as long as the number of sheets needed")
+    }
+    if (!is.null(label_list)) {
+        if (length(label_list) != length(df_list)) 
+            stop("label_list and title should both be as long as the number of sheets needed")
+    }
+    for (i in 1:length(df_list)) {
+        addWorksheet(wb, sheetName = sheet_name[i])
+        if (!is.null(title)) {
+            writeData(wb, sheet = sheet_name[i], x = title[i], 
+                startCol = 1, startRow = 1)
+        }
+        sr <- ifelse(!is.null(title), 3, 1)
+        if (is.null(label_list)) {
+            for (j in 1:length(df_list[[i]])) {
+                writeData(wb, sheet = sheet_name[i], x = df_list[[i]][[j]], 
+                  startCol = 1, startRow = sr, borders = borders)
+                sr <- sr + nrow(df_list[[i]][[j]]) + 2
+            }
+        }
+        else if (!is.null(label_list)) {
+            if (length(df_list[[i]]) != length(label_list[[i]])) {
+                stop("The list of dataframes and list of labels in THIS sheet should be the same length.")
+            }
+            for (j in 1:length(df_list[[i]])) {
+                writeData(wb, sheet = sheet_name[i], x = label_list[[i]][[j]], 
+                  startCol = 1, startRow = sr)
+                writeData(wb, sheet = sheet_name[i], x = df_list[[i]][[j]], 
+                  startCol = 1, startRow = sr + 1, borders = borders)
+                sr <- sr + nrow(df_list[[i]][[j]]) + 3
+            }
+        }
+    }
+    saveWorkbook(wb, file = outfile, overwrite = overwrite)
+}
