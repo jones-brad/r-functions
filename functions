@@ -1063,11 +1063,7 @@ df_list_to_xlsx = function (df_list, sheet_name, outfile, overwrite = TRUE, labe
 {
 	require("openxlsx")
     wb <- createWorkbook()
-    if (any(str_detect(sheet_name, "\\/|\\\\|\\?|:|\\*|\\[|\\]"))) {
-        warning("Excel sheet names cannot contain the characters :, /, \\, ?, *, [ or ]. These characters will automatically be removed from sheet names.")
-        sheet_name <- str_replace_all(sheet_name, "\\/|\\\\|\\?|:|\\*|\\[|\\]", 
-            " ")
-    }
+
     if (any(nchar(sheet_name) > 31)) {
         warning("Excel sheet names cannot contain more than 31 characters. These names will automatically be cut down to 31 characters.")
         sheet_name <- str_sub(sheet_name, start = 1, end = 31)
