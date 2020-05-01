@@ -86,7 +86,8 @@ output_pdf <- function(file, path, note = NULL, plotting_data) {
 }
 
 
-output_file <- function(file, path, note = NULL, plotting_data) {
+output_file <- function(file, path, note = NULL, plotting_data,
+	csv_nm = NULL) {
 	dir <- paste( getwd(), path, sep = "")
 
 	if (dir.exists(dir)) {
@@ -102,12 +103,13 @@ output_file <- function(file, path, note = NULL, plotting_data) {
 	if (!is.null(note)) writeLines(note, 
 		paste(dir, "notes.txt", sep = "/"))
 
-	write.data(plotting_data, dir = dir)
+	write.data(plotting_data, dir = dir, name = csv_nm)
 }
 
-write.data <- function(plotting_data, dir) {
+write.data <- function(plotting_data, dir, name = NULL) {
+	if (is.null(name)) name = "plot_data.csv"
 	if (class(plotting_data) != "list") write.csv(plotting_data, 
-		paste(dir, "plot_data.csv", sep = "/"))
+		paste(dir, name, sep = "/"))
 	if (class(plotting_data) == "list") {
 
 		ncols <- 0
@@ -127,7 +129,7 @@ write.data <- function(plotting_data, dir) {
 		if (length(dn[[2]]) == ncol(array)) colnames(array) <- dn[[2]]
 
 		write.csv(array, 
-			paste(dir, "plot_data.csv", sep = "/"))
+			paste(dir, name, sep = "/"))
 	}
 }
 
