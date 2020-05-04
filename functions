@@ -1127,9 +1127,14 @@ for (j in 1:length(files)) {
 	master.list[[j]] <- list(sheet)
 }
 
-slash <- regexpr("/", names)
-names <- substr(names, slash + 1, 1000)
-names <- gsub("\\.csv$", "", names)
+cond <- TRUE
+while (cond) {
+	slash <- regexpr("/", names)
+	if (slash[1] == -1) cond = FALSE
+	names <- substr(names, slash + 1, 1000)
+	names <- gsub("\\.csv$", "", names)
+}
+
 fnm <- paste(path, nm)
 df_list_to_xlsx(master.list, names, 
 	fnm, 
