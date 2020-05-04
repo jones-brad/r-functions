@@ -1111,3 +1111,29 @@ df_list_to_xlsx = function (df_list, sheet_name, outfile, overwrite = TRUE, labe
     }
     saveWorkbook(wb, file = outfile, overwrite = overwrite)
 }
+
+
+#####################Compile data into a single spreadsheet
+compile_data <- function(path, nm) {
+
+files <- list.files(path, 
+	pattern = "\\.csv$", recursive = TRUE, full.name = TRUE)
+names <- list.files(path, 
+	pattern = "\\.csv$", recursive = TRUE)
+
+master.list <- list()
+for (j in 1:length(files)) {
+	sheet <- read.csv(files[j])
+	master.list[[j]] <- list(sheet)
+}
+
+slash <- regexpr("/", names)
+names <- substr(names, slash + 1, 1000)
+names <- gsub("\\.csv$", "", names)
+fnm <- paste(path, nm)
+df_list_to_xlsx(master.list, names, 
+	fnm, 
+	borders = "none")
+
+
+}
