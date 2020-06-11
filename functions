@@ -1142,3 +1142,11 @@ df_list_to_xlsx(master.list, names,
 
 
 }
+
+#####################get latest panel wave from the RStudio server
+get.panel.server <- function(str) {
+  
+  waves <- list.files("~/shared/atp_data", 
+                      pattern = str, full.names = TRUE)
+  return(files)
+}
