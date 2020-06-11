@@ -1148,5 +1148,5 @@ get.panel.server <- function(str) {
   
   waves <- list.files("~/shared/atp_data", 
                       pattern = str, full.names = TRUE)
-  return(files)
+  return(waves)
 }
