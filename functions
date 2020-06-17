@@ -413,16 +413,27 @@ test.diff <- function(x1, w1, x2, w2) {
 }
 
 
-create.party2 <- function(party, partyln) {
+create.party2 <- function(party, partyln, partystr = NULL) {
 
 	wh <- which(is.na(party)&is.na(partyln))
 	party5 <- rep("3. Ind/Other", length(party))
 	party5[wh] <- NA
 
+
 	w <- grep("republic", party, ignore.case=TRUE)
 	party5[w] <- "5. Republican"
+	if (!is.null(partystr)) {
+		w2 <- grep("strong", party, ignore.case=TRUE)
+		inds <- intersect(w, w2)
+		party5[inds] <- "6. Strong Rep"
+	}
 	w <- grep("democrat", party, ignore.case=TRUE)
 	party5[w] <- "1. Democrat"
+	if (!is.null(partystr)) {
+		w2 <- grep("strong", party, ignore.case=TRUE)
+		inds <- intersect(w, w2)
+		party5[inds] <- "0. Strong Dem"
+	}
 	w <- grep("republic", partyln, ignore.case=TRUE)
 	party5[w] <- "4. Lean Rep"
 	w <- grep("democrat", partyln, ignore.case=TRUE)
