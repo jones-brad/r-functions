@@ -423,14 +423,14 @@ create.party2 <- function(party, partyln, partystr = NULL) {
 	w <- grep("republic", party, ignore.case=TRUE)
 	party5[w] <- "5. Republican"
 	if (!is.null(partystr)) {
-		w2 <- grep("strong", party, ignore.case=TRUE)
+		w2 <- grep("^strong", partystr, ignore.case=TRUE)
 		inds <- intersect(w, w2)
 		party5[inds] <- "6. Strong Rep"
 	}
 	w <- grep("democrat", party, ignore.case=TRUE)
 	party5[w] <- "1. Democrat"
 	if (!is.null(partystr)) {
-		w2 <- grep("strong", party, ignore.case=TRUE)
+		w2 <- grep("^strong", partystr, ignore.case=TRUE)
 		inds <- intersect(w, w2)
 		party5[inds] <- "0. Strong Dem"
 	}
