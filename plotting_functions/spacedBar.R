@@ -308,7 +308,7 @@ xlim <- c(xmin, xmax)
                         next
                 }
                 ##add label
-                text(0, j, names(list)[[j]], pos = 2, 
+                text(0, j+lab.buff, names(list)[[j]], pos = 2, 
                 family = fam,
                 cex = .75)
         x = 0
