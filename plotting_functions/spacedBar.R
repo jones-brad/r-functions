@@ -289,7 +289,7 @@ xlim <- c(xmin, xmax)
 	if (!is.null(lab.pos)) {
 		for (j in 1:length(col.lab)) {
 			fam = ifelse(write.file == "pdf", "", "demi")
-                        text(lab.pos[j], -.25 + lab.buff/2,
+                        text(lab.pos[j], -.25 + lab.buff*.1,
                                 col.lab[j], family = fam, col = col.vec[j],
                                 cex = .75)
 		}
@@ -301,14 +301,14 @@ xlim <- c(xmin, xmax)
                 ##skip NULL entries
                 if (length(list[[j]]) == 0) {
                         
-                        text(xlim[1], j+lab.buff/2, names(list)[[j]], pos = 4, 
+                        text(xlim[1], j+lab.buff*.9, names(list)[[j]], pos = 4, 
                                 family = fam, offset = -.3,
                                 font = 3,
                                 cex = .75)
                         next
                 }
                 ##add label
-                text(0, j+lab.buff/2, names(list)[[j]], pos = 2, 
+                text(0, j+lab.buff*.9, names(list)[[j]], pos = 2, 
                 family = fam,
                 cex = .75)
         x = 0
@@ -318,7 +318,7 @@ xlim <- c(xmin, xmax)
                 addBar2(x = x, val = list[[j]][k], 
                         col = col.vec[k], 
                         val.lab = list[[j]][k] > 0 & val.lab[k],
-                        pos = j+lab.buff/2, shiftSmall = TRUE, write.file = write.file)
+                        pos = j+lab.buff*.9, shiftSmall = TRUE, write.file = write.file)
                 x = x + mat[j,k]
                 if (k < n.cats) x = x + space2[j,k]
         }
