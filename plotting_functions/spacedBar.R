@@ -190,6 +190,7 @@ spacedBar2 <- function(list,  ###input list to plot
         n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
         col.lab = NULL,                 ###column labels
 	lab.pos = NULL,
+	lab.buff = 0,	       
         spaces = NULL,
 	groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
 
@@ -198,7 +199,7 @@ spacedBar2 <- function(list,  ###input list to plot
         ymax <- ifelse(length(col.lab)>0, -.5, .5)
         if (length(col.lab)>0) {
                 i <- grep("\\n", col.lab)
-                if (length(i) > 0) ymax = -.75
+                if (length(i) > 0) ymax = -.75 - lab.buff
         }
 
         ylim <- c(length(list)+.5, ymax)
@@ -268,7 +269,7 @@ xlim <- c(xmin, xmax)
                 xlab = '', ylab = '')
 
 
-        x.pos <- 0
+	x.pos <- 0
         pos <- rep(NA, 3)
         ##Add column labels
         if (length(col.lab)>0 & is.null(lab.pos)) {
