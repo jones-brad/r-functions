@@ -199,10 +199,10 @@ spacedBar2 <- function(list,  ###input list to plot
         ymax <- ifelse(length(col.lab)>0, -.5, .5)
         if (length(col.lab)>0) {
                 i <- grep("\\n", col.lab)
-                if (length(i) > 0) ymax = -.75 - lab.buff
+                if (length(i) > 0) ymax = -.75
         }
 
-        ylim <- c(length(list)+.5, ymax)
+        ylim <- c(length(list)+.5+lab.buff, ymax)
 
 
         ##open the plot window (multiplied by the resolution factor)
@@ -301,7 +301,7 @@ xlim <- c(xmin, xmax)
                 ##skip NULL entries
                 if (length(list[[j]]) == 0) {
                         
-                        text(xlim[1], j, names(list)[[j]], pos = 4, 
+                        text(xlim[1], j+lab.buff, names(list)[[j]], pos = 4, 
                                 family = fam, offset = -.3,
                                 font = 3,
                                 cex = .75)
@@ -318,7 +318,7 @@ xlim <- c(xmin, xmax)
                 addBar2(x = x, val = list[[j]][k], 
                         col = col.vec[k], 
                         val.lab = list[[j]][k] > 0 & val.lab[k],
-                        pos = j, shiftSmall = TRUE, write.file = write.file)
+                        pos = j+lab.buff, shiftSmall = TRUE, write.file = write.file)
                 x = x + mat[j,k]
                 if (k < n.cats) x = x + space2[j,k]
         }
