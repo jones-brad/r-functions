@@ -1061,7 +1061,7 @@ read_ascii <- function(dir = getwd(),
 
 #############Format a haven read spss variable to a standard factor
 to_factor <- function(var) {
-	if (class(var) == "factor") return(var)
+	if (class(var)[1] != "haven_labelled") return(var)
 	lev <- attr(var, 'labels')
 	fac <- factor(var, levels = lev,
 		labels = names(lev))
