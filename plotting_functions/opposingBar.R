@@ -83,7 +83,7 @@ if (addNets & n.cats == 2) {
 	##Add column labels
 	if (length(col.lab)>0) {
 		for (j in 1:length(col.lab)) {
-			fam = ifelse(write.file == "pdf", "", "demi")
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			text(lab.pos[j], -.2-.2*length(lines),
 				col.lab[j], family = fam, col = col.vec[j],
 				cex = .75)
@@ -93,12 +93,12 @@ if (addNets & n.cats == 2) {
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
 		if (!is.null(text.column)) {
-			fam = ifelse(write.file == "pdf", "", "demi")
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			text(xlim[2]-.05, j, text.column[j], family = fam,
 				cex = .75, col = tail(col.vec, 1))
 		}
 		##skip NULL entries
-		fam = ifelse(write.file == "pdf", "", "fgb")
+		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (length(list[[j]]) == 0) {
 			text(xlim[1]+exp.x[1], j, names(list)[[j]], pos = 4, 
 				family = fam, offset = -.1,
@@ -155,7 +155,7 @@ if (addNets & n.cats == 2) {
 	}
 
 	if (addNets) {
-		fam = ifelse(write.file == "pdf", "", "demi")
+		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 		for (j in 1:length(list)) {
 			text( x = nets[j,1]-.13, y = j,
 				abs( round(nets[j,1]*100) ),
