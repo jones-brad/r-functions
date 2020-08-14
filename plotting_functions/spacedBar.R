@@ -101,7 +101,7 @@ xlim <- c(xmin, xmax)
 			if (is.null(spaces)) x.pos <- 
 				x.pos + x.plus + sp
 			if (!is.null(spaces)) x.pos <- 
-				x.pos + x.plus + spaces[j]
+				x.pos + x.plus + spaces[j]*2
 		}
 	}
 
