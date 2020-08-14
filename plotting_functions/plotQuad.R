@@ -11,7 +11,7 @@ plotQuad <- function(tab,
 	if (format == 'jpg') {
 		src <- tempfile(fileext = ".jpg")
 		jpeg(src, width = 2.1, height = 2.1, units = "in", res = 1000)
-		fam = 'fgb'
+		fam = 'Franklin Gothic Book'
 	}
 	if (format == 'pdf') {
 		src <- tempfile(fileext = ".pdf")
@@ -21,7 +21,7 @@ plotQuad <- function(tab,
 	if (format == 'no') {
 		dev.off()
 		dev.new(width = 2.1, height = 2.1)
-		fam = 'fgb'
+		fam = 'Franklin Gothic Book'
 	}
 
 	par(mar = rep(.1, 4))
