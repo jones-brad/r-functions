@@ -96,12 +96,7 @@ xlim <- c(xmin, xmax)
 				if (j < length(col.lab)) sp <- space[center.on.which.row,j]
 			}
 			
-			
-
-			if (is.null(spaces)) x.pos <- 
-				x.pos + x.plus + sp
-			if (!is.null(spaces)) x.pos <- 
-				x.pos + x.plus + spaces[j]*2
+			x.pos <- x.pos + x.plus + sp
 		}
 	}
 
