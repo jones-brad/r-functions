@@ -56,7 +56,7 @@ if (write.file == "pdf") {
 
         ##Open plot window
         par(mar = c(1.7,.1,.1,.1))
-        fam <- ifelse(write.file == "pdf", "", "fgb")
+        fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 
         plot(0,0, pch = '', xlim = xlim+xadj, ylim = ylim,
                 axes = FALSE, xlab = '', ylab = '',
@@ -106,7 +106,7 @@ if (write.file == "pdf") {
         }
         
         for (j in ord) {
-                fam <- ifelse(write.file == "pdf", "", "demi")
+                fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 
                 ##Add trend lines
                 for (k in 2:length(to.plot[,j])) {
@@ -142,7 +142,7 @@ if (write.file == "pdf") {
 
         if (length(lab.pos)>0) {
                 for (j in 1:length(lab.pos)) {
-                        fam <- ifelse(write.file == "pdf", "", "demi")
+                        fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
                         pos <- lab.pos[[j]]
                         text(pos[1], pos[2], labels[j],
                                 family = fam,
@@ -153,7 +153,7 @@ if (write.file == "pdf") {
 
 	if (!is.null(add.legend)) {
 		leg <- sort(ord)
-		fam <- ifelse(write.file == "pdf", "", "fgb")
+		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		op <- par(family = fam)
 		legend(x = sum(xlim/2), y = ylim[2], xjust = .5, 
 			add.legend$labels, horiz = TRUE,
