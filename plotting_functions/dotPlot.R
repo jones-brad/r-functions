@@ -55,7 +55,7 @@ if (autoAxis) {
 	axis(1, at = tick.pos, labels = NA,
 		cex.axis = .75, col = grey(.4), tcl = -.4)
 
-	fam <- ifelse(write.file == "pdf", "", "fgb")
+	fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 
 	axis(1, at = tick.pos, family = fam,
 		cex.axis = .75, lwd = 0, line = -.5)
@@ -67,7 +67,7 @@ if (autoAxis) {
 
 	if (!is.null(legend)) {
 	for (j in 1:length(legend)) {
-		fam <- ifelse(write.file == "pdf", "", "demi")
+		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 		addDot(leg.pos[j], 0, col = col.vec[j], hollow = hollow[j])
 		text(leg.pos[j], 0, legend[j], col = col.vec[j],
 			family = fam, cex = .75, pos = 4)
@@ -75,7 +75,7 @@ if (autoAxis) {
 	}
 
 	for (j in 1:nrow(array)) {
-		fam = ifelse(write.file == "pdf", "", "fgb")
+		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (sum(is.na(array[j,]))==ncol(array)) {
 			 text(xlim[1], j, 
 				rownames(array)[j], pos = 4, 
@@ -94,7 +94,7 @@ if (autoAxis) {
 	}
 
 	##add value labels to the first and last in each row
-	fam = ifelse(write.file == "pdf", "", "demi")
+	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 	for (j in 1:nrow(array)) {
 		if (is.na(array[j,1])) next
 		##min label
