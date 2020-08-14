@@ -80,7 +80,7 @@ xlim <- c(xmin, xmax)
 		for (j in 1:length(col.lab)) {
 			pos[j] <- x.pos
 			sp = 0
-			fam = ifelse(write.file == "pdf", "", "demi")
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			if (is.null(center.on.which.row)) { 
 				text(x.pos + (max(mat[,j], na.rm = TRUE)/2), -.25,
 				col.lab[j], family = fam, col = col.vec[j],
@@ -107,7 +107,7 @@ xlim <- c(xmin, xmax)
 
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
-		fam = ifelse(write.file == "pdf", "", "fgb")
+		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		##skip NULL entries
 		if (length(list[[j]]) == 0) {
 			
@@ -153,7 +153,7 @@ if (write.file != "no") {
 addBar2 <- function(x, y, val, col, val.lab = TRUE,
 	pos = 1, shiftSmall = FALSE, write.file) {
 	
-	fam = ifelse(write.file == "pdf", "", "fgb")
+	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 	polygon( x = c(x, x+val, x+val, x),
 		y = c(pos -.4, pos-.4, pos+.4, pos+.4),
 		border = NA, col = col)
@@ -275,7 +275,7 @@ xlim <- c(xmin, xmax)
         if (length(col.lab)>0 & is.null(lab.pos)) {
                 for (j in 1:length(col.lab)) {
                         pos[j] <- x.pos
-                        fam = ifelse(write.file == "pdf", "", "demi")
+                        fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
                         text(x.pos + (max(mat[,j], na.rm = TRUE)/2), -.25,
                                 col.lab[j], family = fam, col = col.vec[j],
                                 cex = .75)
@@ -288,7 +288,7 @@ xlim <- c(xmin, xmax)
 	
 	if (!is.null(lab.pos)) {
 		for (j in 1:length(col.lab)) {
-			fam = ifelse(write.file == "pdf", "", "demi")
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
                         text(lab.pos[j], -.25 + lab.buff*.1,
                                 col.lab[j], family = fam, col = col.vec[j],
                                 cex = .75)
@@ -297,7 +297,7 @@ xlim <- c(xmin, xmax)
 
         ##run through the list to add the bars
         for (j in 1:length(list)) {
-                fam = ifelse(write.file == "pdf", "", "fgb")
+                fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
                 ##skip NULL entries
                 if (length(list[[j]]) == 0) {
                         
