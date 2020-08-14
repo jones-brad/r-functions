@@ -6,7 +6,7 @@ addVBar <- function(vec, col.vec, val.lab = TRUE,
 	
 	adj <- .5*(1-whiteSpace)
 	y.pos <- 0
-	fam <- ifelse( write.file == "pdf", "", "fgb")
+	fam <- ifelse( write.file == "pdf", "", "Franklin Gothic Book")
 	for (j in 1:length(vec)) {
 		## add the bars
 		polygon( x = c(pos-adj, pos + adj,
@@ -28,7 +28,7 @@ addVBar <- function(vec, col.vec, val.lab = TRUE,
 	}
 
 	## write the label
-	fam = ifelse(write.file == "pdf", "", "fgb")
+	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 			
 	text(pos, 0, label, pos = 1, 
 		family = fam,
