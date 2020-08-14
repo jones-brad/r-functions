@@ -4,7 +4,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black") {
 	
 	x.pos <- 0
-	fam <- ifelse( write.file == "pdf", "", "fgb")
+	fam <- ifelse( write.file == "pdf", "", "Franklin Gothic Book")
 	for (j in 1:length(vec)) {
 		## add the bars
 		polygon( x = c(x.pos, x.pos + vec[j],
@@ -25,7 +25,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 		
 		## add the NET
 		if (j == length(vec) & addNet) {
-			fam = ifelse(write.file == "pdf", "", "demi")
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			if (digits == 0) mult = 100
 			if (digits > 0) mult = 1
 			text( x.pos + netAdj, pos, round(sum(vec)*mult, digits),
@@ -34,7 +34,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 	}
 
 	## write the label
-	fam = ifelse(write.file == "pdf", "", "fgb")
+	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 			
 	##flag for grey sublabels
 	flag <- substr(label, 1, 1)
@@ -137,7 +137,7 @@ if (write.file == "pdf") {
 
 	##Add data to the plot window
 	if (!is.null(col.lab)) {
-		fam <- ifelse(write.file == "pdf", "", "demi")
+		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 		
 	##Add the column labels
 	for (j in 1:length(col.lab)) {
@@ -154,7 +154,7 @@ if (write.file == "pdf") {
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
 		##skip NULL entries; add italicized subheading if applicable
-		fam <- ifelse(write.file == "pdf", "", "fgb")
+		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (length(list[[j]]) == 0) {
 			text(xlim[1], j, 
 				names(list)[[j]], pos = 4, 
