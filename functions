@@ -529,7 +529,7 @@ create.partylnideo <- function(party, ideo) {
 	out[wh] <- 4
 
 	out <- factor(out, labels = c("Cons R/R lean", "Mod/Lib R",
-		"Mod/Cons D", "Lib D/D lean", "DK/ref"))
+		"Mod/Cons D", "Lib D/D lean", "Refused"))
 	return(out)
 }
 
