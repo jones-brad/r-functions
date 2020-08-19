@@ -787,8 +787,8 @@ calculate_deff <- function (weight, include_zeroes = FALSE, at = .5)
 wxtab2 <- function(x, y, w, round = FALSE,
         nets = NULL) {
 
-	if (class(x) == "haven_labelled") x <- to_factor(x)
-	if (class(y) == "haven_labelled") y <- to_factor(y)
+	if (class(x)[1] == "haven_labelled") x <- to_factor(x)
+	if (class(y)[1] == "haven_labelled") y <- to_factor(y)
 
         wh <- which(!is.na(x)&!is.na(y)&!is.na(w))
         x <- x[wh]
