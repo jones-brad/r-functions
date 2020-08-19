@@ -4,8 +4,8 @@ con <- read.csv("https://raw.githubusercontent.com/bjonesPew/r-functions/master/
 	as.is = TRUE)
 
 recode <- function(var, vals, labels = NULL) {
-	if (class(var) == "factor") lev <- levels(var)
-	if (class(var) != "factor") lev <- levels(factor(var))
+	if (class(var)[1] == "factor") lev <- levels(var)
+	if (class(var)[1] != "factor") lev <- levels(factor(var))
 	names(vals) <- lev
 	new <- vals[as.character(var)]
 	
