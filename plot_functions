@@ -105,10 +105,10 @@ output_file <- function(file, path, note = NULL, plotting_data,
 	file.copy(from = file, to = dir)
 	
 	if (!is.null(csv_nm)) {
-		old_nm = paste(dir, file, sep = "/")
-		hit <- gregexpr("\\.[a-z]$", file)
-		ext <- substr(file
-		new_nm = paste(dir, "/", csv_nm, ext, sep = "")
+		#old_nm = paste(dir, file, sep = "/")
+		#hit <- gregexpr("\\.[a-z]$", file)
+		#ext <- substr(file
+		#new_nm = paste(dir, "/", csv_nm, ext, sep = "")
 		#file.rename(from = nm, to = 
 	}
 	
