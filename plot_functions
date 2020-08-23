@@ -38,8 +38,8 @@ gencolors <- c("Silent" = "#377668",
 	
 ############################Windows fonts
 if(.Platform$OS.type == "windows") {
-	windowsFonts(fgb = windowsFont("Franklin Gothic Book"))
-	windowsFonts(demi = windowsFont("Franklin Gothic Demi"))
+	windowsFonts("Franklin Gothic Book" = windowsFont("Franklin Gothic Book"))
+	windowsFonts("Franklin Gothic Demi" = windowsFont("Franklin Gothic Demi"))
 }
 if(.Platform$OS.type == "unix") {
 	fgb = "Franklin Gothic Book"
