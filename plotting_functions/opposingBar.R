@@ -148,7 +148,7 @@ if (addNets & n.cats == 2) {
 		 
 		addBar2(x = x.pos, val = mat[j,k], 
 			col = col.vec[k], 
-			val.lab = val.lab[k],
+			val.lab = val.lab[k] & mat[j,k] >= .05,
 			pos = j, write.file = write.file)
 		x.pos = x.pos + mat[j,k]
 	}
