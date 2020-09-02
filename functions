@@ -1155,6 +1155,14 @@ df_list_to_xlsx(master.list, names,
 
 }
 
+####test difference in proportions
+sig_test <- function(ess1, mu1, ess2, mu2) {
+  return(abs(mu1 - mu2)/sqrt(
+    mu1*(1-mu1)/ess1 + 
+      mu2*(1-mu2)/ess2
+  ))
+}
+
 #####################get latest panel wave from the RStudio server
 get.panel.server <- function(str) {
   
