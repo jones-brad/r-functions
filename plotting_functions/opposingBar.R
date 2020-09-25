@@ -59,7 +59,7 @@ for (j in 1:ncol(mat)) nmat[,j] <- as.numeric(mat[,j])
 nmat[,which.neg] <- nmat[,which.neg]*-1
 mat <- nmat
 
-
+if (length(addNets) == 1) {
 if (addNets & length(which.neg)>1 & ncol(nmat)-length(which.neg)>1) {
 	nets <- array(NA, c( nrow(mat), 2))
 	nets[,1] <- rowSums( mat[,which.neg] )
@@ -70,6 +70,14 @@ if (addNets & n.cats == 2) {
 	nets[,1] <- mat[,which.neg]
 	nets[,2] <- mat[,-which.neg]
 }
+}
+	if (length(addNets) == length(to.plot)) {
+		nets <- array(NA, c( nrow(mat), 2))
+		for (j in 1:nrow(nets)) {
+			nets[j,1] <- addNets[[j]][1]
+			nets[j,2] <- addNets[[j]][2]
+		}
+	}
 
 	par(mar = rep(.1, 4))
 	exp.x = c(0,0)
