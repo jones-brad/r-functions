@@ -74,7 +74,7 @@ if (addNets & n.cats == 2) {
 	if (length(addNets) == length(to.plot)) {
 		nets <- array(NA, c( nrow(mat), 2))
 		for (j in 1:nrow(nets)) {
-			if (length(addNets[[j]]) != 2)) next
+			if (length(addNets[[j]]) != 2) next
 			nets[j,1] <- addNets[[j]][1]
 			nets[j,2] <- addNets[[j]][2]
 		}
