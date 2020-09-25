@@ -79,10 +79,15 @@ if (addNets & n.cats == 2) {
 			nets[j,2] <- addNets[[j]][2]
 		}
 	}
+	
+	###flag for nets
+	netFlag = FALSE
+	if (class(addNets) == 'logical') if (addNets) netFlag = TRUE
+	if (class(addNets) == 'list') netFlag = TRUE
 
 	par(mar = rep(.1, 4))
 	exp.x = c(0,0)
-	if (addNets) exp.x = c(-.2, .2)
+	if (netFlag) exp.x = c(-.2, .2)
 
 	plot(0,0, pch = '', xlim = xlim + exp.x,
 		ylim = ylim, axes = FALSE,
@@ -163,7 +168,7 @@ if (addNets & n.cats == 2) {
 	}
 	}
 
-	if (addNets) {
+	if (netFlag) {
 		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 		for (j in 1:length(list)) {
 			text( x = nets[j,1]-.13, y = j,
