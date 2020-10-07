@@ -1,7 +1,8 @@
 ##############adding bars to the plot
 addBar <- function(vec, col.vec, val.lab = TRUE,
 	pos = 1, label = "Total", res, write.file,
-	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black") {
+	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black",
+	too_small = 0) {
 	
 	x.pos <- 0
 	fam <- ifelse( write.file == "pdf", "", "Franklin Gothic Book")
@@ -15,7 +16,7 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 		if (val.lab[j]) {
 			if (digits == 0) mult = 100
 			if (digits > 0) mult = 1
-			if (round(vec[j]*100) > 0) text(x.pos + vec[j]/2, 
+			if (round(vec[j]*100) > too_small) text(x.pos + vec[j]/2, 
 				pos, round(vec[j]*mult, digits),
 				family = fam,
 				cex = .75, col = vcol[j])
@@ -99,6 +100,7 @@ stackedBar <- function(list, 		##data to plot
 	addNet = FALSE,			##Add NET to bars (only helpful for subsetting)
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
 	vcol = "black",			##Value label color
+	too_small = 0,			##Do not print data labels that are equal or lower to this (rounded) value
 	netAdj = .05) {			##horizontal adjustment to bars
 
 	##set up the height of the box based on the number of elements
@@ -172,7 +174,7 @@ if (write.file == "pdf") {
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
 			addNet = addNet, netAdj = netAdj, digits = digits,
-		      	vcol = vlabcolors)
+		      	vcol = vlabcolors, too_small = too_small)
 	}
 
 ##Close the plot window
