@@ -144,7 +144,7 @@ if (write.file == "pdf") {
 		if (ymin == 0) y = 0
 		if (ymin != 0) y = ymin/2
 		text(col.pos[j], y, col.lab[j], family = fam,
-			col = col.vec[j], cex = .75, adj = NA)
+			col = col.vec[j], cex = .75, adj = c(0,NA))
 	}
 	}
 	
