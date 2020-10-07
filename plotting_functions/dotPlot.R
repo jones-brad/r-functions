@@ -70,7 +70,7 @@ if (autoAxis) {
 		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 		addDot(leg.pos[j], 0, col = col.vec[j], hollow = hollow[j])
 		text(leg.pos[j], 0, legend[j], col = col.vec[j],
-			family = fam, cex = .75, pos = 4)
+			family = fam, cex = .75, pos = 4, adj = c(.5,1))
 	}
 	}
 
