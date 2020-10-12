@@ -103,6 +103,13 @@ if (autoAxis) {
 		addDot(array[j,k]*100, j, col = col.vec[k],
 			hollow = hollow[k])
 	}
+		
+		###Add dotted separator
+		if (dotted_separator & j != nrow(array)) {
+			y.pos = j + dot.spacing/2
+			segments(x0 = xlim[1], x1 = xlim[2],
+				 y0 = y.pos, y1 = y.pos)
+		}
 	}
 
 	##add value labels to the first and last in each row
