@@ -10,7 +10,9 @@ dotPlot <- function(array, ###########input to plot
 	legend = NULL,	   ###########legend labels 
 	leg.pos = NULL,	   ###########legend position
 	hollow = TRUE,	   ###########should points be drawn hollow?
-	plotAxis = TRUE) {   ###########should horizontal axis be plotted?    
+	connecting_line = FALSE	####Draw a connecting line between the dots
+	dotted_separator = FALSE ####Draw dotted lines between the different items
+	plotAxis = FALSE) {   ###########should horizontal axis be plotted?    
 
 	##set up the height of the box based on the number of elements
 	##(in reverse order; list should be ordered with total first, etc)
@@ -74,6 +76,8 @@ if (autoAxis) {
 	}
 	}
 
+	if (length(connecting_line) == 1) connecting_line <- rep(connecting_line, nrow(array))
+	
 	for (j in 1:nrow(array)) {
 		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (sum(is.na(array[j,]))==ncol(array)) {
@@ -85,6 +89,14 @@ if (autoAxis) {
 		}
 	text(0, j, rownames(array)[j], pos = 2,
 		family = fam, cex = .75)
+		
+		###Add connecting line
+		if (connecting_line[j]) {
+			rng <- range(array[j,])
+			segments(x0 = rng[1], x1 = rng[2],
+				 y0 = j, y1 = j, lwd = 3,
+				 col = ppcolors2['lightest'])
+		}
 
 	for (k in 1:ncol(array)) {
 		##add dots
