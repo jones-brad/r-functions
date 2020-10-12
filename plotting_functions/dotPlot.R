@@ -92,9 +92,9 @@ if (autoAxis) {
 		
 		###Add connecting line
 		if (connecting_line[j]) {
-			rng <- range(array[j,])
+			rng <- range(array[j,])*100
 			segments(x0 = rng[1], x1 = rng[2],
-				 y0 = j, y1 = j, lwd = 3,
+				 y0 = j, y1 = j, lwd = 8,
 				 col = ppcolors2['lightest'])
 		}
 
@@ -106,9 +106,9 @@ if (autoAxis) {
 		
 		###Add dotted separator
 		if (dotted_separator & j != nrow(array)) {
-			y.pos = j + dot.spacing/2
+			y.pos = j + dot.spacing*2/3
 			segments(x0 = xlim[1], x1 = xlim[2],
-				 y0 = y.pos, y1 = y.pos)
+				 y0 = y.pos, y1 = y.pos, lty = c("14"))
 		}
 	}
 
