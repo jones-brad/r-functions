@@ -10,8 +10,8 @@ dotPlot <- function(array, ###########input to plot
 	legend = NULL,	   ###########legend labels 
 	leg.pos = NULL,	   ###########legend position
 	hollow = TRUE,	   ###########should points be drawn hollow?
-	connecting_line = FALSE	####Draw a connecting line between the dots
-	dotted_separator = FALSE ####Draw dotted lines between the different items
+	connecting_line = FALSE,	####Draw a connecting line between the dots
+	dotted_separator = FALSE, ####Draw dotted lines between the different items
 	plotAxis = FALSE) {   ###########should horizontal axis be plotted?    
 
 	##set up the height of the box based on the number of elements
