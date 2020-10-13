@@ -158,10 +158,17 @@ if (write.file == "pdf") {
 		##skip NULL entries; add italicized subheading if applicable
 		fam <- ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (length(list[[j]]) == 0) {
+			itext <- names(list)[[j]]
+			flag <- substr(itext, 1, 1)
+			rcol = 'black'
+			if (flag == "*") {
+				rcol = greys['dark']
+				itext <- substr(itext, 2, nchar(itext))
+			}
 			text(xlim[1], j, 
-				names(list)[[j]], pos = 4, 
+				itext, pos = 4, 
 				family = fam, offset = -.1,
-				font = 3,
+				font = 3, col = rcol,
 				cex = .75)
 			next
 		}
