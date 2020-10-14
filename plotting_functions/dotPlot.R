@@ -77,6 +77,7 @@ if (autoAxis) {
 	}
 
 	if (length(connecting_line) == 1) connecting_line <- rep(connecting_line, nrow(array))
+	if (length(dotted_separator)==1) dotted_separator <- rep(dotted_separator, nrow(array))
 	
 	for (j in 1:nrow(array)) {
 		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
@@ -105,7 +106,7 @@ if (autoAxis) {
 	}
 		
 		###Add dotted separator
-		if (dotted_separator & j != nrow(array)) {
+		if (dotted_separator[j] & j != nrow(array)) {
 			y.pos = j + dot.spacing*2/3
 			segments(x0 = xlim[1], x1 = xlim[2],
 				 y0 = y.pos, y1 = y.pos, lty = c("14"))
