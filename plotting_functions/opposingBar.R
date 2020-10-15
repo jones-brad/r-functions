@@ -106,11 +106,7 @@ if (addNets & n.cats == 2) {
 
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
-		if (!is.null(text.column)) {
-			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
-			text(xlim[2]-.05, j, text.column[j], family = fam,
-				cex = .75, col = tail(col.vec, 1))
-		}
+
 		##skip NULL entries
 		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		if (length(list[[j]]) == 0) {
@@ -120,6 +116,14 @@ if (addNets & n.cats == 2) {
 				cex = .75)
 			next
 		}
+		
+		##add text column if supplied
+		if (!is.null(text.column)) {
+			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
+			text(xlim[2]-.05, j, text.column[j], family = fam,
+				cex = .75, col = tail(col.vec, 1))
+		}
+		fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 		##add label
 		if (length(which.neg)>1) lpos <- min(rowSums(mat[,which.neg], 
 			na.rm = TRUE), na.rm = TRUE)-.02
