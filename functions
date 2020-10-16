@@ -415,6 +415,10 @@ test.diff <- function(x1, w1, x2, w2) {
 
 create.party2 <- function(party, partyln, partystr = NULL) {
 
+	if (class(party)[1] == "haven.labelled") party <- to_factor(party)
+	if (class(partyln)[1] == "haven.labelled") partyln <- to_factor(partyln)
+	if (class(partystr)[1] == "haven.labelled") partystr <- to_factor(partystr)
+
 	wh <- which(is.na(party)&is.na(partyln))
 	party5 <- rep("3. Ind/Other", length(party))
 	party5[wh] <- NA
