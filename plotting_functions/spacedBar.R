@@ -84,14 +84,14 @@ xlim <- c(xmin, xmax)
 			if (is.null(center.on.which.row)) { 
 				text(x.pos + (max(mat[,j], na.rm = TRUE)/2), -.25,
 				col.lab[j], family = fam, col = col.vec[j],
-				cex = .75)
+				cex = .75, adj = c(.5,1))
 				x.plus <- (max(mat[,j], na.rm = TRUE))
 			}
 			if (!is.null(center.on.which.row)) {
 				 text(x.pos + 
 				mat[center.on.which.row,j]/2, -.25,
 				col.lab[j], family = fam, col = col.vec[j],
-				cex = .75)
+				cex = .75, adj = c(.5,1))
 				x.plus <- mat[center.on.which.row,j]
 				if (j < length(col.lab)) sp <- space[center.on.which.row,j]
 			}
@@ -163,7 +163,7 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
 		}
 
 		if (shiftSmall) {
-			shift <- ifelse(val*100 < 3, .05, 0)
+			shift <- ifelse(val*100 < 5, .05, 0)
                 if (val.lab) text(x + val/2 + shift, 
                         pos, abs(round(val*100)),
                         family = fam,
