@@ -2,6 +2,7 @@ spacedBar <- function(list,	###input list to plot
 	xmin = -.18,		###xmin for plot (xmax is determined from input)
 	col.vec, 			###colors to plot
 	val.lab, 			###value labels
+	val.lab.col = "black",	      
 	res = 1, 			###resolution for plot
 	plot.width = 3.2,		###width of plot window in inches
 	write.file = "no", 	###write out a file? "pdf" or "jpg"
@@ -127,12 +128,14 @@ xlim <- c(xmin, xmax)
 		cex = .75, col = rcol)
 
 	x = 0
+	if (length(val.lab.col) == 1) val.lab.col <- rep(val.lab.col, n.cats)
 	for (k in 1:n.cats) {
 		 
 		addBar2(x = x, val = list[[j]][k], 
 			col = col.vec[k], 
 			val.lab = list[[j]][k] > 0,
-			pos = j, shiftSmall = TRUE, write.file = write.file)
+			pos = j, shiftSmall = TRUE, write.file = write.file,
+		       val.lab.col = val.lab.col[k])
 		x = x + mat[j,k]
 		if (k < n.cats) x = x + space[j,k]
 	}
@@ -146,7 +149,7 @@ if (write.file != "no") {
 }
 
 addBar2 <- function(x, y, val, col, val.lab = TRUE,
-	pos = 1, shiftSmall = FALSE, write.file) {
+	pos = 1, shiftSmall = FALSE, write.file, val.lab.col = 'black') {
 	
 	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
 	polygon( x = c(x, x+val, x+val, x),
@@ -159,15 +162,18 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
                 if (val.lab & abs(val) > 0) text(x + val/2, 
                         pos, abs(round(val*100)),
                         family = fam,
-                        cex = .75)
+                        cex = .75,
+			col = val.lab.col)
 		}
 
 		if (shiftSmall) {
 			shift <- ifelse(val*100 < 5, .05, 0)
+			if (shift > 0) val.lab.col = 'black'
                 if (val.lab) text(x + val/2 + shift, 
                         pos, abs(round(val*100)),
                         family = fam,
-                        cex = .75)
+                        cex = .75,
+			col = val.lab.col)
 		}
 }
 
