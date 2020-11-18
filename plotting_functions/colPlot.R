@@ -38,8 +38,9 @@ colPlot <- function(
   ylim = c(-.2, 1.2),       ###set the upper and lower bounds for column and group labels
   n.cats,                   ###which values to plot (first n.cats)
   val.lab = NULL,           ###Add value labels
-  val.pos = NULL,           ###positioning of the value labels (defaults to the first column)
- 
+  val.pos = NULL           ###positioning of the value labels (defaults to the first column)
+ ) {
+	
  ##set the height of the plot if it isn't supplied
  if (is.null(plot.height)) plot.height <- plot.width/1.6
  ##save to file
