@@ -38,7 +38,9 @@ colPlot <- function(
   ylim = c(-.2, 1.2),       ###set the upper and lower bounds for column and group labels
   n.cats,                   ###which values to plot (first n.cats)
   val.lab = NULL,           ###Add value labels
-  val.pos = NULL           ###positioning of the value labels (defaults to the first column)
+  val.pos = NULL,           ###positioning of the value labels (defaults to the first column
+  group.lab = NULL,	    ###Add group labels
+  group.lab.pos = NULL	    ###positioning for group labels
  ) {
 	
  ##set the height of the plot if it isn't supplied
@@ -80,17 +82,22 @@ for (j in 1:length(to.plot)) {
     next
   }
   
-  ##add the group label (based on the names supplied in the data list)
-  text(x.pos + length(to.plot[[j]])/4, y = 1.1,
-       names(to.plot)[j], cex = .75, family = "Franklin Gothic Demi")
-  
   ##loop through the elements of the data list and add the columns
-  for (k in 1:length(to.plot[[j]])) {
-    plotCol(to.plot[[j]][[k]][1:n.cats], x.pos, col.vec,
-            lab = names(to.plot[[j]])[k])
-    x.pos = x.pos + 1
-  }
 
+  plotCol(to.plot[[j]][1:n.cats], x.pos, col.vec,
+          lab = names(to.plot)[j])
+  x.pos = x.pos + 1
+
+
+}
+
+##Add group labels if they are supplied
+if (!is.null(group.lab)) {
+  for (j in 1:length(group.lab)) {
+  ##add the group label
+  text(group.lab.pos[j], y = 1.1,
+       group.lab[j], cex = .75, family = "Franklin Gothic Demi")
+  }
 }
 
 ###Add the value labels to the left-hand margin
