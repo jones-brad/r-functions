@@ -103,7 +103,7 @@ if (!is.null(group.lab)) {
 ###Add the value labels to the left-hand margin
 
 if (!is.null(val.lab)) {
-if (is.null(val.pos)) val.pos = to.plot[[1]][[1]][1:n.cats]
+if (is.null(val.pos)) val.pos = to.plot[[1]][1:n.cats]
 y.pos = 0
 for (j in 1:length(val.lab)) {
   text(.4, y.pos + val.pos[j]/2, val.lab[j], cex = .75,
