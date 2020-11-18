@@ -43,6 +43,9 @@ colPlot <- function(
   group.lab.pos = NULL	    ###positioning for group labels
  ) {
 	
+###open up a plot window
+dev.new(width = plot.width, height = plot.height)	
+
  ##set the height of the plot if it isn't supplied
  if (is.null(plot.height)) plot.height <- plot.width/1.6
  ##save to file
@@ -62,10 +65,7 @@ if (write.file == "pdf") {
 
 }
 
-###open up a plot window
-dev.new(width = plot.width, height = plot.height)
 par(mar = rep(.1, 4))
-
 plot(0,0, pch = '', xlim = xlim,
      ylim = ylim, axes = FALSE)
 
