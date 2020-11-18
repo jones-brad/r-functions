@@ -114,4 +114,4 @@ if (write.file!="no") {
 }
 
 }
-dev.off()
+
