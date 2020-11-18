@@ -158,4 +158,50 @@ format.date <- function(dates) {
 	return(odate)
 }
 
-
+###############Function for creating legends
+createLegend <- function(lab, col.vec, width,
+                         xlim = c(0,10),
+                         lab.pos = NULL,
+                         path) {
+  
+  ##find the number of lines
+  lines <- gregexpr("\\n", lab)
+  nlines <- rep(1, length(lab))
+  for (j in 1:length(lines)) {
+    if (lines[[j]][1] == -1) next
+    nlines[j] <- length(lines[[j]])+1
+  }
+  maxlines <- max(nlines)
+  
+  ##get the max number of characters in each
+  nchar <- rep(NA, length(lab))
+  for (j in 1:length(lines)) {
+    if (nlines[j] == 1) nchar[j] <- nchar(lab[j])
+    if (nlines[j] > 1) {
+      spstr <- strsplit(lab[j], '\n')[[1]]
+      nchar[j] <- max(nchar(spstr))
+    }
+  }
+  
+  height <- maxlines*.2
+  dev.new(width = width, height = height)
+  jpeg(path, width = width, height = height,
+       units = 'in', res = 1000)
+  
+  ##open plot window
+  par(mar = rep(.1, 4))
+  plot(0,0, pch = '', xlim = xlim,
+       ylim = c(-.5, .5), axes = FALSE)
+  
+  
+  for (j in 1:length(lab)) {
+    points(lab.pos[j], 0, pch = 15, col = col.vec[j],
+           cex = 1)
+    text(lab.pos[j], 0, lab[j], cex = .75,
+         family = "Franklin Gothic Book",
+         pos = 4)
+  }
+  
+  dev.off()
+  dev.off()
+}
