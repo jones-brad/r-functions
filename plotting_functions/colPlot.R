@@ -34,7 +34,7 @@ colPlot <- function(
   plot.width = 3.2,         ###width of the plot in inches
   plot.height = NULL,       ###height of the plot if necessary
   write.file = 'no',        ###write out the file or no
-  xmin = -1,                ###set the left hand margin for data labels
+  xlim = NULL,              ###set the left hand margin for data labels (it would be nicer to set this automatically...)
   ylim = c(-.2, 1.2),       ###set the upper and lower bounds for column and group labels
   n.cats,                   ###which values to plot (first n.cats)
   val.lab = NULL,           ###Add value labels
