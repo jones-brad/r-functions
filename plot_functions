@@ -94,31 +94,47 @@ output_pdf <- function(file, path, note = NULL, plotting_data) {
 
 
 output_file <- function(file, path, note = NULL, plotting_data,
-	csv_nm = NULL) {
-	dir <- paste( getwd(), path, sep = "")
-
-	if (dir.exists(dir)) {
-		files <- list.files(dir, full.names = TRUE)
-		for (j in files) {
-			file.remove(j)
-		}
-	}
-
-	dir.create(dir, recursive = TRUE)
-	file.copy(from = file, to = dir)
-	
-	if (!is.null(csv_nm)) {
-		#old_nm = paste(dir, file, sep = "/")
-		#hit <- gregexpr("\\.[a-z]$", file)
-		#ext <- substr(file
-		#new_nm = paste(dir, "/", csv_nm, ext, sep = "")
-		#file.rename(from = nm, to = 
-	}
-	
-	if (!is.null(note)) writeLines(note, 
-		paste(dir, "notes.txt", sep = "/"))
-
-	write.data(plotting_data, dir = dir, name = csv_nm)
+                        csv_nm = NULL) {
+  dir <- paste( getwd(), path, sep = "")
+  
+  if (dir.exists(dir)) {
+    files <- list.files(dir, full.names = TRUE)
+    for (j in files) {
+      file.remove(j)
+    }
+  }
+  
+  dir.create(dir, recursive = TRUE)
+  file.copy(from = file, to = dir)
+  
+  if (!is.null(csv_nm)) {
+    oname <- gsub(".+/file", "", file)
+    oname <- paste("file", oname, sep = "")
+    suff <- gsub(".+?\\.", "", oname)
+    
+    nname <- gsub("\\.csv", "", csv_nm)
+    file.rename(from = paste(dir, oname, sep = "/"),
+                to = paste(dir, "/", nname, ".", suff,
+                           sep = ""))
+  }
+  
+  if (!is.null(note)) writeLines(note, 
+                                 paste(dir, "notes.txt", sep = "/"))
+  
+  write.data(plotting_data, dir = dir, name = csv_nm)
+  
+  ###Save out the bit of script that generated the plot
+  codenm <- paste(dir, "code.txt", sep = "/")
+  hist <- savehistory(codenm)
+  
+  ##clean the history file to save just the relevant portion
+  code <- readLines(codenm)
+  
+  find.fun <- grep(".+?<\\-.+?\\(", code)
+  code <- code[tail(find.fun,1):length(code)]
+  writeLines(code, codenm)
+  
+  saveRDS(to.plot, paste(dir, "plot_data.RDat", sep = "/"))
 }
 
 write.data <- function(plotting_data, dir, name = NULL) {
