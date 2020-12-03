@@ -181,7 +181,7 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
   if (!shiftSmall) {
     
     if (val.lab & abs(val) > 0) text(x + val/2, 
-                                     pos, abs(round(val*100, digits)),
+                                     pos, abs(format(round(val*100, digits), nsmall = digits)),
                                      family = fam,
                                      cex = .75,
                                      col = val.lab.col)
