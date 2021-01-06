@@ -1177,3 +1177,23 @@ get.panel.server <- function(str) {
                       pattern = str, full.names = TRUE)
   return(waves)
 }
+
+
+######################Set up a new analysis folder
+
+create_new_folder <- function(path = getwd(), name) {
+  new.path <- paste(path, name, sep = "/")
+  ##Create the main directory
+  dir.create(new.path)
+  
+  ##Populate it with folders for code, data, and figures
+  
+  dir.create(paste(new.path, "code", sep = "/"))
+  dir.create(paste(new.path, "data", sep = "/"))
+  dir.create(paste(new.path, "figures", sep = "/"))
+  
+  ##add a blank 'eda' file with the header
+  file.copy("~/shared/politics/resources/script_template.R", new.path)
+  file.rename(paste(new.path, "script_template.R", sep = "/"), 
+              paste(new.path, "eda.R", sep = "/"))
+}
