@@ -24,7 +24,8 @@ plotTrend <- function(to.plot,
                       add.scatter = NULL,
                       add.legend = NULL,
                       text.labels.list = NULL,
-                      add.value.labels = TRUE) {
+                      add.value.labels = TRUE,
+                      add.all.value.labels = NULL) {
   
   ##open the plot window (multiplied by the resolution factor)
   dev.new(width=plot.width*res, height=plot.height*res)
@@ -127,6 +128,16 @@ plotTrend <- function(to.plot,
         text(x[lp], to.plot[lp,j]+val.lab.adj[j,k], 
              round(abs(to.plot[lp,j])), family = fam,
              col = col.vec[j], pos = lab.points.pos[k], cex = .75)
+      }
+    }
+    
+    if (!is.null(add.all.value.labels)) {
+      for (k in 1:length(x)) {
+        for (i in 1:length(add.all.value.labels)) {
+          text(x[k], to.plot[k,i], round(abs(to.plot[k,i])),
+               family = fam, col = col.vec[i], pos = add.all.value.labels[i],
+               cex = .75)
+        }                     
       }
     }
     
