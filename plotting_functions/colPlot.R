@@ -2,7 +2,8 @@ plotCol <- function(
   y,          ####data values to plot 
   x.pos,      ####horizontal position to plot
   col.vec,    ####colors
-  lab         ####label to plot underneath the column
+  lab,         ####label to plot underneath the column
+  print.small = NULL	###value of labels that are too small to print
   ) {
   
   ##keep track of vertical position
@@ -17,8 +18,12 @@ plotCol <- function(
                   y.pos + y[j], y.pos + y[j]),
             col = col.vec[j], border = NA)
     ##add the data label
-    text(x = x.pos, y = y.pos + y[j]/2, round(y[j]*100),
+if (!is.null(print.small)) {
+    if (y[j]*100 > print.small) {
+    	text(x = x.pos, y = y.pos + y[j]/2, round(y[j]*100),
          cex = .75, family = "Franklin Gothic Book")
+    }
+}
     ##increment the y position
     y.pos = y.pos + y[j]
   }
@@ -40,7 +45,8 @@ colPlot <- function(
   val.lab = NULL,           ###Add value labels
   val.pos = NULL,           ###positioning of the value labels (defaults to the first column
   group.lab = NULL,	    ###Add group labels
-  group.lab.pos = NULL	    ###positioning for group labels
+  group.lab.pos = NULL,	    ###positioning for group labels
+  print.small = NULL
  ) {
 	
 ###open up a plot window
@@ -85,7 +91,8 @@ for (j in 1:length(to.plot)) {
   ##loop through the elements of the data list and add the columns
 
   plotCol(to.plot[[j]][1:n.cats], x.pos, col.vec,
-          lab = names(to.plot)[j])
+          lab = names(to.plot)[j],
+	 print.small = print.small)
   x.pos = x.pos + 1
 
 
