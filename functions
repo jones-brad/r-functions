@@ -1193,7 +1193,9 @@ create_new_folder <- function(path = getwd(), name) {
   dir.create(paste(new.path, "figures", sep = "/"))
   
   ##add a blank 'eda' file with the header
-  file.copy("~/shared/politics/resources/script_template.R", new.path)
-  file.rename(paste(new.path, "script_template.R", sep = "/"), 
-              paste(new.path, "eda.R", sep = "/"))
+  script <- readLines("~/shared/politics/resources/script_template.R")
+  ##add a setwd line
+  to.add <- paste("setwd('", new.path, "')", sep = "")
+  script <- c(script, to.add)
+  writeLines(script, paste(new.path, "eda.R", sep = ""))
 }
