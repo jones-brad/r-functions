@@ -94,7 +94,7 @@ output_pdf <- function(file, path, note = NULL, plotting_data) {
 
 
 output_file <- function(file, path, note = NULL, plotting_data,
-                        csv_nm = NULL) {
+                        csv_nm = NULL, save_example = NULL) {
   dir <- paste( getwd(), path, sep = "")
   
   if (dir.exists(dir)) {
@@ -135,6 +135,23 @@ output_file <- function(file, path, note = NULL, plotting_data,
   writeLines(code, codenm)
   
   saveRDS(to.plot, paste(dir, "plot_data.RDat", sep = "/"))
+  
+  ##Save out the replication files to an example archive
+  if (!is.null(save_example)) {
+  	##Find the kind of plot
+	plot.ind <- regexpr("\\(", code[1])
+	plot_type <- substr(code[1], 1, plot.ind)
+	nonchar <- gregexpr("(=|<-)\\s+", plot_type)[[1]]
+	plot_type <- substr(plot_type, nonchar + attr(nonchar, 'match.length'),
+                    nchar(plot_type)-1)
+
+	##copy directory to archive
+	new.dir <- paste("~/shared/politics/Example graphics archive",
+                 plot_type, save_example, sep = "/")
+	dir.create(new.dir)
+	file.copy(from = list.files(dir, full.names = TRUE), 
+          to = new.dir, copy.date = TRUE)
+  }
 }
 
 write.data <- function(plotting_data, dir, name = NULL) {
