@@ -1197,5 +1197,5 @@ create_new_folder <- function(path = getwd(), name) {
   ##add a setwd line
   to.add <- paste("setwd('", new.path, "')", sep = "")
   script <- c(script, to.add)
-  writeLines(script, paste(new.path, "eda.R", sep = ""))
+  writeLines(script, paste(new.path, "eda.R", sep = "/"))
 }
