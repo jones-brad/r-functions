@@ -150,7 +150,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
                  plot_type, save_example, sep = "/")
 	dir.create(new.dir)
 	file.copy(from = list.files(dir, full.names = TRUE), 
-          to = new.dir, copy.date = TRUE)
+          to = new.dir, copy.date = TRUE, overwrite = TRUE)
   }
 }
 
