@@ -190,7 +190,8 @@ if (write.file == "pdf") {
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
 			addNet = addNet, netAdj = netAdj, digits = digits,
-		      	vcol = vlabcolors, too_small = too_small)
+		      	vcol = vlabcolors, too_small = too_small,
+		      white_space = white_space)
 	}
 
 ##Close the plot window
