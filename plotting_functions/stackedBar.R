@@ -2,15 +2,17 @@
 addBar <- function(vec, col.vec, val.lab = TRUE,
 	pos = 1, label = "Total", res, write.file,
 	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black",
-	too_small = 0) {
+	too_small = 0, white_space = .1) {
 	
 	x.pos <- 0
 	fam <- ifelse( write.file == "pdf", "", "Franklin Gothic Book")
 	for (j in 1:length(vec)) {
 		## add the bars
+		bar_adj <- .5 - white_space
 		polygon( x = c(x.pos, x.pos + vec[j],
 			x.pos + vec[j], x.pos),
-			y = c(pos -.4, pos-.4, pos+.4, pos+.4),
+			y = c(pos - bar_adj, pos - bar_adj, 
+			      pos + bar_adj, pos + bar_adj),
 			border = NA, col = col.vec[j])
 		## write value labels
 		if (val.lab[j]) {
@@ -101,6 +103,7 @@ stackedBar <- function(list, 		##data to plot
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
 	vcol = "black",			##Value label color
 	too_small = 0,			##Do not print data labels that are equal or lower to this (rounded) value
+	white_space = .1,		##The amount of white space that should be printed between the bars (scaled from 0 (bars will touch) to .5)	       
 	netAdj = .05) {			##horizontal adjustment to bars
 
 	##set up the height of the box based on the number of elements
