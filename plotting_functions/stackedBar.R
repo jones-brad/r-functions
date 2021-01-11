@@ -46,8 +46,14 @@ addBar <- function(vec, col.vec, val.lab = TRUE,
 		rcol = greys['dark']
 		label <- substr(label, 2, 10000)
 	}
-	text(0, pos, label, pos = 2, 
-		family = fam,
+	
+	##line breaks
+	lb <- gregexpr("\n", label)[[1]]
+	lab.adj <- length(lb)*.075
+	if (lb[1] == -1) lab.adj = 0
+	
+	text(0, pos + lab.adj, label, pos = 2, 
+		family = fam, adj = .5,
 		cex = .75, col = rcol)
 }
 
