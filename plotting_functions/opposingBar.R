@@ -104,6 +104,13 @@ if (addNets & n.cats == 2) {
 				cex = .75)
 		}
 	}
+	
+	
+	if (addVertical) {
+		segments(x0 = 0, x1 = 0,
+			y0 = .4, y1 = length(list)+.6,
+			col = "grey", lwd = 1.5)
+	}
 
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
@@ -186,11 +193,6 @@ if (addNets & n.cats == 2) {
 		}
 	}
 
-	if (addVertical) {
-		segments(x0 = 0, x1 = 0,
-			y0 = .4, y1 = length(list)+.6,
-			col = "grey", lwd = 1.5)
-	}
 
 if (write.file != "no") {
 	dev.off()
