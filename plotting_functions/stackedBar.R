@@ -96,6 +96,7 @@ getLabelPosition <- function(vec) {
 
 stackedBar <- function(list, 		##data to plot
 	xlim = c(-.18, 1),		##xlim for plot
+	ymin = NULL,			##specify the ymin if the auto option doesn't look right
 	col.vec, 			##colors
 	val.lab = TRUE, 		##value labels
 	res = 1, 			##resolution
@@ -114,15 +115,20 @@ stackedBar <- function(list, 		##data to plot
 
 	##set up the height of the box based on the number of elements
 	##(in reverse order; list should be ordered with total first, etc)
-	ymin <- ifelse(is.null(col.lab), .5, 0)
-	twoline <- grep("\\n", col.lab)
-	if (length(twoline)>0) ymin <- -.75
-
+	if (is.null(ymin)) {
+		ymin <- ifelse(is.null(col.lab), .5, 0)
+		twoline <- grep("\\n", col.lab)
+		if (length(twoline)>0) ymin <- -.75
+	}
+	
 	ylim <- c(length(list)+.5, ymin)
+	
+	##plot height
+	height <- length(list) - ymin
 
 	##open the plot window (multiplied by the resolution factor)
 	dev.new(width=plot.width*res, height=
-		length(list)*bar.width*res)
+		height*bar.width*res)
 
 ##save to file
 if (write.file!="no") {
@@ -130,13 +136,13 @@ if (write.file!="no") {
 if (write.file == "jpg") {
 	src <- tempfile(fileext = ".jpg")
 	jpeg(src, width = plot.width, 
-		height = bar.width*length(list),
+		height = bar.width*height,
 		units = 'in', res = 1000)
 }
 if (write.file == "pdf") {
 	src <- tempfile(fileext = ".pdf")
 	pdf(src, width = plot.width,
-		height = bar.width*length(list))
+		height = bar.width*height)
 }
 
 }
