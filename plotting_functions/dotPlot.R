@@ -12,6 +12,7 @@ dotPlot <- function(array, ###########input to plot
 	hollow = TRUE,	   ###########should points be drawn hollow?
 	connecting_line = FALSE,	####Draw a connecting line between the dots
 	dotted_separator = FALSE, ####Draw dotted lines between the different items
+	shift_label = 0,	####How to shift labels off the 0 line (to make room for labels usually)
 	plotAxis = FALSE) {   ###########should horizontal axis be plotted?    
 
 	##set up the height of the box based on the number of elements
@@ -88,7 +89,7 @@ if (autoAxis) {
 				cex = .75)
 			next
 		}
-	text(0, j, rownames(array)[j], pos = 2,
+	text(shift_label, j, rownames(array)[j], pos = 2,
 		family = fam, cex = .75)
 		
 		###Add connecting line
