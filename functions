@@ -508,7 +508,7 @@ create.age4 <- function(age, age.breaks = c(65, 50, 30)) {
 	wh <- which(age < age.breaks[3])
 	age4[wh] <- 1
 
-	lab <- c( paste0( "18-", age.breaks[3]-1),
+	lab <- c( paste0( "Ages 18-", age.breaks[3]-1),
 		paste(age.breaks[3], age.breaks[2]-1, sep="-"),
 		paste(age.breaks[2], age.breaks[1]-1, sep="-"),
 		paste0(age.breaks[1], "+"), "DK/Refused")
