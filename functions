@@ -1199,3 +1199,42 @@ create_new_folder <- function(path = getwd(), name) {
   script <- c(script, to.add)
   writeLines(script, paste(new.path, "eda.R", sep = "/"))
 }
+
+####function to populate a list for a plot
+###Takes a yvar, a set of xvars (expecting dataframe), and a weight
+###Returns a list with the cross-tabs of yvar by each element of xvars
+###Prints warnings if the ESS for any xvar is < 100
+create_plot_list <- function(yvar, xvars, weight) {
+  ##create the list
+  to.plot <- list()
+  
+  ##collect warnings about small ess
+  warnings <- NULL
+  
+  ##Populate the list
+  for (j in 1:ncol(xvars)) {
+    tab <- wxtab2(xvars[,j], yvar, weight)
+    
+    #flag refusals and remove from tab
+    ref <- grep("Refused", rownames(tab))
+    if (length(ref) > 0) tab <- tab[-ref,]
+    if (nrow(tab) == 0) next
+    
+    ##Add each level of each xvar to the list
+    for (k in 1:nrow(tab)) {
+      to.plot[[rownames(tab)[k]]] <- tab[k,]
+      if (tab[k,'ess'] < 100) {
+        warn <- paste(colnames(xvars)[j], "level", rownames(tab)[k],
+                      "ess =", round(tab[k,'ess']))
+        warnings <- c(warnings, warn)
+      }
+    }
+    
+    ##Add blank lines separating each variable
+    if (j != ncol(xvars)) to.plot <- c(to.plot, list(NULL))
+  }
+  
+  if (!is.null(warnings)) cat(warnings, sep = "\n")
+  
+  return(to.plot)
+}
