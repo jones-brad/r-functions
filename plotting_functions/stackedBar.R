@@ -105,6 +105,7 @@ stackedBar <- function(list, 		##data to plot
 	bar.width = .5,			##width of bars
 	col.lab = NULL, 		##column labels
 	col.pos = NULL, 		##position of labels
+	col.lab.adj = 0,		##adjust position of column labels
 	n.cats = NULL,			##number of categories to plot
 	addNet = FALSE,			##Add NET to bars (only helpful for subsetting)
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
@@ -160,8 +161,8 @@ if (write.file == "pdf") {
 	for (j in 1:length(col.lab)) {
 		if (ymin == 0) y = 0
 		if (ymin != 0) y = ymin/2
-		text(col.pos[j], y, col.lab[j], family = fam,
-			col = col.vec[j], cex = .75, adj = c(.5,1))
+		text(col.pos[j], y, col.lab[j] - col.lab.adj, family = fam,
+			col = col.vec[j], cex = .75, adj = c(.5,0))
 	}
 	}
 	
