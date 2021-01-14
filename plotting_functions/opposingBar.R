@@ -101,7 +101,7 @@ if (addNets & n.cats == 2) {
 			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			text(lab.pos[j], -.2-.2*length(lines),
 				col.lab[j], family = fam, col = col.vec[j],
-				cex = .75)
+				cex = .75, adj = c(.5,0))
 		}
 	}
 	
