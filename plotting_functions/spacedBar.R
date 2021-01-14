@@ -14,6 +14,7 @@ spacedBar <- function(list,	###input list to plot
                       digits = 0,
                       addVerticalLines = FALSE,
                       shiftSmall = TRUE,
+                      col.lab.adj = .1,
                       spaces = NULL) {		###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
   ##set up the height of the box based on the number of elements
@@ -21,7 +22,7 @@ spacedBar <- function(list,	###input list to plot
   ymax <- ifelse(length(col.lab)>0, -.5, .5)
   if (length(col.lab)>0) {
     i <- grep("\\n", col.lab)
-    if (length(i) > 0) ymax = -1.25
+    if (length(i) > 0) ymax = -1.5
   }
   
   ylim <- c(length(list)+.5, ymax)
@@ -88,14 +89,14 @@ spacedBar <- function(list,	###input list to plot
       sp = 0
       fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
       if (is.null(center.on.which.row)) { 
-        text(x.pos + (max(mat[,j], na.rm = TRUE)/2), ylim[2]/2 -.1,
+        text(x.pos + (max(mat[,j], na.rm = TRUE)/2), ylim[2]/2 - col.lab.adj,
              col.lab[j], family = fam, col = col.lab.color[j],
-             cex = .75, adj = c(.5,1))
+             cex = .75, adj = c(.5,0))
         x.plus <- (max(mat[,j], na.rm = TRUE))
       }
       if (!is.null(center.on.which.row)) {
         text(x.pos + 
-               mat[center.on.which.row,j]/2, ylim[2]/2 -.1,
+               mat[center.on.which.row,j]/2, ylim[2]/2 - col.lab.adj,
              col.lab[j], family = fam, col = col.lab.color[j],
              cex = .75, adj = c(.5,1))
         x.plus <- mat[center.on.which.row,j]
