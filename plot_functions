@@ -134,7 +134,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
   code <- code[tail(find.fun,1):length(code)]
   writeLines(code, codenm)
   
-  saveRDS(to.plot, paste(dir, "plot_data.RDat", sep = "/"))
+  saveRDS(plotting_data, paste(dir, "plot_data.RDat", sep = "/"))
   
   ##Save out the replication files to an example archive
   if (!is.null(save_example)) {
