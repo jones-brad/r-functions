@@ -550,6 +550,14 @@ recode2 <- function(var) {
 	return(new)
 }
 
+#####Create education4 from panel data
+create.edu4 <- function(educ) {
+  ed4 <- recode(educ, c(4,4,3,3,2,1,9),
+                c("Postgrad", "College grad",
+                  "Some college", "HS or less",
+                  "Refused"))
+  return(ed4)
+}
 
 create.educ3 <- function(educ) {
 	ed3 <- rep(NA, length(educ))
