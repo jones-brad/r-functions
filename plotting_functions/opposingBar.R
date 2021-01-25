@@ -9,6 +9,7 @@ opposingBar <- function(list, 	##input to plot
 	col.lab = NULL, 			##column labels
 	which.neg, 				##which columns should be negative
 	lab.pos = NULL,
+	lab.align = 1,
 	text.column = NULL,
 	too_small = 0,			##Don't print value labels smaller than...
 	addNets = FALSE,
@@ -94,12 +95,13 @@ if (addNets & n.cats == 2) {
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
 
-
+	if (length(lab.align)==1) lab.align = rep(lab.align, length(col.lab))
 	##Add column labels
 	if (length(col.lab)>0) {
 		for (j in 1:length(col.lab)) {
 			fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
 			text(lab.pos[j], -.2-.2*length(lines),
+			     	pos = lab.align[j],
 				col.lab[j], family = fam, col = col.vec[j],
 				cex = .75, adj = c(.5,0))
 		}
