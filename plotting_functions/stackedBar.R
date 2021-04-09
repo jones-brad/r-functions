@@ -161,7 +161,7 @@ if (write.file == "pdf") {
 	for (j in 1:length(col.lab)) {
 		if (ymin == 0) y = 0
 		if (ymin != 0) y = ymin/2
-		text(col.pos[j], y, col.lab[j] - col.lab.adj, family = fam,
+		text(col.pos[j] - col.lab.adj, y, col.lab[j], family = fam,
 			col = col.vec[j], cex = .75, adj = c(.5,0))
 	}
 	}
