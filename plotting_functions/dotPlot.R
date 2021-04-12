@@ -125,7 +125,7 @@ for (j in 1:nrow(array)) {
        pos = 2, family = fam, cex = .75,
        col = col.vec[w])
   
-  if (sum(is.na(array[j,]))==1) next
+  if (sum(!is.na(array[j,]))==1) next
   
   ##max label
   w <- which(array[j,] == max(array[j,], na.rm = TRUE))
