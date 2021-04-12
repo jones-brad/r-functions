@@ -195,6 +195,7 @@ format.date <- function(dates) {
 createLegend <- function(lab, col.vec, width,
                          xlim = c(0,10),
                          lab.pos = NULL,
+			 hollow = FALSE,
                          path) {
   
   ##find the number of lines
@@ -228,8 +229,12 @@ createLegend <- function(lab, col.vec, width,
   
   
   for (j in 1:length(lab)) {
-    points(lab.pos[j], 0, pch = 15, col = col.vec[j],
+    if (!hollow) points(lab.pos[j], 0, pch = 15, col = col.vec[j],
            cex = 1)
+    if (hollow) {
+      points(lab.pos[j], 0, col= col.vec[j], pch = 20, cex = 1.67)
+      points(lab.pos[j], 0, col = "white", pch = 20, cex = 1.67/2)
+    }
     text(lab.pos[j], 0, lab[j], cex = .75,
          family = "Franklin Gothic Book",
          pos = 4)
