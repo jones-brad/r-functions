@@ -114,23 +114,25 @@ if (autoAxis) {
 		}
 	}
 
-	##add value labels to the first and last in each row
-	fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
-	for (j in 1:nrow(array)) {
-		if (is.na(array[j,1])) next
-		##min label
-		
-		w <- which(array[j,] == min(array[j,]))
-		text(array[j,w]*100, j, round(array[j,w]*100),
-			pos = 2, family = fam, cex = .75,
-			col = col.vec[w])
-
-		##max label
-		w <- which(array[j,] == max(array[j,]))
-		text(array[j,w]*100, j, round(array[j,w]*100),
-			pos = 4, family = fam, cex = .75,
-			col = col.vec[w])
-	}
+##add value labels to the first and last in each row
+fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
+for (j in 1:nrow(array)) {
+  if (is.na(array[j,1])) next
+  ##min label
+  
+  w <- which(array[j,] == min(array[j,], na.rm = TRUE))
+  text(array[j,w]*100, j, round(array[j,w]*100),
+       pos = 2, family = fam, cex = .75,
+       col = col.vec[w])
+  
+  if (sum(is.na(array[j,]))==1) next
+  
+  ##max label
+  w <- which(array[j,] == max(array[j,], na.rm = TRUE))
+  text(array[j,w]*100, j, round(array[j,w]*100),
+       pos = 4, family = fam, cex = .75,
+       col = col.vec[w])
+}
 
 if (write.file != "no") {
 	dev.off()
