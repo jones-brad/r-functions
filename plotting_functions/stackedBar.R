@@ -180,6 +180,13 @@ if (write.file == "pdf") {
 				rcol = greys['dark']
 				itext <- substr(itext, 2, nchar(itext))
 			}
+			if (flag == "#") {
+				btext <- substr(itext, 2, nchar(itext))
+				text( (xlim[2] - xlim[1])/2, j,
+				    btext, family = "Franklin Gothic Demi",
+				     cex = .75)
+				next
+			}
 			text(xlim[1], j, 
 				itext, pos = 4, 
 				family = fam, offset = -.1,
