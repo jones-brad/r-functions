@@ -159,8 +159,7 @@ if (write.file == "pdf") {
 		
 	##Add the column labels
 	for (j in 1:length(col.lab)) {
-		if (ymin == 0) y = 0
-		if (ymin != 0) y = ymin/2
+		y = 0
 		text(col.pos[j] - col.lab.adj, y, col.lab[j], family = fam,
 			col = col.vec[j], cex = .75, adj = c(.5,0))
 	}
