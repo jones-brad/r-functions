@@ -13,6 +13,7 @@ dotPlot <- function(array, ###########input to plot
 	connecting_line = FALSE,	####Draw a connecting line between the dots
 	dotted_separator = FALSE, ####Draw dotted lines between the different items
 	shift_label = 0,	####How to shift labels off the 0 line (to make room for labels usually)
+	vert_adj = 0,		##shift for legend labels
 	plotAxis = FALSE) {   ###########should horizontal axis be plotted?    
 
 	##set up the height of the box based on the number of elements
@@ -22,7 +23,7 @@ dotPlot <- function(array, ###########input to plot
 	twoline <- grep("\\n", legend)
 	if (length(twoline)>0) ymin <- -.5
 
-	ylim <- c(nrow(array)+.5, ymin)
+	ylim <- c(nrow(array)+.5, ymin + vert_adj)
 
 
 	##open the plot window (multiplied by the resolution factor)
