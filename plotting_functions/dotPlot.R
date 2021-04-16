@@ -90,8 +90,15 @@ if (autoAxis) {
 				cex = .75)
 			next
 		}
-	text(shift_label, j, rownames(array)[j], pos = 2,
-		family = fam, cex = .75)
+		txt <- rownames(array)[j]
+		flag <- substr(txt, 1, 1)
+		rcol = 'black'
+		if (flag == "*") {
+			rcol = greys['dark']
+			txt <- substr(txt, 2, nchar(txt))
+		}
+		text(shift_label, j, txt, pos = 2,
+			family = fam, cex = .75, col = rcol)
 		
 		###Add connecting line
 		if (connecting_line[j]) {
