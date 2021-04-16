@@ -44,8 +44,8 @@ if (write.file == "pdf") {
 
 }
 
-lower <- ifelse(plotAxis, 1.5, .1)
-	par(mar = c(lower, rep(.1, 3)))
+lower <- ifelse(plotAxis, 1.5, 0)
+	par(mar = c(lower, rep(0, 3)))
 	plot(0,0, pch = '', xlim = xlim,
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
