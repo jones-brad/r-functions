@@ -1246,3 +1246,18 @@ create_plot_list <- function(yvar, xvars, weight) {
   
   return(to.plot)
 }
+
+
+##Weighted mean by group----
+wmean_bygroup <- function(x, group, weight) {
+  ##get the weighted sum
+  ##remove any missing data
+  nmis <- which(!is.na(x) & !is.na(group) & !is.na(weight))
+  x <- x[nmis]
+  group <- group[nmis]
+  weight <- weight[nmis]
+  ag <- aggregate(x*weight ~ group, FUN = sum)
+  wag <- aggregate(weight ~ group, FUN = sum)
+  ##weighted mean
+  return(ag[,2]/wag[,2])
+}
