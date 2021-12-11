@@ -1259,5 +1259,7 @@ wmean_bygroup <- function(x, group, weight) {
   ag <- aggregate(x*weight ~ group, FUN = sum)
   wag <- aggregate(weight ~ group, FUN = sum)
   ##weighted mean
-  return(ag[,2]/wag[,2])
+  ret = ag[,2]/wag[,2]
+  names(ret) <- ag[,1]
+  return(ret)
 }
