@@ -200,7 +200,6 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
 }
 
 
-
 ########################Grouping sets of bars
 spacedBar2 <- function(list,  ###input list to plot
                        xmin = -.18,            ###xmin for plot (xmax is determined from input)
@@ -213,7 +212,8 @@ spacedBar2 <- function(list,  ###input list to plot
                        n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
                        col.lab = NULL,                 ###column labels
                        lab.pos = NULL,
-                       lab.buff = 0,	       
+                       lab.buff = 0,
+                       add.net = NULL,         ###add NETs to any grouped bars
                        spaces = NULL,
                        groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
@@ -265,10 +265,11 @@ spacedBar2 <- function(list,  ###input list to plot
   }
   
   space <- array(NA, c( length(list), ncol(mat2) - 1))
-  
+  sp = .05
+  if (!is.null(add.net)) sp = .13
   if (is.null(spaces)) {
     for (j in 1:(length(groups) - 1)) {
-      space[,j] <- max(mat2[,j], na.rm = TRUE) - mat2[,j] + .05
+      space[,j] <- max(mat2[,j], na.rm = TRUE) - mat2[,j] + sp
     }
   }
   
@@ -338,12 +339,34 @@ spacedBar2 <- function(list,  ###input list to plot
     if (length(val.lab)==1) val.lab <- rep(val.lab, n.cats)
     for (k in 1:n.cats) {
       
+      small = ifelse(is.null(add.net), 100, 3)
       addBar2(x = x, val = list[[j]][k], 
               col = col.vec[k], 
               val.lab = list[[j]][k] > 0 & val.lab[k],
-              pos = j+lab.buff*.9, shiftSmall = TRUE, write.file = write.file)
+              pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
+              write.file = write.file,
+              too_small = small)
+
       x = x + mat[j,k]
       if (k < n.cats) x = x + space2[j,k]
+    }
+  }
+  
+  fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
+  ###Add NETs
+  if (!is.null(add.net)) {
+    for (j in 1:length(list)) {
+      x = 0
+      if (is.null(list[[j]])) next
+      for (k in 1:length(groups)) {
+        net = sum(list[[j]][groups[[k]]])
+        x = x + net
+        if (length(groups[[k]]) == 1) next
+        if (k > 1) x.star = x + sum(space2[j,k:(k-1)])
+        if (k == 1) x.star = x
+        text(x.star + .05, j, round(net*100), cex = .75,
+             family = fam)
+      }
     }
   }
   
@@ -353,4 +376,3 @@ spacedBar2 <- function(list,  ###input list to plot
     return(src)
   }
 }
-
