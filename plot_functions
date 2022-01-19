@@ -138,7 +138,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
   regex = paste(".+?(<\\-|=).+?(", 
     	paste(graph_functions, collapse = "|"), ")\\(",
 	sep = "")
-  find.fun <- grep(, code)
+  find.fun <- grep(regex, code)
   code <- code[tail(find.fun,1):length(code)]
   writeLines(code, codenm)
   
