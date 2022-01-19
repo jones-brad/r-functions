@@ -125,10 +125,12 @@ output_file <- function(file, path, note = NULL, plotting_data,
   
   ###Save out the bit of script that generated the plot
   codenm <- paste(dir, "code.txt", sep = "/")
+  codenm2 <- paste(dir, "all_code.txt", sep = "/")
   hist <- savehistory(codenm)
   
   ##clean the history file to save just the relevant portion
   code <- readLines(codenm)
+  writeLines(code, codenm2)
   
   find.fun <- grep(".+?<\\-.+?\\(", code)
   code <- code[tail(find.fun,1):length(code)]
