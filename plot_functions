@@ -132,7 +132,13 @@ output_file <- function(file, path, note = NULL, plotting_data,
   code <- readLines(codenm)
   writeLines(code, codenm2)
   
-  find.fun <- grep(".+?<\\-.+?\\(", code)
+  graph_functions = c("opposingBar", "spacedBar", "dotPlot",
+  	"plotTrend", "plotQuad", "stackedBar", "spacedBar2",
+	"verticalBar")
+  regex = paste(".+?(<\\-|=).+?(", 
+    	paste(graph_functions, collapse = "|"), ")\\(",
+	sep = "")
+  find.fun <- grep(, code)
   code <- code[tail(find.fun,1):length(code)]
   writeLines(code, codenm)
   
