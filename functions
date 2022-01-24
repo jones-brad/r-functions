@@ -1263,3 +1263,9 @@ wmean_bygroup <- function(x, group, weight) {
   names(ret) <- ag[,1]
   return(ret)
 }
+
+#####tabulate with labels from haven
+tab2 = function(x, y = NULL) {
+	if (!is.null(y)) return(table(to_factor(x), to_factor(y)))
+	return(table(to_factor(x)))
+}
