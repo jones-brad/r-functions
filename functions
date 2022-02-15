@@ -367,7 +367,7 @@ roll_avg <- function(x, y, window = 5) {
 	while (end <= length(x)) {
 		inds <- start:end
 		res <- rbind(res, 
-			c(mean(x[inds]), mean(y[inds])))
+			c(mean(x[inds], na.rm = TRUE), mean(y[inds], na.rm = TRUE)))
 		start <- start+1
 		end <- end+1
 	}
