@@ -1279,7 +1279,7 @@ wquant = function(var, q, weight) {
   wdat$order = 1:nrow(wdat)
   ##container for quantile variable
   wdat$cvar = NA
-
+  
   ##sort by var
   ord = order(wdat$var)
   wdat <- wdat[ord,]
@@ -1290,7 +1290,7 @@ wquant = function(var, q, weight) {
   
   ##find breaks
   breaks = rep(NA, length(q))
-
+  
   q = q[order(q, decreasing = FALSE)]
   w <- which(csum <= q[length(q)])
   wdat$cvar[w] = length(q)
@@ -1301,6 +1301,7 @@ wquant = function(var, q, weight) {
     }
   }
   
-  wdat = wdat[wdat$order,]
+  ord = order(wdat$order)
+  wdat = wdat[ord,]
   return(wdat$cvar)
 }
