@@ -1269,3 +1269,38 @@ tab2 = function(x, y = NULL) {
 	if (!is.null(y)) return(table(to_factor(x), to_factor(y)))
 	return(table(to_factor(x)))
 }
+
+#####Function to return weighted quantile
+wquant = function(var, q, weight) {
+  
+  ##put into a dataframe to order together
+  wdat = data.frame(var, weight)
+  ##mark original ordering
+  wdat$order = 1:nrow(wdat)
+  ##container for quantile variable
+  wdat$cvar = NA
+
+  ##sort by var
+  ord = order(wdat$var)
+  wdat <- wdat[ord,]
+  
+  ##get cumulative sum of weight
+  csum = cumsum(wdat$weight)
+  csum = csum/max(csum, na.rm = TRUE)
+  
+  ##find breaks
+  breaks = rep(NA, length(q))
+
+  q = q[order(q, decreasing = FALSE)]
+  w <- which(csum <= q[length(q)])
+  wdat$cvar[w] = length(q)
+  if (length(q) > 1) {
+    for (j in (length(q)+1):1) {
+      w <- which(csum <= q[j])
+      wdat$cvar[w] = j
+    }
+  }
+  
+  wdat = wdat[wdat$order,]
+  return(wdat$cvar)
+}
