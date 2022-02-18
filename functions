@@ -1305,3 +1305,27 @@ wquant = function(var, q, weight) {
   wdat = wdat[ord,]
   return(wdat$cvar)
 }
+
+#######Cut continuous
+recode_continuous = function(x, cut,
+                             labels = NULL) {
+  cut = cut[order(cut, decreasing = TRUE)]
+  
+  rvar = rep(NA, length(x))
+  for (j in 1:length(cut)) {
+    w <- which(x <= cut[j])
+    rvar[w] = length(cut) - j
+  }
+    
+  mins = aggregate(x ~ rvar, FUN = min)
+  maxs = aggregate(x ~ rvar, FUN = max)
+  
+  lab = paste(round(mins[,2],1), round(maxs[,2],1),
+              sep = "-")
+  vals = mins[,1]
+  if (length(labels)!=length(vals)) names(vals) = lab
+  if (length(labels) == length(vals)) names(vals) = labels    
+  
+  rvar = haven::labelled(rvar, labels = vals)
+  return(rvar)
+}
