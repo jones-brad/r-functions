@@ -1191,6 +1191,10 @@ get.panel.server <- function(str) {
 
 create_new_folder <- function(path = getwd(), name) {
   new.path <- paste(path, name, sep = "/")
+  
+  #prevent overwriting
+  if (dir.exists(new.path)) return(
+   cat(paste("The directory", new.path, "already exists")))
   ##Create the main directory
   dir.create(new.path)
   
