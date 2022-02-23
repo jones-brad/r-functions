@@ -1307,6 +1307,11 @@ wquant = function(var, q, weight) {
   
   ord = order(wdat$order)
   wdat = wdat[ord,]
+  
+  ##remove missing values
+  mis = which(is.na(wdat$var))
+  if (length(mis)>0) wdat$cvar[mis] = NA
+  
   return(wdat$cvar)
 }
 
