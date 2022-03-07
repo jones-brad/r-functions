@@ -1,0 +1,16 @@
+#########
+###source from github
+readGit <- function(path) {
+  tmp <- tempfile(fileext = ".R")
+  text <- readLines(path)
+  writeLines(text, tmp)
+  source(tmp)
+}
+
+###some custom functions I use
+readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/functions")
+
+library(haven)
+
+###Pew telephone merge file
+dat <- read_sav()
