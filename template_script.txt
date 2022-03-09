@@ -11,6 +11,3 @@ readGit <- function(path) {
 readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/functions")
 
 library(haven)
-
-###Pew telephone merge file
-dat <- read_sav()
