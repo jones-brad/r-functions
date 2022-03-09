@@ -1205,7 +1205,7 @@ create_new_folder <- function(path = getwd(), name) {
   dir.create(paste(new.path, "figures", sep = "/"))
   
   ##add a blank 'eda' file with the header
-  script <- readLines("https://github.com/bjonesPew/r-functions/blob/master/template_script.txt")
+  script <- readLines("https://raw.githubusercontent.com/bjonesPew/r-functions/master/template_script.txt")
   ##add a setwd line
   to.add <- paste("setwd('", new.path, "')", sep = "")
   script <- c(script, to.add)
