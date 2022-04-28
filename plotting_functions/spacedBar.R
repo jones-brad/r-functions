@@ -205,6 +205,7 @@ spacedBar2 <- function(list,  ###input list to plot
                        xmin = -.18,            ###xmin for plot (xmax is determined from input)
                        col.vec,                        ###colors to plot
                        val.lab = TRUE,                        ###value labels
+                       val.lab.col = 'black',
                        res = 1,                        ###resolution for plot
                        plot.width = 3.2,               ###width of plot window in inches
                        write.file = "no",      ###write out a file? "pdf" or "jpg"
@@ -319,6 +320,7 @@ spacedBar2 <- function(list,  ###input list to plot
     }
   }
   
+  if (length(val.lab.col) == 1) val.lab.col <- rep(val.lab.col, n.cats)
   ##run through the list to add the bars
   for (j in 1:length(list)) {
     fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
