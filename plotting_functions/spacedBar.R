@@ -344,6 +344,7 @@ spacedBar2 <- function(list,  ###input list to plot
       small = ifelse(is.null(add.net), 100, 3)
       addBar2(x = x, val = list[[j]][k], 
               col = col.vec[k], 
+              val.lab.col = val.lab.col[k],
               val.lab = list[[j]][k] > 0 & val.lab[k],
               pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
               write.file = write.file,
