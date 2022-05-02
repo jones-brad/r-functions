@@ -213,6 +213,7 @@ spacedBar2 <- function(list,  ###input list to plot
                        n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
                        col.lab = NULL,                 ###column labels
                        lab.pos = NULL,
+                       space.labs.evenly = NULL,
                        lab.buff = 0,
                        add.net = NULL,         ###add NETs to any grouped bars
                        spaces = NULL,
@@ -297,7 +298,7 @@ spacedBar2 <- function(list,  ###input list to plot
   x.pos <- 0
   pos <- rep(NA, 3)
   ##Add column labels
-  if (length(col.lab)>0 & is.null(lab.pos)) {
+  if (length(col.lab)>0 & is.null(lab.pos) & is.null(space.labs.evenly)) {
     for (j in 1:length(col.lab)) {
       pos[j] <- x.pos
       fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
@@ -308,6 +309,18 @@ spacedBar2 <- function(list,  ###input list to plot
         x.pos + max(mat[,j], na.rm = TRUE) +.05
       if (!is.null(spaces)) x.pos <- 
         x.pos + max(mat[,j], na.rm = TRUE) + spaces[j]
+    }
+  }
+  
+  if (!is.null(space.labs.evenly) & is.null(lab.pos)) {
+    pos = seq(from = xmin - (xmax - xmin)/20,
+              to = xmax - (xmax - xmin)/20,
+              length = length(lab.pos))
+    for (j in 1:length(col.lab)) {
+      fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
+      text(pos[j], -.25 + lab.buff*.1,
+           col.lab[j], family = fam, col = col.vec[j],
+           cex = .75)
     }
   }
   
