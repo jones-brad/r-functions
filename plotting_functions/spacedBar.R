@@ -313,7 +313,7 @@ spacedBar2 <- function(list,  ###input list to plot
   }
   
   if (!is.null(space.labs.evenly) & is.null(lab.pos)) {
-    pos = seq(from = xmin - (xmax - xmin)/20,
+    pos = seq(from = xmin + (xmax - xmin)/50,
               to = xmax - (xmax - xmin)/20,
               length = length(col.lab))
     for (j in 1:length(col.lab)) {
@@ -362,7 +362,7 @@ spacedBar2 <- function(list,  ###input list to plot
               pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
               write.file = write.file,
               too_small = small)
-
+      
       x = x + mat[j,k]
       if (k < n.cats) x = x + space2[j,k]
     }
