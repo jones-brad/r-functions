@@ -315,7 +315,7 @@ spacedBar2 <- function(list,  ###input list to plot
   if (!is.null(space.labs.evenly) & is.null(lab.pos)) {
     pos = seq(from = xmin - (xmax - xmin)/20,
               to = xmax - (xmax - xmin)/20,
-              length = length(lab.pos))
+              length = length(col.lab))
     for (j in 1:length(col.lab)) {
       fam = ifelse(write.file == "pdf", "", "Franklin Gothic Demi")
       text(pos[j], -.25 + lab.buff*.1,
