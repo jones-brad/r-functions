@@ -113,7 +113,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
     suff <- gsub(".+?\\.", "", oname)
     
     nname <- gsub("\\.csv", "", csv_nm)
-    file.rename(from = paste(dir, oname, sep = "/"),
+    file.rename(from = file,
                 to = paste(dir, "/", nname, ".", suff,
                            sep = ""))
   }
