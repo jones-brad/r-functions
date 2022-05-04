@@ -24,6 +24,10 @@ partycolors <- c(rep = "#BF3B27",
 
 greys <- c(dark = rgb(128/255, 128/255, 128/255))
 
+##colors with contrast from RColorBrewer
+colors = c("#7FC97F", "#BEAED4", "#FDC086", "#FFFF99", 
+"#386CB0", "#F0027F", "#BF5B17", "#666666")
+
 thermcolors <- c("Very cold" = "#82A6BF",
 	"Somewhat cold" = "#D5E1E9",
 	"Neutral" = "#D7D7D7",
