@@ -214,8 +214,10 @@ spacedBar2 <- function(list,  ###input list to plot
                        col.lab = NULL,                 ###column labels
                        lab.pos = NULL,
                        space.labs.evenly = NULL,
+                       lab.start = .1,
                        lab.buff = 0,
                        add.net = NULL,         ###add NETs to any grouped bars
+                       net.buff = 0,           ###add a little extra to the xmax to prevent cutting off net labels
                        spaces = NULL,
                        groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
@@ -288,6 +290,10 @@ spacedBar2 <- function(list,  ###input list to plot
   }
   
   xmax <- max( rowSums(mat) + rowSums(space), na.rm = TRUE )
+  ##Add a little extra space if there are nets added so they don't get cut off
+  if (!is.null(add.net)) {
+    if (sum(add.net)>0) xmax = xmax + net.buff
+  }
   xlim <- c(xmin, xmax)
   par(mar = rep(.1, 4))
   plot(0,0, pch = '', xlim = xlim,
@@ -313,7 +319,7 @@ spacedBar2 <- function(list,  ###input list to plot
   }
   
   if (!is.null(space.labs.evenly) & is.null(lab.pos)) {
-    pos = seq(from = xmin + (xmax - xmin)/50,
+    pos = seq(from = lab.start,
               to = xmax - (xmax - xmin)/20,
               length = length(col.lab))
     for (j in 1:length(col.lab)) {
