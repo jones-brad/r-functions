@@ -98,7 +98,8 @@ output_pdf <- function(file, path, note = NULL, plotting_data) {
 
 
 output_file <- function(file, path, note = NULL, plotting_data,
-                        csv_nm = NULL, save_example = NULL) {
+                        csv_nm = NULL, save_example = NULL,
+			markdown = FALSE) {
   dir <- paste( getwd(), path, sep = "")
   
   if (dir.exists(dir)) {
@@ -128,6 +129,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
   write.data(plotting_data, dir = dir, name = csv_nm)
   
   ###Save out the bit of script that generated the plot
+  if (!markdown) {
   codenm <- paste(dir, "code.txt", sep = "/")
   codenm2 <- paste(dir, "all_code.txt", sep = "/")
   hist <- savehistory(codenm)
@@ -145,6 +147,7 @@ output_file <- function(file, path, note = NULL, plotting_data,
   find.fun <- grep(regex, code)
   code <- code[tail(find.fun,1):length(code)]
   writeLines(code, codenm)
+  }
   
   saveRDS(plotting_data, paste(dir, "plot_data.RDat", sep = "/"))
   
