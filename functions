@@ -3,7 +3,8 @@ library(foreign)
 con <- read.csv("https://raw.githubusercontent.com/bjonesPew/r-functions/master/state_concordance.csv",
 	as.is = TRUE)
 
-recode <- function(var, vals, labels = NULL) {
+recode <- function(var, vals, labels = NULL,
+	missing_to_zero = FALSE) {
 	if (class(var)[1] == "factor") lev <- levels(var)
 	if (class(var)[1] != "factor") lev <- levels(factor(var))
 	names(vals) <- lev
@@ -12,6 +13,11 @@ recode <- function(var, vals, labels = NULL) {
 	if (!is.null(labels)) {
 		new <- factor(new, levels = sort(unique(vals)),
 			labels = labels)
+	}
+	
+	if (missing_to_zero) {
+		w <- which(is.na(new))
+		if (length(w) > 0) new[w] = 0
 	}
 	return(new)
 }
