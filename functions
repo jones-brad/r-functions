@@ -802,58 +802,60 @@ calculate_deff <- function (weight, include_zeroes = FALSE, at = .5)
 
 
 ####Weighted cross tab with ss and ess
-wxtab2 <- function(x, y, w, round = FALSE,
-        nets = NULL) {
-
-	if (class(x)[1] == "haven_labelled") x <- to_factor(x)
-	if (class(y)[1] == "haven_labelled") y <- to_factor(y)
-
-        wh <- which(!is.na(x)&!is.na(y)&!is.na(w))
-        x <- x[wh]
-        y <- y[wh]
-        w <- w[wh]
-        tab1 <- table(x)
-        tab2 <- table(y)
-
-        res <- array(0, c(length(tab1), length(tab2)+length(nets)))
-        dimnames(res) <- list(names(tab1), c(names(tab2), names(nets)))
-        tot <- rep(NA, length(tab1))
-
-        for (j in 1:length(tab1)) {
-                wh <- which(x == names(tab1)[j])
-                if (length(wh)==0) { 
-                        res[j,] <- 0
-                        next
-                }
-                ag <- aggregate(w[wh] ~ y[wh], FUN = sum)
-                res[j,as.character(ag[,1])] <- ag[,2]
-                tot[j] <- sum(res[j,])
-                if (!is.null(nets)) {
-                        for (k in 1:length(nets)) {
-                                res[j,names(nets)[k]] <- sum(ag[nets[[k]],2])
-                        }
-                }
-        }
-
-
-        res <- res/tot
-        if (round) res = round(res*100)
-
-        ssize <- array(NA, c(length(tab1), 2))
-        colnames(ssize) <- c("n", "ess")
-
-        ###get ss
-        for (j in 1:length(tab1)) {
-                wh <- which(x == names(tab1)[j])
-                ss <- calculate_deff(w[wh])
-                ssize[j,'n'] <- ss$n
-                ssize[j,'ess'] <- ss$ess
-        }
-
-        res <- cbind(res, ssize)
-
-        return(res)
-        
+wxtab2 = function(x, y, w, round = FALSE,
+                  nets = NULL) {
+  
+  if (class(x)[1] == "haven_labelled") x <- to_factor(x)
+  if (class(y)[1] == "haven_labelled") y <- to_factor(y)
+  
+  wh <- which(!is.na(x)&!is.na(y)&!is.na(w))
+  x <- x[wh]
+  y <- y[wh]
+  w <- w[wh]
+  tab1 <- table(x)
+  tab2 <- table(y)
+  
+  res <- array(0, c(length(tab1), length(tab2)+length(nets)))
+  dimnames(res) <- list(names(tab1), c(names(tab2), names(nets)))
+  tot <- rep(NA, length(tab1))
+  
+  for (j in 1:length(tab1)) {
+    wh <- which(x == names(tab1)[j])
+    if (length(wh)==0) { 
+      res[j,] <- 0
+      next
+    }
+    ag <- aggregate(w[wh] ~ y[wh], FUN = sum)
+    res[j,as.character(ag[,1])] <- ag[,2]
+    tot[j] <- sum(res[j,])
+    if (!is.null(nets)) {
+      for (k in 1:length(nets)) {
+        vals = dimnames(res)[[2]][nets[[k]]]
+        res[j,names(nets)[k]] <- sum(
+          ag[which(is.element(ag[,1],vals)),2])
+      }
+    }
+  }
+  
+  
+  res <- res/tot
+  if (round) res = round(res*100)
+  
+  ssize <- array(NA, c(length(tab1), 2))
+  colnames(ssize) <- c("n", "ess")
+  
+  ###get ss
+  for (j in 1:length(tab1)) {
+    wh <- which(x == names(tab1)[j])
+    ss <- calculate_deff(w[wh])
+    ssize[j,'n'] <- ss$n
+    ssize[j,'ess'] <- ss$ess
+  }
+  
+  res <- cbind(res, ssize)
+  
+  return(res)
+  
 }
 
 ###Github
