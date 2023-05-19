@@ -340,6 +340,8 @@ spacedBar2 <- function(list,  ###input list to plot
   }
   
   if (length(val.lab.col) == 1) val.lab.col <- rep(val.lab.col, n.cats)
+  
+    
   ##run through the list to add the bars
   for (j in 1:length(list)) {
     fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
@@ -353,9 +355,18 @@ spacedBar2 <- function(list,  ###input list to plot
       next
     }
     ##add label
-    text(0, j+lab.buff*.9, names(list)[[j]], pos = 2, 
+    ##flag for grey sublabels
+    label <- names(list)[[j]]
+    flag <- substr(label, 1, 1)
+    rcol = "black"
+    if (flag == "*") {
+      rcol = greys['dark']
+      label <- substr(label, 2, 10000)
+    }
+    text(0, j+lab.buff*.9, label, pos = 2, 
          family = fam,
-         cex = .75)
+         cex = .75, col = rcol)
+         
     x = 0
     if (length(val.lab)==1) val.lab <- rep(val.lab, n.cats)
     for (k in 1:n.cats) {
