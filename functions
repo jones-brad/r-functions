@@ -502,7 +502,7 @@ chunk <- function(vlist, data) {
 #######################create age4 from raw age
 
 create.age4 <- function(age, age.breaks = c(65, 50, 30)) {
-	if (class(age) == "factor") age <- as.numeric(as.character(age))
+	if (class(age)[1] == "factor") age <- as.numeric(as.character(age))
 	
 	age4 <- rep(9, length(age))
 	wh <- which(age < 99)
