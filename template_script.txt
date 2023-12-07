@@ -8,6 +8,6 @@ readGit <- function(path) {
 }
 
 ###some custom functions I use
-readGit("https://raw.githubusercontent.com/bjonesPew/r-functions/master/functions")
+readGit("https://raw.githubusercontent.com/jones-brad/r-functions/master/functions")
 
 library(haven)
