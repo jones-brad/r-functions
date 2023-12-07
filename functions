@@ -1346,3 +1346,35 @@ recode_continuous = function(x, cut,
   rvar = haven::labelled(rvar, labels = vals)
   return(rvar)
 }
+
+## Power analysis function
+power_test = function(n.test, n.control,
+                      mu.test, mu.control,
+                      n.iter = 1000) {
+  
+  #containers to hold results
+  res = sig = rep(NA, n.iter)
+  
+  for (j in 1:n.iter) {
+    c = rbinom(1, n.control, mu.control)
+    t = rbinom(1, n.test, mu.test)
+    res[j] = (t/n.test)-(c/n.control)
+    
+    c1 = sample(c(rep(1, c), rep(0, n.control-c)))
+    t1 = sample(c(rep(1, t), rep(0, n.test-t)))
+    
+    sig[j] = t.test(t1, c1)$p.value
+  }
+  
+  #type s errors
+  s = mean(res < 0 & sig < .05)
+  
+  #not significant difference
+  ns = mean(sig > 0.05)
+  
+  #significant in the right direction
+  g = mean(sig < 0.05 & res > 0)
+  
+  return(c("good" = g, "not_sig" = ns, "s_error" = s))
+  
+}
