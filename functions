@@ -1086,6 +1086,7 @@ read_ascii <- function(dir = getwd(),
 to_factor <- function(var) {
 	if (class(var)[1] != "haven_labelled") return(var)
 	lev <- attr(var, 'labels')
+	lev <- sort(lev)
 	fac <- factor(var, levels = lev,
 		labels = names(lev))
 	return(fac)
