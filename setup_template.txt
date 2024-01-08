@@ -1,0 +1,28 @@
+## Find the latest version of the data
+files = list.files("data/", full.names = TRUE)
+files = files[grep("\\.sav$", files)]
+
+# date of the files
+time = file.info(files)$mtime
+
+latest_file = files[which.max(time)]
+
+# Load data
+dat = read_sav(latest_file)
+
+# Add a constant column
+dat$cons = 1
+
+# Keep completes
+dat = dat[which(dat$disposition == 1),]
+
+# Check for the presence of weights
+has_weights = is.element(wt_names, names(dat))
+
+for (j in 1:length(has_weights)) {
+  if (!has_weights[j]) {
+    dat[[wt_names[j]]] = 1
+    cat(paste('"', wt_names[j], '"', " not found, dummy added to data",
+                sep = ""))
+  }
+}
