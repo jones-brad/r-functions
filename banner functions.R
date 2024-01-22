@@ -186,3 +186,91 @@ create_banners = function(questions, bannerpoints,
   }
   
 }
+
+test_diff = function(P1, P2, n1, n2, conf_level) {
+  delta = P1 - P2
+  
+  if (delta < 0) return(FALSE)
+  
+  sd = sqrt((P1*(1 - P1) / n1) + (P2*(1 - P2) / n2) )
+  z = abs(delta)/sd
+  
+  return(z > qnorm(1-(1-conf_level)/2))
+}
+
+get_stats = function(xvar, xlev, fnm, q, qlev = 1,
+                     decades, conf_level = .95) {
+  
+  ##results arrays
+  mu_array = ess_array = array(NA, c(length(decades), length(xlev)))
+  rownames(mu_array) = rownames(ess_array) = decades
+  colnames(mu_array) = colnames(ess_array) = levels(adat[[xvar]])[xlev]
+  cat_comp = temp_comp = array('', c(length(decades), length(xlev)))
+  dimnames(cat_comp) = dimnames(temp_comp) = dimnames(mu_array)
+  
+  ##fill arrays
+  for (j in 1:length(xlev)) {
+    inds = which(adat[[xvar]] == levels(adat[[xvar]])[xlev[j]])
+    tb = wxtab2(adat$decade[inds], 
+                adat[[q]][inds], 
+                adat$weight_all[inds])
+    
+    mu_array[,j] = tb[decades,qlev]
+    ess_array[,j] = tb[decades,'ess']
+  }
+  
+  ## make the category comparisons
+  
+  for (j in 1:nrow(cat_comp)) {
+    for (k in 1:ncol(cat_comp)) {
+      p1 = mu_array[j,k]
+      n1 = ess_array[j,k]
+      test = 1:ncol(cat_comp)
+      test = test[-j]
+      sig = NULL
+      for (i in test) {
+        p2 = mu_array[j,i]
+        n2 = ess_array[j,i]
+        if (test_diff(p1, p2, n1, n2, conf_level)) sig = c(sig, LETTERS[i])
+      }
+      if (length(sig) > 0) cat_comp[j,k] = 
+        paste("(", paste(sig, collapse = ","), ")", sep = "")
+    }
+  }
+  
+  ## make decade comparisons
+  
+  for (j in 1:nrow(temp_comp)) {
+    for (k in 1:ncol(temp_comp)) {
+      p1 = mu_array[j,k]
+      n1 = ess_array[j,k]
+      test = 1:nrow(temp_comp)
+      test = test[-j]
+      sig = NULL
+      for (i in test) {
+        p2 = mu_array[i,k]
+        n2 = ess_array[i,k]
+        if (test_diff(p1, p2, n1, n2, conf_level)) sig = c(sig, 
+                                                           substr(decades[i], 3,4))
+      }
+      if (length(sig) > 0) temp_comp[j,k] = 
+        paste("[", paste(sig, collapse = ","), "]", sep = "")
+    }
+  }
+  
+  ## combine into one table
+  
+  combined = cbind(
+    rbind(c("Share who are ...", rep('', length(xlev)-1)),
+          colnames(mu_array),
+          round(mu_array*100)), '',
+    rbind(c("Comparison across categories ...", rep('', length(xlev)-1)),
+          colnames(cat_comp), 
+          cat_comp), '',
+    rbind(c("Comparison across decades ...", rep('', length(xlev)-1)),
+          colnames(temp_comp),
+          temp_comp))
+  
+  write.table(combined, paste("comparisons", fnm, sep = "/"),
+              col.names = FALSE, sep = ",")
+}
