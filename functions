@@ -872,7 +872,7 @@ readGit <- function(path) {
 
 readGit("https://raw.githubusercontent.com/jones-brad/r-functions/master/plot_functions")
 readGit("https://raw.githubusercontent.com/jones-brad/r-functions/master/mode_effects")
-readGit("https://raw.githubusercontent.com/jones-brad/r-functions/master/banner functions.R")
+readGit("https://raw.githubusercontent.com/jones-brad/r-functions/master/banner%20functions.R")
 
 ###########Get party indices
 partyinds <- function(dat, partynm) {
