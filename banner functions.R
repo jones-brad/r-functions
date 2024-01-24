@@ -46,7 +46,7 @@ create_banners = function(questions, bannerpoints,
     if (is.null(questions[[j]]$summary)) {
       ##Calculate the number of rows needed for a standard table
       nrow = length(header) + 1 + length(questions[[j]]$levels) +
-        1 + length(questions[[j]]$nets) + 1
+        1 + length(questions[[j]]$nets) + 2
       
       ## value labels
       tab = wxtab2(dat$cons[inds],
@@ -58,7 +58,7 @@ create_banners = function(questions, bannerpoints,
       vlab = colnames(tab)[questions[[j]]$levels]
       if (!is.null(questions[[j]]$nets)) vlab = c(vlab,
                                                   names(questions[[j]]$nets))
-      vlab = c(vlab, 'n')
+      vlab = c(vlab, 'n', 'ess')
       
       ## add NET indicator
       vlab2 = vlab
@@ -67,9 +67,11 @@ create_banners = function(questions, bannerpoints,
           (length(questions[[j]]$levels)+length(questions[[j]]$nets))
         vlab2[i] = paste("NET:", vlab2[i])
       }
+      vlab2[(length(vlab2)-1):length(vlab2)] = c("Total N", 
+                                                 "Effective sample size")
       
       ncats = length(questions[[j]]$levels) +
-        length(questions[[j]]$nets)
+        length(questions[[j]]$nets)+1
       
     }
     
@@ -87,7 +89,7 @@ create_banners = function(questions, bannerpoints,
       }
       summary_order = order(vec, decreasing = TRUE)
       vlab2 = vlab2[summary_order]
-      vlab2 = c(vlab2, 'n')
+      vlab2 = c(vlab2, 'Total N', 'Effective sample size')
       ncats = length(vlab2)-1
       
       ##add a bit to the header
@@ -97,7 +99,7 @@ create_banners = function(questions, bannerpoints,
                    collapse = ", "), ") responses", sep = ""))
       
       ##Calculate the number of rows needed for a summary table
-      nrow = length(header) + 1 + length(svars) + 2
+      nrow = length(header) + 1 + length(svars) + 3
     }
     
     ##container for results
@@ -110,9 +112,18 @@ create_banners = function(questions, bannerpoints,
 
     res[row_pos:(row_pos+ncats),1] = vlab2
     
-
     ## counter for column positioning
     col_pos = 2
+    
+    ## container for data (cbind for each banner point)
+    all_output = NULL
+    
+    ## container for n
+    all_n = NULL
+    
+    ## container for ess
+    all_ess = NULL
+    
     for (k in 1:length(bannerpoints)) {
       ##var name for the banner
       x = bannerpoints[[k]]$var
@@ -124,8 +135,8 @@ create_banners = function(questions, bannerpoints,
       nlev = length(lev)
       
       ## add column labels
-      res[row_pos-2,col_pos] = names(bannerpoints)[k]
-      res[row_pos-1,col_pos:(col_pos+nlev-1)] = bnames
+      #res[row_pos-2,col_pos] = names(bannerpoints)[k]
+      #res[row_pos-1,col_pos:(col_pos+nlev-1)] = bnames
       
       ## Handle summary tables
       if (!is.null(questions[[j]]$summary)) {
@@ -141,54 +152,173 @@ create_banners = function(questions, bannerpoints,
           int = intersect(bnames, names(mu))
           output[r,int] = mu[int]
         }
-        output = round(output[summary_order,]*100)
+        clean.output = round(output[summary_order,]*100)
+        raw.output = output[summary_order,]
         
-        ##add n to the bottom row
+        ##add n and ess to the bottom row
         n = table(dat[[x]][inds])[bannerpoints[[k]]$levels]
-        if (class(output)[1]=='numeric') output = c(output, n)
-        if (class(output)[1]=='matrix') {
-          output = rbind(output, n)
+        ess = round(wxtab2(dat[[x]][inds], dat$cons[inds], dat$weight[inds])[
+                    bannerpoints[[k]]$levels,'ess'
+                    ],1)
+        if (class(clean.output)[1]=='numeric') clean.output = c(clean.output, n, ess)
+        if (class(clean.output)[1]=='matrix') {
+          clean.output = rbind(clean.output, n, ess)
         }
         
         ##insert values
-        res[row_pos:(row_pos+ncats),
-            col_pos:(col_pos+nlev-1)] = output
+        #res[row_pos:(row_pos+ncats),
+        #    col_pos:(col_pos+nlev-1)] = clean.output
         
         ## update the column position
         col_pos = col_pos + nlev
+        
+        ##append results
+        all_output = cbind(all_output, raw.output)
+        
+        ##append n
+        all_n = c(all_n, as.numeric(n))
+        
+        ##append ess
+        all_ess = c(all_ess, ess)
         
         next
       }
       
       
-      tab = wxtab2(dat[[x]][inds],
+      tab = round(wxtab2(dat[[x]][inds],
                    dat[[var]][inds],
                    dat[[control$weight]][inds],
                    round = TRUE,
-                   nets = questions[[j]]$nets)
+                   nets = questions[[j]]$nets),1)
       
       
       ## fill in data
 
-      res[row_pos:(row_pos+ncats),
-          col_pos:(col_pos+nlev-1)] = t(tab[lev,vlab])
+      #res[row_pos:(row_pos+ncats),
+      #    col_pos:(col_pos+nlev-1)] = t(tab[lev,vlab])
+      
+      tab = wxtab2(dat[[x]][inds],
+                         dat[[var]][inds],
+                         dat[[control$weight]][inds],
+                         nets = questions[[j]]$nets)
       
       ## update the column position
       col_pos = col_pos + nlev
+      
+      ## append output
+      vlab_o = vlab[1:(length(vlab)-2)]
+      if (length(lev) == 1) all_output = cbind(all_output,
+                                               as.numeric(t(tab[lev,vlab_o])))
+      if (length(lev) > 1) all_output = cbind(all_output, 
+                                              t(tab[lev,vlab_o]))
+      
+      ## append n
+      all_n = c(all_n, tab[lev,'n'])
+      
+      ## append ess
+      all_ess = c(all_ess, tab[lev,'ess'])
     }
+    
+    
+    ## Assemble the results
+    
+    #header (var label, base, dates, question wording, other notes)
+    res = c(header[1], rep("", ncol(all_output)))
+    for (h in 2:length(header)) {
+      res = rbind(res, c(header[h], rep("", ncol(all_output))))
+    }
+    
+    #banner labels
+    blabels = ''
+    for (b in 1:length(bannerpoints)) {
+      str = c(names(bannerpoints)[b], rep('', 
+                                          length(bannerpoints[[b]]$levels) - 1))
+      blabels = c(blabels, str)
+    }
+    res = rbind(res, blabels)
+    
+    #banner column names
+    bnames = ''
+    for (n in 1:length(bannerpoints)) {
+      tab = tab2(dat[[bannerpoints[[n]]$var]])
+      nm = names(tab)[bannerpoints[[n]]$levels]
+      bnames = c(bnames, nm)
+    }
+    
+    
+    #add stat sig guide if necessary
+    sig = control$significance_testing
+    
+    if (!is.null(sig)) {
+      for (s in 1:length(sig)) {
+        inds = sig[[s]]+1
+        bnames[inds] = paste(bnames[inds], " [", LETTERS[1:length(inds)],
+                             "]", sep = "")
+      }
+    }
+    
+    res = rbind(res, bnames)
+    
+    #data (rows of results interweaved with significance indicators)
+    
+    for (o in 1:nrow(all_output)) {
+      
+      #get the data
+      r = round(all_output[o,]*100)
+      res = rbind(res, c(vlab2[o],r))
+      
+      ## skip any missing cases
+      mis = which(is.na(all_output[o,]))
+      
+      if (!is.null(sig)) {
+        # container for significance flags
+        sig_res = rep('', ncol(res))
+        
+        for (s in 1:length(sig)) {
+          
+          comp = sig[[s]]
+          for (c in comp) {
+            if (is.element(c, mis)) next
+            
+            P1 = all_output[o,c]
+            n1 = all_ess[c]
+
+            comp.star = 1:length(comp)
+            comp.star = comp.star[-which(comp == c)]
+            comps = NULL
+            for (c2 in comp.star) {
+              if (is.element(comp[c2], mis)) next 
+              P2 = all_output[o,comp[c2]]
+              n2 = all_ess[comp[c2]]
+              if (test_diff(P1, P2, n1, n2, conf_level)) comps =
+                c(comps, LETTERS[c2])
+            }
+            if (length(comps)>0) sig_res[c+1] = paste("(",
+                      paste(comps, collapse = ","), ")", sep = "")
+          }
+          
+        }
+        res = rbind(res, sig_res)
+      }
+    }
+    
+    #footer (n, ess)
+    res = rbind(res, c("Total N:", all_n),
+                c("Effective sample size:", all_ess))
     
     ## write the file
     fnm = paste(names(questions)[j], "csv", sep = ".")
     write.table(res, paste("banners", fnm, sep = "/"),
               row.names = FALSE, col.names = FALSE,
               sep = ",")
-    if (pause) Sys.sleep(1)
+    if (pause) Sys.sleep(.5)
   }
   
 }
 
 test_diff = function(P1, P2, n1, n2, conf_level) {
   delta = P1 - P2
+  if (delta == 0) return(FALSE)
   
   if (delta < 0) return(FALSE)
   
