@@ -1225,7 +1225,7 @@ create_new_folder <- function(path = getwd(), name) {
 
   ##add a 'set up data' script template to the code folder
   setup <- readLines("https://raw.githubusercontent.com/jones-brad/r-functions/master/setup_template.txt")
-  writeLines(setup, paste(new.path, "set up data.R", sep = "/"))
+  writeLines(setup, paste(new.path, "code/set up data.R", sep = "/"))
 }
 
 ####function to populate a list for a plot
