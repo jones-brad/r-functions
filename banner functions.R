@@ -318,6 +318,7 @@ create_banners = function(questions, bannerpoints,
 
 test_diff = function(P1, P2, n1, n2, conf_level) {
   delta = P1 - P2
+  if (is.na(delta)) return(NA)
   if (delta == 0) return(FALSE)
   
   if (delta < 0) return(FALSE)
