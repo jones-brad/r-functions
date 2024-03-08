@@ -14,7 +14,7 @@ dat = read_sav(latest_file)
 dat$cons = 1
 
 # Keep completes
-dat = dat[which(dat$disposition == 1),]
+if (is.element("disposition", names(dat))) dat = dat[which(dat$disposition == 1),]
 
 # Check for the presence of weights
 has_weights = is.element(wt_names, names(dat))
