@@ -290,7 +290,7 @@ create_banners = function(questions, bannerpoints,
               if (is.element(comp[c2], mis)) next 
               P2 = all_output[o,comp[c2]]
               n2 = all_ess[comp[c2]]
-              if (test_diff(P1, P2, n1, n2, conf_level)) comps =
+              if (test_diff(P1, P2, n1, n2, control$conf_level)) comps =
                 c(comps, LETTERS[c2])
             }
             if (length(comps)>0) sig_res[c+1] = paste("(",
