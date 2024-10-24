@@ -22,6 +22,16 @@ partycolors <- c(rep = "#BF3B27",
 	consrep = rgb(143/255, 44/255, 29/255),
 	libdem = rgb(50/255, 78/255, 97/255))
 
+ygcolors = c(
+	'yg purple' ="#712F89",
+	'yg violet' = "#CA85DE",
+	'yg orchid' = "#F372A1"
+	'yg pink' = "#EA5094",
+	'yg red' = "#EB4F3E",
+	'yg teal' = "#009996",
+	'yg turquoise' = "#29CDCA"
+)
+
 greys <- c(dark = rgb(128/255, 128/255, 128/255))
 
 ##colors with contrast from RColorBrewer
