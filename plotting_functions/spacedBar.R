@@ -14,6 +14,7 @@ spacedBar <- function(list,	###input list to plot
                       digits = 0,
                       addVerticalLines = FALSE,
                       shiftSmall = TRUE,
+                      small_val = 5,
                       col.lab.adj = .1,
                       spaces = NULL) {		###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
@@ -189,7 +190,7 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
   }
   
   if (shiftSmall) {
-    shift <- ifelse(val*100 < 5, .05, 0)
+    shift <- ifelse(val*100 < small_val, .05, 0)
     if (shift > 0) val.lab.col = 'black'
     if (val.lab) text(x + val/2 + shift, 
                       pos, abs(round(val*100)),
@@ -219,6 +220,8 @@ spacedBar2 <- function(list,  ###input list to plot
                        add.net = NULL,         ###add NETs to any grouped bars
                        net.buff = 0,           ###add a little extra to the xmax to prevent cutting off net labels
                        spaces = NULL,
+                       shiftSmall = TRUE,
+                       small_val = 5,
                        groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
   ##set up the height of the box based on the number of elements
