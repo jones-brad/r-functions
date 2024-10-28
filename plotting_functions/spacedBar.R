@@ -379,7 +379,7 @@ spacedBar2 <- function(list,  ###input list to plot
               col = col.vec[k], 
               val.lab.col = val.lab.col[k],
               val.lab = list[[j]][k] > 0 & val.lab[k],
-              pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
+              pos = j+lab.buff*.9, shiftSmall = shiftSmall, 
               write.file = write.file, small_val = small_val,
               too_small = small)
       
