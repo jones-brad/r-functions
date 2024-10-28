@@ -171,7 +171,7 @@ spacedBar <- function(list,	###input list to plot
 }
 
 addBar2 <- function(x, y, val, col, val.lab = TRUE,
-                    pos = 1, shiftSmall = FALSE, write.file, val.lab.col = 'black',
+                    pos = 1, shiftSmall = shiftSmall, write.file, val.lab.col = 'black',
                     digits = 0, too_small = TRUE, small_val = small_val) {
   
   fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
