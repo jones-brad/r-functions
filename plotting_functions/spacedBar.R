@@ -143,7 +143,7 @@ spacedBar <- function(list,	###input list to plot
               digits = digits,
               val.lab = list[[j]][k] > 0,
               pos = j, shiftSmall = shiftSmall, write.file = write.file,
-              val.lab.col = val.lab.col[k])
+              val.lab.col = val.lab.col[k], small_val = small_val)
       x = x + mat[j,k]
       if (k < n.cats) {
         x = x + space[j,k]
@@ -172,7 +172,7 @@ spacedBar <- function(list,	###input list to plot
 
 addBar2 <- function(x, y, val, col, val.lab = TRUE,
                     pos = 1, shiftSmall = FALSE, write.file, val.lab.col = 'black',
-                    digits = 0, too_small = TRUE) {
+                    digits = 0, too_small = TRUE, small_val = small_val) {
   
   fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
   polygon( x = c(x, x+val, x+val, x),
@@ -380,7 +380,7 @@ spacedBar2 <- function(list,  ###input list to plot
               val.lab.col = val.lab.col[k],
               val.lab = list[[j]][k] > 0 & val.lab[k],
               pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
-              write.file = write.file,
+              write.file = write.file, small_val = small_val,
               too_small = small)
       
       x = x + mat[j,k]
