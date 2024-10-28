@@ -182,7 +182,7 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
   ## write value labels
   if (!shiftSmall) {
     
-    if (val.lab & abs(val*100) > too_small) text(x + val/2, 
+    if (val.lab & abs(val*100) > small_val) text(x + val/2, 
                                      pos, format(round(abs(val)*100, digits), nsmall = digits),
                                      family = fam,
                                      cex = .75,
