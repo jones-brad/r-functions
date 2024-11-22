@@ -50,6 +50,8 @@ verticalBar <- function(list, ##data to plot
 	whiteSpace = 0,		##Add NET to bars (only helpful for subsetting)
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
 	vcol = "black",		##Value label color
+	bg.col = "white",	##Background color
+	custom.bar.colors = NULL,	##Customizable bar colors
 	netAdj = .05) {		##horizontal adjustment to bars
 
 	##open the plot window (multiplied by the resolution factor)
@@ -74,6 +76,7 @@ if (write.file == "pdf") {
 }
 	##Open plot window
 	par(mar = rep(.1, 4))
+	par(bg = bg.col)
 	plot(0,0, pch = '', 
 		xlim = c(.5, length(to.plot)+.5),
 		ylim = ylim, axes = FALSE,
@@ -84,9 +87,11 @@ if (write.file == "pdf") {
 	if (length(val.lab)<n.cats) val.lab = rep(val.lab, n.cats)
 	##run through the list to add the bars
 	for (j in 1:length(list)) {
+		if (is.null(list[[j]])) next
 		##add bars
 		if (is.null(n.cats)) N <- length(list[[j]])
 		if (!is.null(n.cats)) N <- n.cats
+		if (!is.null(custom.bar.colors)) col.vec = custom.bar.colors[[j]]
 
 		addVBar(vec = list[[j]][1:N], col.vec = col.vec, 
 			val.lab = val.lab, val.lab.thresh = val.lab.thresh,
