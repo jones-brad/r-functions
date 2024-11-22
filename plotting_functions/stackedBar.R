@@ -111,7 +111,9 @@ stackedBar <- function(list, 		##data to plot
 	digits = 0,			##How many digits to display (0 assumes data is from 0-1 and prints percentages)
 	vcol = "black",			##Value label color
 	too_small = 0,			##Do not print data labels that are equal or lower to this (rounded) value
-	white_space = .1,		##The amount of white space that should be printed between the bars (scaled from 0 (bars will touch) to .5)	       
+	white_space = .1,		##The amount of white space that should be printed between the bars (scaled from 0 (bars will touch) to .5)
+	bg.col = 'white',		##Set the background color
+	custom.bar.colors = NULL,	##List of custom bar colors
 	netAdj = .05) {			##horizontal adjustment to bars
 
 	##set up the height of the box based on the number of elements
@@ -149,6 +151,7 @@ if (write.file == "pdf") {
 }
 	##Open plot window
 	par(mar = rep(.1, 4))
+	par(bg = bg.col)
 	plot(0,0, pch = '', xlim = xlim,
 		ylim = ylim, axes = FALSE,
 		xlab = '', ylab = '')
@@ -197,6 +200,8 @@ if (write.file == "pdf") {
 		##add bars
 		if (is.null(n.cats)) N <- length(list[[j]])
 		if (!is.null(n.cats)) N <- n.cats
+
+		if (!is.null(custom.bar.colors)) col.vec = custom.bar.colors[[j]]
 
 		addBar(vec = list[[j]][1:N], col.vec = col.vec, 
 			val.lab = val.lab,
