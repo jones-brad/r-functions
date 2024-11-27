@@ -2,7 +2,7 @@
 addVBar <- function(vec, col.vec, val.lab = TRUE,
 	pos = 1, label = "Total", res, write.file,
 	addNet = FALSE, netAdj = .05, digits = 0, vcol = "black",
-	whiteSpace = .2, val.lab.thresh = NULL) {
+	whiteSpace = .2, val.lab.thresh = NULL, show_pct=FALSE) {
 	
 	adj <- .5*(1-whiteSpace)
 	y.pos <- 0
@@ -16,8 +16,10 @@ addVBar <- function(vec, col.vec, val.lab = TRUE,
 			border = NA, col = col.vec[j])
 		## write value labels
 		if (val.lab[j] & vec[j] > val.lab.thresh) {
+			to.paste = round(vec[j]*100,digits)
+			if (show_pct) to.paste = paste(to.paste, "%", sep = "")
 			if (round(vec[j]*100) > 0) text(pos, 
-				vec[j]/2 + y.pos, round(vec[j]*100),
+				vec[j]/2 + y.pos, to.paste,
 				family = fam,
 				cex = .75, col = vcol[j])
 		}
@@ -52,6 +54,7 @@ verticalBar <- function(list, ##data to plot
 	vcol = "black",		##Value label color
 	bg.col = "white",	##Background color
 	custom.bar.colors = NULL,	##Customizable bar colors
+	show_pct = FALSE,
 	netAdj = .05) {		##horizontal adjustment to bars
 
 	##open the plot window (multiplied by the resolution factor)
@@ -97,7 +100,7 @@ if (write.file == "pdf") {
 			val.lab = val.lab, val.lab.thresh = val.lab.thresh,
 			pos = j, label = names(list)[[j]],
 			res = res, write.file = write.file,
-			whiteSpace = whiteSpace)
+			whiteSpace = whiteSpace, show_pct = show_pct)
 	}
 
 ##Close the plot window
