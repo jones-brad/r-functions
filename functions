@@ -1213,6 +1213,7 @@ create_new_folder <- function(path = getwd(), name) {
   dir.create(paste(new.path, "code", sep = "/"))
   dir.create(paste(new.path, "data", sep = "/"))
   dir.create(paste(new.path, "figures", sep = "/"))
+  dir.create(paste(new.path, "output", sep = "/"))
   
   ##add a blank 'eda' file with the header
   script <- readLines("https://raw.githubusercontent.com/jones-brad/r-functions/master/template_script.txt")
