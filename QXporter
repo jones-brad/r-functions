@@ -1,0 +1,537 @@
+## Written by Julissa
+#########################################################################################################
+#Possible things to add to this function
+
+#	still need to implement the recursive guarding, ie [Q2 if sample_type in [3]], [Q3 if Q2 in [1,2]],
+#	then specifying 'sample_type in [3]' in the guards will exclude both Q2 and Q3, since Q3 won't be
+#	shown if Q2 isn't shown.   Could also write a helper function to print out all guard terms present
+#	in the QX to aid in determination of what guards to exclude
+
+#	could add a parameter to be able to exclude specific html tags from the export of free text elements
+#	right now any text that starts with '<script>' or '<style>' are hardcoded to be excluded so that 
+#	big html/JS chunks don't get exported, that could also be extended so you could input other tags
+# 	like '<div>' or '<table>' if those need to be excluded as well
+
+#	a number of used questions still need to be added to the exporter, notable thermometers, placement,
+#	maybe text-highlighters.  Other fancy or specific versions of supported questions may need to be
+#	added as well, but no coding might be necessary, it might be simply adding those terms to the if
+#	conditions in the main loop.  Examples of this are things like dyngrid-check, multiple-colorpicker,
+#	etc.  Most likely these would already be fully supported they just haven't been tested rigorously yet 
+
+# Guards/topics at the module and page level do not get picked up. Perhaps we can add code do do this
+
+# Piping text get printed as $piped_text, it would be nice to be able to show what were the possible 
+# pipping texts
+#########################################################################################################
+
+library(readxl)
+library(httr)
+library(stringr)
+require(officer)
+
+panGET = function(url) {
+  if (!exists("userName")) stop("userName not defined. Please provide your name. For example userName = 'firstName.lastName'")
+	return(content(GET(url, add_headers('Monocle-Client' = userName, 'Monocle-Warnings' = 'not-yet'))))
+}
+
+    # This function returns TRUE wherever elements are the same, including NA's,
+    # and false everywhere else.
+compareNA <- function(v1,v2) {
+    same <- (v1 == v2)  |  (is.na(v1) & is.na(v2))
+    same[is.na(same)] <- FALSE
+    return(same)
+}
+   
+	#this isn't used specifically in the export function, but is available to print
+	#out a list of all questions in the survey and their types, in case some aren't 
+	#coded for export so you can check out what might be missing.  Every question will
+	#at least have "[qName] {qType} Question text" printed out, but for unusual types
+	#that may have other parameters that need to be translated (for example thermos)
+	#they are not all coded into the export function yet    
+get_qtypes = function(survey, uniqueQs=FALSE) {
+	if(length(grep('g4-emea',survey))) {
+		panURL <- "http://panoptic.ldc.yougov.net/questionnaires/"
+	} else if(length(grep('g4-us',survey))) {
+		panURL <- "http://panoptic.paix.yougov.net/questionnaires/"
+	} 
+	qx <- strsplit(survey,'#')[[1]][2]
+	active_version = panGET(paste0(panURL, qx))$body$active_version
+	foo = panUnpack(panGET(active_version)$children)
+	foo = foo[which(unlist(lapply(foo, function(x) x$element)) == 'qdf:question')]
+	if(!(uniqueQs))	{
+		return(cbind(unlist(lapply(foo, function(x) ifelse('family' %in% names(x), x$family, x$type))), unlist(lapply(foo, function(x) x$name))))
+	} else {
+		return(unique(unlist(lapply(foo, function(x) ifelse('family' %in% names(x), x$family, x$type)))))
+	}
+}
+
+	#this function is used in the exporter to either print out a message that all the 
+	#questions in the survey are accounted for in the exporter or else print out a
+	#message with what types aren't account for in the exporter that are in the 
+	#survey you're exporting.  The list of currently supported question types is
+	#hard-coded into this function, and should be changed as question types
+	#are added to the exporter
+check_qtypes = function(active_version) {
+	foo = panUnpack(panGET(active_version)$children)
+	foo = foo[which(unlist(lapply(foo, function(x) x$element)) == 'qdf:question')]
+	qTypes = unique(unlist(lapply(foo, function(x) ifelse('family' %in% names(x), x$family, x$type))))
+	scripted = c('language','pdl-update','open','open-int','open-intrange','open-real','open-realrange','single','single-colorpicker','dropdown','multiple','rank','grid','dyngrid','grid-open','grid-check','scale','rule','multiple-colorpicker','colorpicker')
+	unscripted = setdiff(qTypes, scripted)
+	if(length(unscripted)) {
+		cat(paste0("The following question types in this QX aren't scripted for lingua export yet\n"), paste(unscripted, collapse='\n'), '\n')
+	} else {
+		cat('All variables are scripted for lingua export\n')
+	}
+}
+
+	#a function to recursively parse a QDF list object grabbed from panman, it only
+	#returns bottom level elements, collapsing the hierarchical list structure of
+	#panman's return into a list of all the individual elements in the QDF
+panUnpack <- function(panList) {
+	bar = list()
+	for(i in panList) {
+		if('children' %in% names(i)) {
+			bar = append(bar, panUnpack(i$children))
+		} else {
+			if(is.list(i)) {
+				bar <- append(bar, list(i))
+			}
+		}	
+	}
+	return(bar)
+}
+
+	#a helper function that takes care of printing out translated or untranslated
+	#question lines.  It checks if the question text is translated by looking in 
+	#the lingua sheet (or not if the survey is untranslated/doesn't use lingua)
+	#also checks for 'fuzzy' tags to not translate those lines, and returns the 
+	#formatted question line to add to the output object
+
+qPrint <- function(question, sheet, subQ = FALSE, untranslated, 
+                   grid = F, printGuardText = T, printOrderText = T) {
+
+  if('text' %in% names(question)) {
+    tag = paste0('/question:',question$name,'/text')
+    qText = question$text
+    
+    guardText = ""
+    fixedText = ""
+    orderText = ""
+    
+    ### Prints guards on grid rows, can be turned off, default is on ###
+    if('guard' %in% names(question) & printGuardText) {
+        guardText <- paste0(' if ', question$guard)
+    }
+
+    ### Prints randomization text, can be turned off, default is on ###
+    if ('options' %in% names(question) & printOrderText){
+      	if('roworder' %in% names(question$options)) orderText <- paste0(' roworder=', question$options$roworder, '')
+      	if('colorder' %in% names(question$options)) orderText <- paste0(orderText, ' colorder=', question$options$colorder, '')
+        if('order' %in% names(question$options)) orderText <- paste0(' order=', question$options$order, '')
+    }
+
+    if('options' %in% names(question) & grid) {
+      if('fixed' %in% names(question$options)) fixedText <- paste0('{fixed} ')
+    }
+   
+    if(untranslated) {
+      if(!(subQ)) {
+        return(paste0('[',question$name, guardText, ']', fixedText,' {',question$type, orderText,'} ',qText))
+      } else {
+        return(paste0(' -[',question$name, guardText,'] ', fixedText,qText))
+      }			
+    }
+    if(tag %in% sheet$context) {
+      if(!(compareNA(sheet$flags[sheet$context == tag],'fuzzy')) & !is.na(sheet$translated_text[sheet$context == tag])) {qText = sheet$translated_text[sheet$context == tag]}
+    } 
+    
+    if(!(subQ)) {
+      return(paste0('[',question$name, guardText,']', fixedText,' {',question$type, orderText,'} ',qText))
+    } else {
+      return(paste0(' -[',question$name, guardText,'] ', fixedText,qText))
+    }
+  }
+}
+
+	#a helper function that takes care of translating and printing out response
+	#lists for a question.  It checks for translating each response text (or not
+	#if there's a 'fuzzy' tag) and returns a set of formatted lines to add to 
+	#the output text object. 
+respPrint = function(responses, question, sheet, testing, untranslated, printGuardText = T) {
+  returnText = character()
+
+  for(j in responses) {
+
+    openText = ""
+    if('children' %in% names(j)) {
+        openText <- paste0(" [",j$children[[1]]$export[[1]]$name, "] {open}")
+    }
+    
+    fixedXorText = ""
+    if('options' %in% names(j)){
+    	if ("fixed" %in% names(j$options)){
+        	if(j$options$fixed) fixedXorText = " fixed"
+      	}
+    	if ("xor" %in% names(j$options)){
+        	if(j$options$xor) fixedXorText = paste0(fixedXorText, " xor")
+    	}
+    }
+
+    guardText = ""
+    if('guard' %in% names(j) & printGuardText) {
+        if(j$guard == 0) {
+            next
+        } else{
+        	guardText <- paste0(' if ', j$guard)
+      	}
+    }
+    
+    tag = paste0('/question:',question,'/response:',j$code,'/text')
+    if(testing) {print(tag)}
+    if(untranslated) {
+      returnText = c(returnText, paste0(' <',j$code, guardText, fixedXorText, '> ',j$text, openText))
+      next
+    }
+    
+    if (tag %in% unique(sheet$context)){
+      if(!(is.na(sheet$translated_text[sheet$context == tag]))) {
+        if(!(compareNA(sheet$flags[sheet$context == tag],'fuzzy'))) {
+          returnText = c(returnText, paste0(' <',j$code, guardText, fixedXorText,'> ',sheet$translated_text[sheet$context == tag], openText))
+        } else {
+          returnText = c(returnText, paste0(' <',j$code, guardText, fixedXorText,'> ',j$text, openText))
+        }
+      } else {
+        returnText = c(returnText, paste0(' <',j$code, guardText, fixedXorText,'> ',j$text, openText))
+      }
+    } else{
+      returnText = c(returnText, paste0(' <',j$code, guardText, fixedXorText, '> ',j$text, openText))
+    }
+
+  } 
+  return(returnText)
+}
+
+	#this is the main function that you call to write out the translated (or not) export for a project
+	#for questions that are pdl-update, the question body is not included in the panoptic QDF, so this
+	#function grabs the definition from datum, and subs in translations from the datum translations
+	#if they exist.  So even pdl-update questions should be exported "as seen by a survey taker"
+	
+	#the paramaters for the main function are:
+		#survey - this is the url copied from gryphon for a survey, as a string, 
+		#like "https://g4-us.yougov.net/#play_jp_201904"
+		
+		#lang - the language code that you want to print out the translated export for.  This defaults to "", if you don't
+		#enter a parameter for lang, that's alright, the function will determine the authored language of the QX from 
+		#panman and set lang to that code
+		
+		#filename - you can specify a file name for the export, the default if unspecified will be:
+		#"{qx_name}_translated_{lang code}.txt"
+		
+		#guardExcludes - can specify a single string or vector of strings here to be excluded from the export.
+		#the format of these should be without the "if", so if you want to exclude all "if 0" questions, add
+		# "0" to this parameter, "Q2 in [2]" for "if Q2 in [2]", etc.  By default, for all "if 0" questions that
+		#are exported with "(question not displayed during survey)" printed directly above them, to indicate
+		#such to clients
+		
+		#topicExcludes - similar to guardExcludes, you can specify topics such that all questions in that
+		#topic are excluded from the export, so you can keep topic=".hidden" or "Demographics" out of 
+		#the export if need.  These should be in the format as in QSL, so topicExcludes = c(".hidden","screening")
+		#for example
+		
+		#testing - this defaults to FALSE, but if you change it to TRUE, various points in the exporter function
+		#will print out indicators like "question", "for loop iteration", "responses", "{question name}" etc.  
+		#This is useful for when the function errors, so you can turn on the testing parameter and determine
+		#which question caused the error, and fix it or exclude that question or whatever
+		
+		#stuff added by Julissa
+		#textExcludes- can specify a single string or vector of strings here of text to be excluded from the export.
+		#questionExcludes - can specify a single alias, e.g. "gender" or vector of aliases, e.g. c("gender", "OtherAlias") here to be excluded from the export.
+
+		#overall, the idea is this can be used without too much input from the user to create a file that
+		#can be sent to the client.  So valid calls for an untranslated export could just be:
+			#printLingua("https://g4-us.yougov.net/#FACE0093")
+			#printLingua("https://g4-emea.yougov.net/#GOOG0403_UK")
+		#lingua exports should just need the language code added:
+		 	#printLingua("https://g4-emea.yougov.net/#GOOG0482_IT", lang="it")
+			#printLingua("https://g4-emea.yougov.net/#ASRP0012", lang="et")
+		#a cleaner export for a client might also be something like:
+			#printLingua("https://g4-us.yougov.net/#FACE0093", guardExcludes=c("0","testing"), topicExcludes=".hidden")
+
+#lang=""; filename=''; guardExcludes = ""; topicExcludes = ""; textExcludes = ''; questionExcludes = ""; testing=FALSE; printGuardText = T; printOrderText = T; ds = NULL
+printLingua <- function(survey, lang="", filename='', guardExcludes = "", topicExcludes = "", 
+                        textExcludes = '', questionExcludes = "", testing=FALSE, 
+                        printGuardText = T, printOrderText = T, ds = NULL, skip_html = T) {
+
+	output = character()
+
+	untranslated = 0
+	
+	##get the appropriate links depending on whether the survey was EMEA or other
+	if(length(grep('g4-emea',survey))) {
+		philaeURL <- "http://philae-emea.yougov.net/questionnaires/"
+		panURL <- "http://panoptic.ldc.yougov.net/questionnaires/"
+	} else if(length(grep('g4-us',survey))) {
+		philaeURL <- "http://philae-us.yougov.net/questionnaires/"
+		panURL <- "http://panoptic.paix.yougov.net/questionnaires/"
+	} else {
+		stop('please enter the whole URL to the survey you intend to print out lingua exports for')
+	}
+
+	qx <- strsplit(survey,'#')[[1]][2]
+	
+	active_version = panGET(paste0(panURL, qx))$body$active_version
+	active <- tail(strsplit(active_version, '/')[[1]],1)
+	panel = panGET(active_version)$panelid
+	
+	check_qtypes(active_version)
+	
+	if(lang == "") {
+		lang = panGET(paste0(philaeURL,qx,'/versions/',active,'/locales/'))$authored
+		print(lang)
+	}
+	
+	sheet = panGET(paste0(philaeURL, qx, '/versions/', active, '/catalogs/', lang, '.csv'))
+	if(!('exception' %in% names(sheet))) {
+		sheet = sheet[is.na(sheet$obsolete),]
+	} else {
+		untranslated = 1	
+		cat("WARNING: there is no language catalog found or no language code specified.\nSurvey will be printed out as coded in QSL\n\n")
+	}
+	
+	if(testing) {testsheet <<- sheet}
+
+	## set up a default filename if none is provided
+	if (filename == "") filename = paste0(qx,'_translated_',lang,'.txt')
+	
+	## Add a .txt suffix if not present
+	if (grep("\\.txt$", filename)) filename = paste0(filename,".txt")
+	if(filename != "") {
+		fileConn <- file(filename)
+	} else {
+		fileConn <- file(paste0(qx,'_translated_',lang,'.txt'))
+	}
+
+	foo = panUnpack(panGET(active_version)$children)
+	counter = 0
+	
+	#### beginning of loop ####
+	for(i in foo) {
+    counter = counter+1
+		if (testing) {
+		  print(counter)
+		  print(i$name)
+		}
+	  
+    ## Skipping all the questions/text with guards we want to skip ##
+		if('guard' %in% names(i)) {
+			if(i$guard %in% guardExcludes) {
+				next
+			}	
+		}
+	  
+    ## Skipping all the questions we want to skip ##
+    q_skip <- c("qualityControl_understand", "qualityControl_interest", "qualityControl_overall", "comments", "topic_check", "paste_detected_t", "qualityControl_fairness", "qualityControl_problems", 
+                "qualityControl_lingua", "comments_lingua", "qc_understand", "qc_interest", "qc_fairness", "qc03_problems", "qc04_overall", "qualityControl_lingua_eng", "qualityControl_lingua_hindi", "next2")
+	  if('name' %in% names(i)) {
+	    if(i$name %in% questionExcludes | i$name %in% q_skip) {
+	      next
+	    }	
+	  }
+
+    ## Skipping all the /text we want to skip ##
+	  if('text' %in% names(i)) {
+	    if(i$text %in% textExcludes) {
+	      next
+	    }	
+	  }
+    ## trying to fix the lazzy scales response thing ##
+    if(i$element == 'qdf:object_set'){
+      
+      # responses = i$items
+      # responses = responses[unlist(lapply(responses, function(x) x$element)) == 'qdf:response']
+      # output = c(output, respPrint(responses, question = i$name,  sheet=sheet, testing=testing, untranslated = untranslated, printGuardText = printGuardText))
+      # 
+      #object_set
+    }
+	  
+    ########################
+		if(i$element == 'qdf:text') {
+      ## grabbing the guard for text sections ##
+		  if (printGuardText & 'guard' %in% names(i)){
+		    guardTextTmp <- paste0("Text only shown if ", i$guard, "\n")
+		  } else{
+		    guardTextTmp = ""
+		  }
+		  
+			textsub = i$text
+			if(substr(textsub,1, 8) == '<script>' | substr(textsub,1, 7) == '<style>' & skip_html) {next}
+			
+			if(testing) {print(textsub)}
+			if(textsub %in% sheet$original_text) {
+			  if (!is.na(sheet$translated_text[sheet$original_text == textsub])){
+			    textsub = sheet$translated_text[sheet$original_text == textsub]
+			  }
+			  
+			} 
+			
+			textsub <- paste0(guardTextTmp, textsub)
+			output = c(output, c(textsub,""))
+			
+		} else if(i$element == 'qdf:question') {
+			if('options' %in% names(i)) {
+				if('topic' %in% names(i$options)) {
+					if(i$options$topic %in% topicExcludes) {
+						next
+					}
+				}	
+			}
+
+			if (printGuardText){
+        
+				if ('guard' %in% names(i)){
+		        	if(i$guard == '0') {
+		        		output = c(output, "# Question not displayed during survey")
+		      		} else	if(i$guard == 'type=="test"') {
+		        		output = c(output, "# Question used for testing purposes")
+		      		}	
+		    	} 
+
+				if (!is.null(ds)){ 
+					list_of_all_aliases <- aliases(allVariables(ds))
+					if (i$name %in% list_of_all_aliases) {
+						if(notes(ds[[i$name]]) != "") output = c(output, paste0("# ",notes(ds[[i$name]])))
+					} else{
+						print(paste0(i$name, " was not found in Crunch dataset, guard or filtered text not displayed"))
+					}		    
+		        	
+		    	} else{
+		    	  #print(i)
+		        	if ('guard' %in% names(i)) {
+		        	  if (i$guard == '0' & i$guard == 'type=="test"') output = c(output, paste0("Question displayed if ", i$guard))
+		        	}
+		    	}
+
+			}
+
+			if('family' %in% names(i) && i$family == 'pdl-update') {
+				def = content(GET(url=paste0('https://datum.yougov.net/api/namespaces/panel:',panel,'/definitions/', i$variable, '/')))
+				vartype <- def$meta$qdf$cache$export[[1]]$type	
+				qText = def$meta$qdf$cache$text	
+				if ("guard" %in% names(i)){
+				  guardTextTmp = paste0(" if ", i$guard)
+				} else {
+				  guardTextTmp = ""
+				}
+				
+				if(!(is.null(def$meta$translations[[qText]][[lang]]))) {
+				  qText = def$meta$translations[[qText]][[lang]]
+				}
+				output = c(output, paste0('[',i$name, guardTextTmp, ']',' {',vartype,'} ',qText))
+				
+				if(vartype %in% c('string_resp','int_resp')) {
+					output = c(output, "")
+					next
+				} else if(vartype %in% c('single_resp','multiple_resp')) {
+					qResps = def$meta$qdf$cache$responses$items
+					for(j in qResps) {
+						if(!(is.null(def$meta$translations[[j$text]][[lang]]))) {
+							output = c(output, paste0(' <',j$code,'> ',def$meta$translations[[j$text]][[lang]]))
+						} else {
+							output = c(output, paste0(' <',j$code,'> ',j$text))
+						}
+					}
+					output = c(output, "")
+				}
+				next
+			}
+		  
+			if(testing) {print('question')}
+			tag = paste0('/question:',i$name,'/text')
+			output = c(output, 
+			           qPrint(question=i, sheet=sheet, untranslated = untranslated, 
+			                  printGuardText = printGuardText, 
+			                  printOrderText = printOrderText))
+			if(testing) {print('here')}
+			if(i$type %in% c('rule')) {
+				if(untranslated) {
+					leftout = paste0('left: ', i$options$left)
+					rightout = paste0('right: ', i$options$right)
+				} else {
+					leftout = ifelse(is.na(sheet$translated_text[sheet$context == paste0('/question:',i$name,'/left')]), paste0('left: ', i$options$left), paste0('left: ', sheet$translated_text[sheet$context == paste0('/question:',i$name,'/left')]))
+					rightout = ifelse(is.na(sheet$translated_text[sheet$context == paste0('/question:',i$name,'/right')]), paste0('right: ', i$options$right), paste0('right: ', sheet$translated_text[sheet$context == paste0('/question:',i$name,'/right')]))
+				}
+				output = c(output, paste0(leftout,' | ',rightout))
+			} else if(i$type %in% c('scale')) {
+				subQs = i$subquestions
+				for(j in subQs) {
+					if(untranslated) {
+						initout = paste0('initial: ', j$options$initial)
+						finout = paste0('final: ', j$options$final)
+					} else {
+						initout = ifelse(is.na(sheet$translated_text[sheet$context == paste0('/question:',j$name,'/initial')]), paste0('initial: ', j$options$initial), paste0('initial: ', sheet$translated_text[sheet$context == paste0('/question:',j$name,'/initial')]))
+						finout = ifelse(is.na(sheet$translated_text[sheet$context == paste0('/question:',j$name,'/final')]), paste0('final: ', j$options$final), paste0('final: ', sheet$translated_text[sheet$context == paste0('/question:',j$name,'/final')]))
+					}
+					output = c(output, paste0(initout,' | ',finout))
+				}
+			} else if(i$type %in% c('single','single-colorpicker','dropdown','multiple','rank','multiple-colorpicker')) {
+				if('items' %in% names(i$responses)) {
+					responses = i$responses$items
+					responses = responses[unlist(lapply(responses, function(x) x$element)) == 'qdf:response']
+				} else if('src' %in% names(i$responses)) {
+					respname = substr(i$responses$src,2,60) 
+					responses = foo[[which(as.character(sapply(foo, function(x) x$name))==respname)]]$items
+				} 
+				output = c(output, respPrint(responses, question = i$name,  sheet=sheet, testing=testing, untranslated = untranslated, printGuardText = printGuardText))
+			} else if(i$type %in% c('grid','dyngrid','grid-open','grid-check','colorpicker')) {
+				subQs = i$subquestions
+				for(j in subQs) {output = c(output, qPrint(j, sheet=sheet, subQ=T, untranslated = untranslated, grid = T, printGuardText = printGuardText, printOrderText = printOrderText))}
+				if('items' %in% names(i$responses)) {
+					responses = i$responses$items
+					responses = responses[unlist(lapply(responses, function(x) x$element)) == 'qdf:response']
+				} else if('src' %in% names(i$responses)) {
+					respname = substr(i$responses$src,2,60) 
+					responses = foo[[which(as.character(sapply(foo, function(x) x$name))==respname)]]$items
+				} 	
+				output = c(output, respPrint(responses, question = i$name,  sheet=sheet, testing=testing, untranslated = untranslated, printGuardText = printGuardText))
+			} 
+
+		}
+		if(testing) {print('end of for loop')}
+    # print(i)
+    # print("output")
+    # print(output)
+		output = c(output, "") 		
+	}
+
+	output = gsub("&nbsp;", "", output)
+	output = gsub("<div style=\"display:none !important\">", "", output)
+  output = gsub("</div>", "", output)
+	output = gsub("", "", output)
+		output2 = character()
+	
+	flag = 0
+	for(i in output) {
+	  #print(i)
+		if(i == "") {
+			if(flag) {
+				next
+			}
+			flag = 1
+		} else {
+			flag = 0
+		}
+		output2 = c(output2, i)	
+	}
+	writeLines(output2, fileConn)
+	close(fileConn)
+	
+	## Write out to word document
+	doc = officer::read_docx()
+	doc = officer::body_add(doc, output2)
+	fnm = gsub("\\.txt", ".docx", filename)
+	doc_file = print(doc, target = fnm)
+	
+	return(filename)
+}
+
+
