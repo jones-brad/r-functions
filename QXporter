@@ -534,4 +534,10 @@ printLingua <- function(survey, lang="", filename='', guardExcludes = "", topicE
 	return(filename)
 }
 
-
+## Example of use
+# userName = 'brad.jones'
+# clum = printLingua("https://g4-us-alpha.yougov.net/#CLUM0045", 
+#                   guardExcludes=c("0","testing", "gryphon.interview_type != \"test\""), 
+#                   topicExcludes=".hidden", lang="en_US", 
+#                   questionExcludes = c("trap","qc_days"),
+#                   filename = "output/clum0045_qx.txt")
