@@ -1392,3 +1392,39 @@ power_test = function(n.test, n.control,
   return(c("good" = g, "not_sig" = ns, "s_error" = s))
   
 }
+
+## Function to search through variable labels
+search = function(str, data, include_value_labels = FALSE) {
+  names = names(data)
+  varlab = rep('', ncol(data))
+  vallab = rep('', ncol(data))
+  
+  for (j in 1:ncol(data)) {
+    ## Variable label
+    lab = attr(data[[j]], 'label')
+    if (length(lab)>0) varlab[j] = lab
+    
+    if (!include_value_labels) next
+    
+    ## Value labels
+    lab = paste(names(attr(data[[j]], 'labels')), collapse = "; ")
+    if (length(lab)>0) vallab[j] = lab
+  }
+  
+  ## Search var names
+  hits = grep(str, names, ignore.case = TRUE)
+  names(hits) = names[hits]
+  cat("Variable name hits:", 
+      paste(paste(names[hits], "-", hits), collapse = ","), "\n")
+  
+  ## search var labels
+  hits = grep(str, varlab, ignore.case = TRUE)
+  names(hits) = names[hits]
+  cat("Variable label hits:", 
+      paste(paste(names[hits], "-", hits), collapse = ","), "\n")
+  
+  ## search value labels
+  hits = grep(str, vallab, ignore.case = TRUE)
+  if (include_value_labels) cat("Value label hits:", 
+      paste(paste(names[hits], "-", hits), collapse = ","), "\n")
+}
