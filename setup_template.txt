@@ -5,10 +5,10 @@ files = files[grep("\\.sav$", files)]
 # date of the files
 time = file.info(files)$mtime
 
-latest_file = haven::files[which.max(time)]
+latest_file = files[which.max(time)]
 
 # Load data
-dat = read_sav(latest_file)
+dat = haven::read_sav(latest_file)
 
 # Add a constant column
 dat$cons = 1
