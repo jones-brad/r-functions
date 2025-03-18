@@ -157,7 +157,7 @@ create_banners = function(questions, bannerpoints,
         
         ##add n and ess to the bottom row
         n = table(dat[[x]][inds])[bannerpoints[[k]]$levels]
-        ess = round(wxtab2(dat[[x]][inds], dat$cons[inds], dat$weight[inds])[
+        ess = round(wxtab2(dat[[x]][inds], dat$cons[inds], dat[[control$weight]][inds])[
                     bannerpoints[[k]]$levels,'ess'
                     ],1)
         if (class(clean.output)[1]=='numeric') clean.output = c(clean.output, n, ess)
