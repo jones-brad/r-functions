@@ -147,7 +147,7 @@ create_banners = function(questions, bannerpoints,
         for (r in 1:nrow(output)) {
           mu = wmean_bygroup(is.element(dat[[svars[r]]][inds],
                                         questions[[j]]$levels),
-                             as_factor(dat[[x]][inds]),
+                             to_factor(dat[[x]][inds]),
                              dat[[control$weight]][inds])
           int = intersect(bnames, names(mu))
           output[r,int] = mu[int]
