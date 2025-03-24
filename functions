@@ -1394,7 +1394,7 @@ power_test = function(n.test, n.control,
 }
 
 ## Function to search through variable labels
-search = function(str, data, include_value_labels = FALSE) {
+search_data = function(str, data, include_value_labels = FALSE) {
   names = names(data)
   varlab = rep('', ncol(data))
   vallab = rep('', ncol(data))
