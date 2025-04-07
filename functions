@@ -1428,3 +1428,18 @@ search_data = function(str, data, include_value_labels = FALSE) {
   if (include_value_labels) cat("Value label hits:", 
       paste(paste(names[hits], "-", hits), collapse = ","), "\n")
 }
+
+## Find latest panelist file
+read_datum <- function(panel){
+  
+  datum <- googlesheets4::read_sheet(ss = "1S2M5gFZUjPrbaVjijmUGAwXK5JuU7RnobjXXTZkCG5c",
+                      sheet = "Datum Links")
+  
+  datum <- data.frame(datum)
+  
+  datum_link <- datum$URL[datum$Panel == panel]
+  
+  ds <- crunch::loadDataset(dataset = datum_link)
+  
+  return(ds)
+}
