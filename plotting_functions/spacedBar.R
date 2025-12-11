@@ -202,27 +202,26 @@ addBar2 <- function(x, y, val, col, val.lab = TRUE,
 
 
 ########################Grouping sets of bars
-spacedBar2 <- function(list,  ###input list to plot
-                       xmin = -.18,            ###xmin for plot (xmax is determined from input)
-                       col.vec,                        ###colors to plot
-                       val.lab = TRUE,                        ###value labels
-                       val.lab.col = 'black',
-                       res = 1,                        ###resolution for plot
-                       plot.width = 3.2,               ###width of plot window in inches
-                       write.file = "no",      ###write out a file? "pdf" or "jpg"
-                       bar.width = .5,         ###width of bars (determines the height of the plot)
-                       n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
-                       col.lab = NULL,                 ###column labels
-                       lab.pos = NULL,
-                       space.labs.evenly = NULL,
-                       lab.start = .1,
-                       lab.buff = 0,
-                       add.net = NULL,         ###add NETs to any grouped bars
-                       net.buff = 0,           ###add a little extra to the xmax to prevent cutting off net labels
-                       spaces = NULL,
-                       shiftSmall = TRUE,
-                       small_val = 5,
-                       groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
+
+spacedBar2 = function(list,  ###input list to plot
+         xmin = -.18,            ###xmin for plot (xmax is determined from input)
+         col.vec,                        ###colors to plot
+         val.lab = TRUE,                        ###value labels
+         val.lab.col = 'black',
+         res = 1,                        ###resolution for plot
+         plot.width = 3.2,               ###width of plot window in inches
+         write.file = "no",      ###write out a file? "pdf" or "jpg"
+         bar.width = .5,         ###width of bars (determines the height of the plot)
+         n.cats = 4,             ###number of categories to plot (to exclude DK/Refused mostly)
+         col.lab = NULL,                 ###column labels
+         lab.pos = NULL,
+         space.labs.evenly = NULL,
+         lab.start = .1,
+         lab.buff = 0,
+         add.net = NULL,         ###add NETs to any grouped bars
+         net.buff = 0,           ###add a little extra to the xmax to prevent cutting off net labels
+         spaces = NULL,
+         groups = NULL) {                ###supply spaces between bars (should be vector of length n.cats-1) (otherwise set to 0.05)
   
   ##set up the height of the box based on the number of elements
   ##(in reverse order; list should be ordered with total first, etc)
@@ -344,7 +343,7 @@ spacedBar2 <- function(list,  ###input list to plot
   
   if (length(val.lab.col) == 1) val.lab.col <- rep(val.lab.col, n.cats)
   
-    
+  
   ##run through the list to add the bars
   for (j in 1:length(list)) {
     fam = ifelse(write.file == "pdf", "", "Franklin Gothic Book")
@@ -369,7 +368,7 @@ spacedBar2 <- function(list,  ###input list to plot
     text(0, j+lab.buff*.9, label, pos = 2, 
          family = fam,
          cex = .75, col = rcol)
-         
+    
     x = 0
     if (length(val.lab)==1) val.lab <- rep(val.lab, n.cats)
     for (k in 1:n.cats) {
@@ -379,8 +378,8 @@ spacedBar2 <- function(list,  ###input list to plot
               col = col.vec[k], 
               val.lab.col = val.lab.col[k],
               val.lab = list[[j]][k] > 0 & val.lab[k],
-              pos = j+lab.buff*.9, shiftSmall = shiftSmall, 
-              write.file = write.file, small_val = small_val,
+              pos = j+lab.buff*.9, shiftSmall = is.null(add.net), 
+              write.file = write.file,
               too_small = small)
       
       x = x + mat[j,k]
@@ -398,10 +397,11 @@ spacedBar2 <- function(list,  ###input list to plot
         net = sum(list[[j]][groups[[k]]])
         x = x + net
         if (length(groups[[k]]) == 1) next
-        if (k > 1) x.star = x + sum(space2[j,k:(k-1)])
+        if (net < .01) next
+        if (k > 1) x.star = x + sum(space[j,(k-1):1])
         if (k == 1) x.star = x
         text(x.star + .05, j, round(net*100), cex = .75,
-             family = fam)
+             family = fam, font = 2)
       }
     }
   }
@@ -412,3 +412,4 @@ spacedBar2 <- function(list,  ###input list to plot
     return(src)
   }
 }
+
