@@ -1430,16 +1430,76 @@ search_data = function(str, data, include_value_labels = FALSE) {
 }
 
 ## Find latest panelist file
-read_datum <- function(panel){
-  
-  datum <- googlesheets4::read_sheet(ss = "1S2M5gFZUjPrbaVjijmUGAwXK5JuU7RnobjXXTZkCG5c",
-                      sheet = "Datum Links")
-  
-  datum <- data.frame(datum)
-  
-  datum_link <- datum$URL[datum$Panel == panel]
-  
-  ds <- crunch::loadDataset(dataset = datum_link)
-  
+#' Read Datum dataset from Crunch
+#'
+#' Loads the latest Datum Current Facts dataset for a given panel from Crunch.
+#' Falls back to a Google Sheet lookup if the Crunch path fails.
+#'
+#' @param panel Character string specifying the panel (e.g., "Panel 1", "Panel 13")
+#' @return A Crunch dataset object
+#' @export
+#' @examples
+#' \dontrun{
+#' ds <- read_datum(panel = "Panel 1")
+#' }
+read_datum <- function(panel) {
+  project_name <- "YouGov Global"
+
+  panel_num <- gsub("Panel ", "", panel)
+
+  panel_map <- c(
+    "1"   = "pollingpoint",
+    "4"   = "DE",
+    "10"  = "UAE",
+    "13"  = "UK",
+    "71"  = "Denmark",
+    "72"  = "Finland",
+    "73"  = "Norway",
+    "74"  = "Sweden",
+    "118" = "France",
+    "133" = "South America",
+    "152" = "Europe",
+    "156" = "China",
+    "162" = "Southeast Asia"
+  )
+
+  panel_country <- panel_map[[panel_num]]
+  panel_name <- sprintf("%s (panel:%s)", panel_country, panel_num)
+
+  base_pattern <- sprintf(
+    "^Datum Current Facts for panel:%s \\(%s\\) - \\d{4}-\\d{2}-\\d{2}$",
+    panel_num, panel_country
+  )
+
+  ds <- tryCatch({
+    names <- crunch::projects() %>%
+      crunch::cd(file.path(project_name, panel_name)) %>%
+      crunch::listDatasets(kind = "active")
+
+    filtered <- names[stringr::str_detect(names, base_pattern)]
+    if (length(filtered) == 0) stop("No matching datasets found")
+
+    dates <- as.Date(stringr::str_extract(filtered, "\\d{4}-\\d{2}-\\d{2}"))
+    latest_file <- filtered[which.max(dates)]
+
+    path <- file.path(panel_name, latest_file)
+    crunch::loadDataset(path, project = project_name)
+  }, error = function(e) {
+    message("Warning: Crunch lookup failed, falling back to Google Sheet...")
+
+    datum <- googlesheets4::read_sheet(
+      ss = "1S2M5gFZUjPrbaVjijmUGAwXK5JuU7RnobjXXTZkCG5c",
+      sheet = "Datum Links"
+    )
+    datum <- data.table::as.data.table(datum)
+
+    datum_link <- datum$URL[datum$Panel == panel]
+    if (length(datum_link) == 0) {
+      stop("No dataset found in fallback sheet for panel: ", panel)
+    }
+
+    crunch::loadDataset(dataset = datum_link)
+  })
+
   return(ds)
 }
