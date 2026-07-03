@@ -1503,3 +1503,69 @@ read_datum <- function(panel) {
 
   return(ds)
 }
+
+draw_curved_arrow <- function(x0, y0, x1, y1, label = "", 
+                              curvature = 0.3, 
+                              arrow_size = 0.065,
+                              label_offset = 0.1,
+                              col = "black",
+                              lwd = 2,
+                              label_cex = 1,
+                              pos = 0) {
+  #' Draw a curved arrow from origin to termination point
+  #' 
+  #' @param x0,y0 Origin coordinates
+  #' @param x1,y1 Termination coordinates
+  #' @param label Text label at origin
+  #' @param curvature Controls how much the arrow curves (0 = straight, higher = more curve)
+  #' @param arrow_size Size of arrowhead
+  #' @param label_offset Distance of label from origin point
+  #' @param col Color of arrow
+  #' @param lwd Line width
+  #' @param label_cex Label text size
+  
+  # Calculate control point for quadratic Bezier curve
+  # Place it perpendicular to the line connecting origin and terminus
+  mid_x <- (x0 + x1) / 2
+  mid_y <- (y0 + y1) / 2
+  
+  # Vector from origin to terminus
+  dx <- x1 - x0
+  dy <- y1 - y0
+  
+  # Perpendicular vector (rotated 90 degrees)
+  perp_x <- -dy
+  perp_y <- dx
+  
+  # Normalize and scale by curvature
+  dist <- sqrt(dx^2 + dy^2)
+  perp_x <- perp_x / dist * curvature * dist
+  perp_y <- perp_y / dist * curvature * dist
+  
+  # Control point
+  ctrl_x <- mid_x + perp_x
+  ctrl_y <- mid_y + perp_y
+  
+  # Generate points along the Bezier curve
+  t <- seq(0, 1, length.out = 100)
+  curve_x <- (1-t)^2 * x0 + 2*(1-t)*t * ctrl_x + t^2 * x1
+  curve_y <- (1-t)^2 * y0 + 2*(1-t)*t * ctrl_y + t^2 * y1
+  
+  # Draw the curve
+  lines(curve_x, curve_y, col = col, lwd = lwd)
+  
+  # Add arrowhead at the end
+  arrows(curve_x[99], curve_y[99], curve_x[100], curve_y[100], 
+         length = arrow_size, col = col, lwd = lwd)
+  
+  # Add label at origin
+  if (label != "") {
+    # Calculate label position (offset from origin)
+    angle <- atan2(ctrl_y - y0, ctrl_x - x0)
+    label_x <- x0 - label_offset * cos(angle)
+    label_y <- y0 - label_offset * sin(angle)
+    
+    text(label_x, label_y, label, cex = label_cex, col = col,
+         pos = pos)
+  }
+}
